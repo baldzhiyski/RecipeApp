@@ -5,5 +5,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface IngredientRepository extends JpaRepository<RecipeIngredient,Long> {
+public interface RecipeIngredientRepository extends JpaRepository<RecipeIngredient, Long> {
 }
