@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Recipe</title>
+    <link rel="stylesheet" href="static/css/styles_add_recipe.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
+
+    <style>
+        .ingredient-group {
+            margin-bottom: 10px;
+            display: flex;
+            gap: 10px;
+        }
+    </style>
+</head>
+<body>
+<header>
+<nav>
+    <a href="#">Home</a>
+    <a href="#">My Recipes</a>
+    <a href="#">Contact</a>
+    <a href="#">Add Ingredient</a>
+</nav>
+</header>
+
+<div class="header-image">
+    <img src="static/image/food.jpg" alt="Recipe Background">
+
+<form action="#" method="post" class="recipe-form">
+    <label for="title">Recipe Title:</label>
+    <input type="text" id="title" name="title" required>
+
+    <label for="description">Description:</label>
+    <textarea id="description" name="description" required></textarea>
+
+    <label>Ingredients:</label>
+    <div id="ingredients-container"></div>
+    <button type="button" onclick="addIngredient()">Add Ingredient</button>
+
+    <label for="instructions">Instructions:</label>
+    <textarea id="instructions" name="instructions" required></textarea>
+
+    <button type="submit">Add Recipe</button>
+</form>
+</div>
+<script>
+    // List of ingredient options (these could also come from an API call)
+    const ingredientOptions = [
+        "First Ingredient",
+        "Second Ingredient",
+        "Third Ingredient"
+    ];
+
+    function createIngredientOptions() {
+        return ingredientOptions.map(ingredient => {
+            return `<option value="${ingredient}">${ingredient}</option>`;
+        }).join('');
+    }
+
+    function addIngredient() {
+        const ingredientsContainer = document.getElementById('ingredients-container');
+
+        const ingredientGroup = document.createElement('div');
+        ingredientGroup.classList.add('ingredient-group');
+
+        ingredientGroup.innerHTML = `
+                <select name="ingredients[]" required>
+                    <option value="" disabled selected>Select Ingredient</option>
+                    ${createIngredientOptions()}
+                </select>
+                <input type="text" name="quantity[]" placeholder="Quantity" required>
+                <select name="unit[]">
+                    <option value="grams">grams</option>
+                    <option value="ml">ml</option>
+                    <option value="cups">cups</option>
+                    <option value="tbsp">tbsp</option>
+                </select>
+                <button type="button" onclick="removeIngredient(this)">Remove</button>
+            `;
+
+        ingredientsContainer.appendChild(ingredientGroup);
+    }
+
+    function removeIngredient(button) {
+        const ingredientGroup = button.parentElement;
+        ingredientGroup.remove();
+    }
+</script>
+<footer class="footer">
+    <p>&copy; 2024 Your Company. All rights reserved.</p>
+    <p>This website is for informational purposes only. All recipes are the property of their respective owners.</p>
+</footer>
+</body>
+</html>
