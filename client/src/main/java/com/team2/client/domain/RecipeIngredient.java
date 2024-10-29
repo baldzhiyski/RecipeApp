@@ -7,12 +7,12 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-@Table(name = "recipeIngredients")
+@Table(name = "recipe_ingredients")
 @Getter
 @Setter
 public class RecipeIngredient extends BaseEntity{
 
-    @OneToOne
+    @ManyToOne
     private Ingredient ingredient;
 
     @Positive
