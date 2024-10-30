@@ -1,0 +1,271 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Carousel Template · Bootstrap v5.0</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="static/css/bootstrap.min.css" rel="stylesheet">
+    <link href="static/css/index.css" rel="stylesheet">
+    <link href="static/css/footer.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+
+<header>
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Recipe Haven</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarCollapse">
+                <ul class="navbar-nav me-auto mb-2 mb-md-0">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="#">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#"> Recipies Stats</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Add recipies</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">My Weekly Plan</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">My Shopping Lists</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#searchModal">Search for recipe</a>
+                    </li>
+
+                </ul>
+            </div>
+        </div>
+    </nav>
+</header>
+
+<main>
+
+    <!-- Modal Structure -->
+    <div class="modal fade" id="searchModal" tabindex="-1" aria-labelledby="searchModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="searchModalLabel">Search for Recipe</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="/search" method="GET">
+                        <div class="mb-3">
+                            <label class="form-label">Search for:</label>
+                            <div class="form-check form-check-inline">
+                                <input type="radio" class="form-check-input" id="ingredient" name="searchType" value="ingredient" required onclick="toggleMealType(false)">
+                                <label class="form-check-label me-3" for="ingredient">Ingredient</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input type="radio" class="form-check-input" id="dish" name="searchType" value="dish" required onclick="toggleMealType(true)">
+                                <label class="form-check-label" for="dish">Dish</label>
+                            </div>
+                        </div>
+                        <div id="mealTypeContainer" class="mb-3" style="display: none;">
+                            <label class="form-label">Select Meal Type:</label>
+                            <select class="form-select" name="category">
+                                <option selected value="">Choose category</option>
+                                <option value="snack">Snack</option>
+                                <option value="dessert">Dessert</option>
+                                <option value="main-dish">Main Dish</option>
+                                <option value="soup">Soup</option>
+                            </select>
+                        </div>
+                        <input class="form-control mb-3" type="search" name="query" placeholder="Enter name..." aria-label="Search">
+                        <button class="btn btn-primary btn-lg w-100" type="submit">Search</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="myCarousel" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-indicators">
+            <button type="button" data-bs-target="#myCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+            <button type="button" data-bs-target="#myCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
+
+        </div>
+        <div class="carousel-inner">
+            <div class="carousel-item active">
+
+                <div class="container">
+                    <div class="carousel-caption text-start text-black">
+                        <h1>Generate your weekly plan.</h1>
+                        <p>Get started with your plan ! Plan everything in advanced !</p>
+                        <p><a class="btn btn-lg btn-primary" href="#">Get Started</a></p>
+                    </div>
+                </div>
+            </div>
+            <div class="carousel-item">
+
+                <div class="container">
+                    <div class="carousel-caption text-end">
+                        <h1>Welcome to Our Culinary Journey!</h1>
+                        <p>Discover new recipes, cooking tips, and a vibrant community of food lovers.</p>
+                        <p><a class="btn btn-lg btn-primary" href="#">See our stats !</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#myCarousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#myCarousel" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
+    </div>
+
+    <div class="blurred-background">
+        <div class="container marketing">
+            <h2 class="mb-3 text-white" >Most Rated Recipies</h2>
+
+            <!-- Three columns of text below the carousel -->
+            <div class="row">
+                <div class="col-lg-4">
+                    <svg class="bd-placeholder-img rounded-circle" width="140" height="140" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: 140x140" preserveAspectRatio="xMidYMid slice" focusable="false"><title>Placeholder</title><rect width="100%" height="100%" fill="#777"/><text x="50%" y="50%" fill="#777" dy=".3em">140x140</text></svg>
+
+                    <h2>Heading</h2>
+                    <p>Some representative placeholder content for the three columns of text below the carousel. This is the first column.</p>
+                    <p><a class="btn btn-secondary" href="#">View details &raquo;</a></p>
+                </div><!-- /.col-lg-4 -->
+                <div class="col-lg-4">
+                    <svg class="bd-placeholder-img rounded-circle" width="140" height="140" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: 140x140" preserveAspectRatio="xMidYMid slice" focusable="false"><title>Placeholder</title><rect width="100%" height="100%" fill="#777"/><text x="50%" y="50%" fill="#777" dy=".3em">140x140</text></svg>
+
+                    <h2>Heading</h2>
+                    <p>Another exciting bit of representative placeholder content. This time, we've moved on to the second column.</p>
+                    <p><a class="btn btn-secondary" href="#">View details &raquo;</a></p>
+                </div><!-- /.col-lg-4 -->
+                <div class="col-lg-4">
+                    <svg class="bd-placeholder-img rounded-circle" width="140" height="140" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: 140x140" preserveAspectRatio="xMidYMid slice" focusable="false"><title>Placeholder</title><rect width="100%" height="100%" fill="#777"/><text x="50%" y="50%" fill="#777" dy=".3em">140x140</text></svg>
+
+                    <h2>Heading</h2>
+                    <p>And lastly this, the third column of representative placeholder content.</p>
+                    <p><a class="btn btn-secondary" href="#">View details &raquo;</a></p>
+                </div><!-- /.col-lg-4 -->
+            </div><!-- /.row -->
+
+            <div class="row featurette">
+                <div class="col-md-7">
+                    <h2 class="featurette-heading text-muted">Plan Your Meals Effortlessly. <span class="text-muted">Your culinary journey starts here.</span></h2>
+                    <p class="lead text-black">Discover easy meal planning with our intuitive platform. Choose from a variety of recipes tailored to your dietary preferences and enjoy cooking at home.</p>
+                </div>
+                <div class="col-md-5">
+                    <div class="featurette">
+                        <img src="static/images/food1.webp" class="custom-image bd-placeholder-img bd-placeholder-img-lg featurette-image img-fluid mx-auto" alt="Your Image Description">
+                    </div>
+                </div>
+            </div>
+
+            <hr class="featurette-divider">
+
+
+            <hr class="featurette-divider">
+
+            <div class="row featurette">
+                <div class="col-md-7 order-md-2">
+                    <h2 class="featurette-heading text-muted">Healthy Choices Made Easy. Savor the flavors.</h2>
+                    <p class="lead text-black">Explore healthy recipes that cater to your lifestyle. From quick snacks to gourmet dinners, our planner helps you make delicious choices every day.</p>
+                </div>
+                <div class="col-md-5">
+                    <div class="featurette">
+                        <img src="static/images/food1.webp" class="custom-image bd-placeholder-img bd-placeholder-img-lg featurette-image img-fluid mx-auto" alt="Your Image Description">
+                    </div>
+                </div>
+            </div>
+
+            <hr class="featurette-divider">
+
+        </div>
+    </div>
+
+
+    <footer>
+        <div class="footer-container">
+            <!-- Grid container -->
+            <div class="container p-4">
+                <!--Grid row-->
+                <div class="row mt-4">
+                    <!--Grid column-->
+                    <div class="col-lg-4 col-md-12 mb-4 mb-md-0">
+                        <h5 class="text-uppercase mb-4">Plan Your Meals with Us</h5>
+                        <p>Join our community to make meal planning easier and more enjoyable.</p>
+                        <p>Explore delicious recipes and simplify your shopping.</p>
+
+                        <div class="mt-4">
+                            <!-- Social Media Links -->
+                            <a type="button" class="btn btn-floating btn-outline-light btn-lg" style="color: white;" href="#"><i class="fab fa-linkedin"></i></a>
+                            <a type="button" class="btn btn-floating btn-outline-light btn-lg" style="color: white;" href="#"><i class="fab fa-twitter"></i></a>
+                            <a type="button" class="btn btn-floating btn-outline-light btn-lg" style="color: white;" href="#"><i class="fab fa-github"></i></a>
+                        </div>
+                    </div>
+                    <!--Grid column-->
+
+                    <!--Grid column-->
+                    <div class="col-lg-4 col-md-6 mb-4 mb-md-0">
+                        <h5 class="text-uppercase mb-4">Contact Us</h5>
+                        <ul class="fa-ul" style="margin-left: 1.65em;">
+                            <li class="mb-3">
+                                <span class="fa-li"><i class="fas fa-home"></i></span><span class="ms-2">Stuttgart , Germany</span>
+                            </li>
+                            <li class="mb-3">
+                                <span class="fa-li"><i class="fas fa-envelope"></i></span><span class="ms-2">info@mealplanning.com</span>
+                            </li>
+                            <li class="mb-3">
+                                <span class="fa-li"><i class="fas fa-phone"></i></span><span class="ms-2">+12 345 678 910</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="col-lg-4 col-md-6 mb-4 mb-md-0">
+                        <h5 class="text-uppercase mb-4">Join Our Community</h5>
+                        <p>Become a part of our meal planning community today!</p>
+                        <p>Get access to exclusive content, personalized meal plans, and much more.</p>
+
+                    </div>
+                    <!--Grid column-->
+                </div>
+                <!--Grid row-->
+            </div>
+            <!-- Grid container -->
+
+            <!-- Copyright -->
+            <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.2);">
+                © 2024 Meal Planning Platform , Creators: Hristo Baldzhiyski , Anastasiia Sariohlo
+            </div>
+            <!-- Copyright -->
+        </div>
+    </footer>
+
+
+</main>
+</body>
+<script src="/carousel/js/bootstrap.bundle.min.js"></script>
+<script>
+    function toggleMealType(show) {
+        const mealTypeContainer = document.getElementById('mealTypeContainer');
+        mealTypeContainer.style.display = show ? 'block' : 'none';
+    }
+
+    var searchModal = document.getElementById('searchModal');
+
+    searchModal.addEventListener('show.bs.modal', function () {
+        document.body.classList.add('blur-background');
+    });
+
+    searchModal.addEventListener('hide.bs.modal', function () {
+        document.body.classList.remove('blur-background');
+    });
+</script>
+</html>

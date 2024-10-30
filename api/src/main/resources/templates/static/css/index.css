@@ -1,0 +1,271 @@
+
+body {
+    padding-top: 3rem;
+    padding-bottom: 3rem;
+    color: #5a5a5a;
+
+  }
+
+  .carousel {
+    margin-bottom: 0.5px;
+  }
+
+  
+
+  .carousel-caption {
+    bottom: 3rem;
+    z-index: 10;
+  }
+  
+  .carousel-item {
+    height: 20rem;
+    background-color: rgb(211, 118, 19);
+  }
+  .carousel-item > img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    min-width: 100%;
+    height: 32rem;
+  }
+
+  .marketing .col-lg-4 {
+    margin-bottom: 1.5rem;
+    text-align: center;
+  }
+  .marketing h2 {
+    font-weight: 400;
+  }
+
+  .marketing .col-lg-4 p {
+    margin-right: .75rem;
+    margin-left: .75rem;
+  }
+
+  .featurette-divider {
+    margin: 5rem 0; 
+  }
+  
+  .featurette-heading {
+    font-weight: 300;
+    line-height: 1;
+    
+    letter-spacing: -.05rem;
+  }
+
+  /* Base Navbar Styles */
+.navbar {
+  padding: 15px 20px;
+  background-color: #343a40; /* Dark background */
+}
+
+/* Navbar Brand */
+.navbar-brand {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #ffffff; /* White text */
+}
+
+/* Navbar Links */
+.nav-link {
+  color: #ffffff; /* White text */
+  margin-right: 15px; /* Spacing between links */
+  transition: color 0.3s; /* Smooth color transition */
+}
+
+.nav-link:hover {
+  color: #e9ecef; /* Lighter color on hover */
+}
+
+/* Active Link */
+.nav-link.active {
+  color: #61dafb; /* Highlight active link */
+}
+
+/* Navbar Toggler */
+.navbar-toggler {
+  border: none; /* Remove default border */
+}
+
+.navbar-toggler-icon {
+  background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3E%3Cpath stroke='rgba(255,255,255,.5)' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E"); /* Change icon color */
+}
+
+/* Form Styles */
+.form-select {
+  background-color: #495057; /* Dark background for select */
+  color: #ffffff; /* White text */
+  border: none; /* Remove default border */
+}
+
+.form-select:focus {
+  border: 2px solid #61dafb; /* Highlight border on focus */
+  box-shadow: none; /* Remove default shadow */
+}
+
+.form-control {
+  background-color: #495057; /* Dark background for input */
+  color: #ffffff; /* White text */
+  border: none; /* Remove default border */
+}
+
+.form-control:focus {
+  border: 2px solid #61dafb; /* Highlight border on focus */
+  box-shadow: none; /* Remove default shadow */
+}
+
+/* Button Styles */
+.btn-outline-success {
+  border-color: #61dafb; /* Button border color */
+  color: #61dafb; /* Button text color */
+}
+
+.btn-outline-success:hover {
+  background-color: #61dafb; /* Change background on hover */
+  color: #ffffff; /* Change text color on hover */
+}
+
+
+.blurred-background {
+  position: relative;
+  overflow: hidden; /* Prevents content overflow */
+}
+
+.blurred-background::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: url('/templates/static/images/planner.jpg'); /* Path to your background image */
+  background-size: cover; /* Makes sure the image covers the entire area */
+  background-position: center; /* Centers the image */
+  filter: grayscale(120%) blur(0px); /* Make it black and white and reduce blur intensity */
+  z-index: 1; /* Make sure this is below the content */
+}
+
+
+.container.marketing {
+  position: relative; /* Makes sure the content is above the blurred background */
+  z-index: 2; /* Makes sure content is above the blurred background */
+  color: white; /* Change text color to make it readable */
+}
+
+
+form {
+  max-width: 400px; /* Set a maximum width for better readability */
+  margin: auto; /* Center the form horizontally */
+  padding: 20px; /* Add some padding */
+  border: 1px solid #ced4da; /* Add a border */
+  border-radius: 5px; /* Round the corners */
+  background-color: #f8f9fa; /* Light background color */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
+}
+
+h2 {
+  color: #495057; /* Change heading color */
+}
+
+
+/*Form for searching into the db*/
+.modal-content {
+  background-color: #f8f9fa; /* Light background color for better contrast */
+  border-radius: 10px; /* Rounded corners */
+}
+
+.modal-header {
+  border-bottom: none; /* Remove bottom border for a cleaner look */
+}
+
+.form-label {
+  font-weight: bold; /* Make labels bold */
+}
+
+.form-select {
+  border: 1px solid #007bff; /* Bootstrap primary color */
+  border-radius: 5px; /* Rounded select box */
+  transition: border-color 0.3s;
+}
+
+.form-select:focus {
+  border-color: #0056b3; /* Darker shade on focus */
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25); /* Bootstrap focus shadow */
+}
+
+.btn-primary {
+  background-color: #007bff; /* Bootstrap primary color */
+  border: none; /* Remove border */
+}
+
+.btn-primary:hover {
+  background-color: #0056b3; /* Darker shade on hover */
+}
+
+/* Additional styling for the input field */
+input[type="search"] {
+  border: 1px solid #ced4da; /* Border color for search input */
+  border-radius: 5px; /* Rounded corners for input */
+}
+
+input[type="search"]:focus {
+  border-color: #007bff; /* Change border color on focus */
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25); /* Add shadow on focus */
+}
+
+.custom-image {
+  width: 500px; /* Set the width */
+  height: 500px; /* Set the height */
+  object-fit: cover; /* Maintain aspect ratio and cover the entire area */
+  border-radius: 10px; /* Optional: Add rounded corners */
+}
+
+car-img{
+  width: 100%; height: 100%; object-fit: cover;
+}
+
+/* Media Queries for Responsiveness */
+@media (max-width: 768px) {
+  .navbar-nav {
+      margin-top: 10px; /* Space above the collapsed navbar */
+  }
+  
+  .nav-link {
+      margin-right: 0; /* Reset margin for smaller screens */
+      padding: 10px; /* Add padding for touch targets */
+  }
+}
+
+  
+  
+  @media (min-width: 40em) {
+    .carousel-caption p {
+      margin-bottom: 1.25rem;
+      font-size: 1.25rem;
+      line-height: 1.4;
+    }
+  
+    .featurette-heading {
+      font-size: 50px;
+    }
+  }
+  
+  @media (min-width: 62em) {
+    .featurette-heading {
+      margin-top: 7rem;
+    }
+  }
+
+  .bd-placeholder-img {
+    font-size: 1.125rem;
+    text-anchor: middle;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    user-select: none;
+  }
+
+  @media (min-width: 768px) {
+    .bd-placeholder-img-lg {
+      font-size: 3.5rem;
+    }
+  }

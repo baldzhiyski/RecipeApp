@@ -1,0 +1,41 @@
+/* Ensure the footer stays at the bottom */
+html, body {
+    height: 100%;
+    margin: 0;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 80vh;
+}
+
+.content {
+    flex: 1;
+}
+
+footer {
+    width: 100%;
+    background-color: #c38916;
+    color: white;
+    padding: 20px 0;
+}
+
+.footer-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 15px;
+}
+
+.footer-links a {
+    color: white;
+    text-decoration: none;
+}
+
+.footer-links a:hover {
+    color: #ccc;
+}
+
+.btn-floating i {
+    font-size: 1.5rem;
+}
