@@ -1,5 +1,9 @@
 package com.team2.client.domain.dto;
 
+import com.team2.client.validation.annotation.PasswordAnnotation;
+import com.team2.client.validation.annotation.PasswordMatch;
+import com.team2.client.validation.annotation.UniqueUsername;
+import com.team2.client.validation.annotation.ValidEmail;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -8,27 +12,27 @@ import lombok.Setter;
 
 @Getter
 @Setter
+@PasswordMatch
 public class UserRegisterDto {
 
-    // TODO : Validate each field  with more advanced annotations!
+
     @NotBlank(message = "First Name is required")
     private String firstName;
 
     @NotBlank(message = "Last Name  is required")
     private String lastName;
 
+    @UniqueUsername
     @NotBlank(message = "Username is required")
     private String username;
 
-    @NotBlank(message = "Password is required")
-    @Size(min = 6, message = "Password must be at least 6 characters long")
+    @PasswordAnnotation
     private String password;
 
-    @NotBlank(message = "Confirm Password is required")
-    @Size(min = 6, message = "Confirm Password must be at least 6 characters long")
+    @PasswordAnnotation
     private String confirmPassword;
 
     @NotBlank(message = "Email is required")
-    @Email(message = "Email should be valid")
+    @ValidEmail
     private String email;
 }

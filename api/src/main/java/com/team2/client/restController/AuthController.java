@@ -25,14 +25,14 @@ public class AuthController {
     }
 
     @PostMapping("/api/users/register")
-    public ResponseEntity<User> createUser(@Valid @RequestBody UserRegisterDto userRegisterDto){
+    public ResponseEntity<User> createUser(@RequestBody @Valid UserRegisterDto userRegisterDto){
         User savedUser = userService.registerUser(userRegisterDto);
         return ResponseEntity.ok(savedUser);
     }
 
     @PostMapping("/api/auth/login")
     public ResponseEntity<?> login(
-            HttpServletRequest request, HttpServletResponse response, @Valid @RequestBody LoginRequest body) throws org.springframework.security.core.AuthenticationException {
+            HttpServletRequest request, HttpServletResponse response,@RequestBody @Valid LoginRequest body) throws org.springframework.security.core.AuthenticationException {
         authService.login(request, response, body);
         return ResponseEntity.ok().build();
     }
