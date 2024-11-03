@@ -24,11 +24,19 @@ spring:
     hiddenmethod:
       filter:
         enabled: 'true'
-
   datasource:
     driverClassName: org.mariadb.jdbc.Driver
     username: root
-    url: jdbc:mariadb://${MYSQL_HOST:localhost}:${MYSQL_PORT:3306}/programmentwurf2?allowPublicKeyRetrieval=true&useSSL=false&createDatabaseIfNotExist=true&serverTimezone=UTC
+    url: jdbc:mariadb://${MYSQL_HOST:localhost}:${MYSQL_PORT:3306}/${MYSQL_DATABASE:programmentwurf2}?allowPublicKeyRetrieval=true&useSSL=false&createDatabaseIfNotExist=true&serverTimezone=UTC
+
+app:
+  allowed-origins: http://localhost
+  base-url: http://localhost:8080
+  application-name: Shopping App
+  login-page-url: ${app.base-url}/auth/login
+  login-success-url: ${app.base-url}/auth/login-success
+
+
 logging:
   level:
     org:
@@ -36,7 +44,10 @@ logging:
         type:
           descriptor: TRACE
         SQL: TRACE
+      spring:
+        security: DEBUG  # Enable debug logging for Spring Security
       nodeValue: WARN
     blog: WARN
+
 server:
   port: 8082

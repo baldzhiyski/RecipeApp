@@ -1,0 +1,27 @@
+version: '3.8'
+services:
+  database:
+    image: mariadb:latest
+    restart: always
+    container_name: database
+    environment:
+      MYSQL_DATABASE: 'shopping-app'  # Default database to create
+      MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'  # Allow empty password for root user
+    ports:
+      - "3306:3306"
+    networks:
+      - app_net
+
+  caddy:
+    image: caddy:latest
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
+    networks:
+      - app_net
+
+networks:
+  app_net:
+    driver: bridge

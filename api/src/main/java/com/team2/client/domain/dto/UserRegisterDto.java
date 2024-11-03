@@ -11,6 +11,11 @@ import lombok.Setter;
 public class UserRegisterDto {
 
     // TODO : Validate each field  with more advanced annotations!
+    @NotBlank(message = "First Name is required")
+    private String firstName;
+
+    @NotBlank(message = "Last Name  is required")
+    private String lastName;
 
     @NotBlank(message = "Username is required")
     private String username;
