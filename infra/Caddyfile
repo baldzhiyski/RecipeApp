@@ -1,0 +1,9 @@
+http://localhost:8080 {
+    route /api/* {
+        reverse_proxy http://host.docker.internal:8082
+    }
+
+    route * {
+        reverse_proxy http://host.docker.internal:3000
+    }
+}

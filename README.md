@@ -1,8 +1,9 @@
+
 # Einkaufsplaner (Meal & Shopping Planner)
 
 **Team-2**  
 **Members:**  
-hristo Baldzhiyski , Anastasiia Sariohlo
+Hristo Baldzhiyski, Anastasiia Sariohlo , Stefan
 
 ## Overview
 Einkaufsplaner is a comprehensive meal and shopping planner that simplifies recipe management, meal planning, and grocery list generation. The application is designed to streamline weekly meal prep, shopping, and cooking efficiency, with an array of critical and optional features.
@@ -62,8 +63,32 @@ Einkaufsplaner is a comprehensive meal and shopping planner that simplifies reci
 
 ---
 
+## Security Features
+- **User Authentication**  
+  Secure user login and registration processes using Spring Security.
+
+- **Role-Based Authorization**  
+  Differentiate access levels based on user roles, ensuring that users can only access their data.
+
+
 ## Getting Started
 
 1. **Clone the repository**:
    ```bash
    git clone https://github.com/username/einkaufsplaner.git
+   cd einkaufsplaner
+   ```
+
+2. **Build and Start the Docker containers**:
+   Before starting the project, you need to build the Docker containers. Run the following command in your terminal:
+   ```bash
+   docker-compose up --build
+   ```
+   This command will set up the database and the Caddy server as specified in the `docker-compose.yml` file.
+
+3. **Understanding the Caddyfile**:
+   The `Caddyfile` is configured to manage how incoming requests are routed. It specifies the rules for directing traffic to your application. Ensure you have the correct configuration to handle the requests your application will receive.
+
+4. **Access the Application**:
+   Once the containers are running, you can access the application through your web browser at `http://localhost:8080`.
+

@@ -1,6 +1,7 @@
 package com.team2.client.config;
 
 import com.team2.client.repository.RecipeRepository;
+import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ResourceLoader;
@@ -27,5 +28,10 @@ public class Init {
         }
 
         return initializer;
+    }
+
+    @Bean
+    public ModelMapper mapper(){
+        return new ModelMapper();
     }
 }
