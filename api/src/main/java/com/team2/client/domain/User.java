@@ -2,6 +2,7 @@ package com.team2.client.domain;
 
 import com.team2.client.domain.enums.Role;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -15,6 +16,19 @@ import java.util.UUID;
 @Setter
 @NoArgsConstructor
 public class User  extends BaseEntity{
+
+    @Column
+    @NotEmpty
+    private String username;
+
+    @Column
+    @NotEmpty
+    private String password;
+
+
+    @Column
+    @NotEmpty
+    private String email;
 
     @Column
     private UUID uuid;
