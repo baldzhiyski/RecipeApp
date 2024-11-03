@@ -1,5 +1,7 @@
 package com.team2.client.domain;
 
+import com.team2.client.domain.enums.DietaryPreference;
+import com.team2.client.domain.enums.MealType;
 import com.team2.client.domain.enums.RecipeType;
 import com.team2.client.utils.Constants;
 import jakarta.persistence.*;
@@ -15,8 +17,15 @@ import java.util.List;
 @Setter
 public class Recipe  extends BaseEntity{
 
+
     @Enumerated(EnumType.STRING)
     private RecipeType dishType;
+
+    @Enumerated(EnumType.STRING)
+    private MealType mealType; // Add meal type field
+
+    @Enumerated(EnumType.STRING)
+    private DietaryPreference dietaryPreference;
 
     @Column
     @NotBlank
@@ -29,6 +38,10 @@ public class Recipe  extends BaseEntity{
     @Column
     @NotBlank
     private String instructions;
+
+
+    @ManyToOne
+    private User creator;
 
 
 }
