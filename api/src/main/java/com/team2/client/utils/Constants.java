@@ -14,4 +14,6 @@ public enum Constants {
     public static final Pattern PATTERN_DIGIT = Pattern.compile("[0-9]");
     public static final Pattern PATTERN_SYMBOL = Pattern.compile("[!@#$%^&*()_+<>?]");
 
+    public static final int MAX_FILE_SIZE =  5 * 1024 * 1024; // 5 MB in bytes
+
 }

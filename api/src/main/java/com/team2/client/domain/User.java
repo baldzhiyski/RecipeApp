@@ -41,6 +41,9 @@ public class User  extends BaseEntity implements UserDetails {
     private String email;
 
     @Column
+    private String profileImageUrl;
+
+    @Column
     private UUID uuid;
 
     @Enumerated(EnumType.STRING)
