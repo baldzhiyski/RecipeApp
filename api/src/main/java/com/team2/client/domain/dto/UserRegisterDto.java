@@ -1,14 +1,12 @@
 package com.team2.client.domain.dto;
 
-import com.team2.client.validation.annotation.PasswordAnnotation;
-import com.team2.client.validation.annotation.PasswordMatch;
-import com.team2.client.validation.annotation.UniqueUsername;
-import com.team2.client.validation.annotation.ValidEmail;
+import com.team2.client.validation.annotation.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.web.multipart.MultipartFile;
 
 @Getter
 @Setter
@@ -31,6 +29,9 @@ public class UserRegisterDto {
 
     @PasswordAnnotation
     private String confirmPassword;
+
+    @ValidFile
+    private MultipartFile profileImage;
 
     @NotBlank(message = "Email is required")
     @ValidEmail
