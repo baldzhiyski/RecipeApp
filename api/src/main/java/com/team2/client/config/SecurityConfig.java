@@ -13,12 +13,14 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -39,17 +41,37 @@ import org.springframework.web.filter.OncePerRequestFilter;
 public class SecurityConfig {
 
     private final ApplicationProperties applicationProperties;
-    private final UserDetailsService userDetailsService;
+    private final AuthenticationProvider authenticationProvider;
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.authorizeHttpRequests(customizer -> {
-            customizer
-                    .requestMatchers(antMatcher(HttpMethod.POST, "/api/users/register")).permitAll()
-                    .requestMatchers(antMatcher(HttpMethod.POST, "/api/auth/login")).permitAll()
-                    .requestMatchers(antMatcher(HttpMethod.GET, "/api/auth/csrf")).permitAll()
-                    .anyRequest().authenticated();
-        });
+
+        http
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+
+                // Disable CSRF because we're using JWTs
+                .csrf(AbstractHttpConfigurer::disable)
+
+                // Authorize requests to /api/auth/** to be public
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(antMatcher(HttpMethod.POST, "/api/auth/register")).permitAll()
+                        .requestMatchers(antMatcher(HttpMethod.POST, "/api/auth/login")).permitAll()
+                        .requestMatchers(antMatcher(HttpMethod.GET, "/api/auth/csrf")).permitAll()
+                        .anyRequest().authenticated()
+                )
+
+                // Set session management to stateless (JWT-based)
+                .sessionManagement(session -> session
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                )
+
+                // Add the custom authentication provider
+                .authenticationProvider(authenticationProvider)
+
+                // Add the JWT filter before the UsernamePasswordAuthenticationFilter
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+
 
         http.exceptionHandling(customizer -> {
             customizer.authenticationEntryPoint(
@@ -58,25 +80,8 @@ public class SecurityConfig {
                     });
         });
 
-        http.addFilterBefore(new UsernamePasswordAuthenticationFilter(), LogoutFilter.class);
-        http.userDetailsService(userDetailsService);
-
-        http.csrf(csrf -> {
-            csrf
-                    .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-                    .csrfTokenRequestHandler(new SpaCsrfTokenRequestHandler());
-        }).addFilterAfter(new CsrfCookieFilter(), BasicAuthenticationFilter.class);
-
-        http.cors(customizer -> {
-            customizer.configurationSource(corsConfigurationSource());
-        });
 
         return http.build();
-    }
-
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
     }
 
     private CorsConfigurationSource corsConfigurationSource() {
@@ -92,60 +97,5 @@ public class SecurityConfig {
             }
         };
     }
-
-    @Bean
-    public AuthenticationManager authenticationManager() {
-        DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
-        daoAuthenticationProvider.setUserDetailsService(userDetailsService);
-        daoAuthenticationProvider.setPasswordEncoder(passwordEncoder());
-        return new ProviderManager(daoAuthenticationProvider);
-    }
-    final class SpaCsrfTokenRequestHandler extends CsrfTokenRequestAttributeHandler {
-        private final CsrfTokenRequestHandler delegate = new XorCsrfTokenRequestAttributeHandler();
-
-        @Override
-        public void handle(HttpServletRequest request, HttpServletResponse response, Supplier<CsrfToken> csrfToken) {
-            /*
-             * Always use XorCsrfTokenRequestAttributeHandler to provide BREACH protection of
-             * the CsrfToken when it is rendered in the response body.
-             */
-            this.delegate.handle(request, response, csrfToken);
-        }
-
-        @Override
-        public String resolveCsrfTokenValue(HttpServletRequest request, CsrfToken csrfToken) {
-            /*
-             * If the request contains a request header, use CsrfTokenRequestAttributeHandler
-             * to resolve the CsrfToken. This applies when a single-page application includes
-             * the header value automatically, which was obtained via a cookie containing the
-             * raw CsrfToken.
-             */
-            if (StringUtils.hasText(request.getHeader(csrfToken.getHeaderName()))) {
-                return super.resolveCsrfTokenValue(request, csrfToken);
-            }
-            /*
-             * In all other cases (e.g. if the request contains a request parameter), use
-             * XorCsrfTokenRequestAttributeHandler to resolve the CsrfToken. This applies
-             * when a server-side rendered form includes the _csrf request parameter as a
-             * hidden input.
-             */
-            return this.delegate.resolveCsrfTokenValue(request, csrfToken);
-        }
-    }
-
-    final class CsrfCookieFilter extends OncePerRequestFilter {
-
-        @Override
-        protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
-                throws ServletException, IOException {
-            CsrfToken csrfToken = (CsrfToken) request.getAttribute("_csrf");
-            // Render the token value to a cookie by causing the deferred token to be loaded
-            csrfToken.getToken();
-
-            filterChain.doFilter(request, response);
-        }
-    }
-
-
 
 }

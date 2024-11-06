@@ -2,25 +2,23 @@ package com.team2.client.service.impl;
 
 
 
-import com.team2.client.config.SecurityUtil;
 import com.team2.client.domain.User;
 import com.team2.client.domain.dto.LoginRequest;
+import com.team2.client.domain.dto.LoginResponse;
 import com.team2.client.repository.UserRepository;
 import com.team2.client.service.AuthService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.context.SecurityContextHolderStrategy;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
-import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
-import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,7 +32,9 @@ public class AuthServiceImpl implements AuthService {
 
     private final UserRepository userRepository;
     private final AuthenticationManager authenticationManager;
-    private SecurityContextRepository securityContextRepository = new HttpSessionSecurityContextRepository();
+
+    private final JwtService jwtService;
+
     SecurityContextLogoutHandler logoutHandler = new SecurityContextLogoutHandler();
 
     /**
@@ -44,33 +44,34 @@ public class AuthServiceImpl implements AuthService {
      * @param userRepository        Repository for User entity operations
      * @param authenticationManager Manager for handling authentication logic
      */
-    public AuthServiceImpl(UserRepository userRepository, AuthenticationManager authenticationManager) {
+    public AuthServiceImpl(UserRepository userRepository, AuthenticationManager authenticationManager, JwtService jwtService) {
         this.userRepository = userRepository;
         this.authenticationManager = authenticationManager;
+        this.jwtService = jwtService;
     }
 
-    /**
-     * Authenticates the user based on provided credentials and establishes a
-     * security context for the session. If authentication is successful, the
-     * security context is saved, effectively logging the user in.
-     *
-     * @param request HTTP request for the current session
-     * @param response HTTP response to update with the security context
-     * @param body LoginRequest object containing email and password for authentication
-     * @throws AuthenticationException if authentication fails due to invalid credentials
-     */
+
     @Override
-    public void login(HttpServletRequest request,
-                      HttpServletResponse response,
+    public ResponseEntity<LoginResponse> login(
                       LoginRequest body
     ) throws AuthenticationException {
-        UsernamePasswordAuthenticationToken token = UsernamePasswordAuthenticationToken.unauthenticated(body.getEmail(), body.getPassword());
-        Authentication authentication = authenticationManager.authenticate(token);
-        SecurityContextHolderStrategy securityContextHolderStrategy = SecurityContextHolder.getContextHolderStrategy();
-        SecurityContext context = securityContextHolderStrategy.createEmptyContext();
-        context.setAuthentication(authentication);
-        securityContextHolderStrategy.setContext(context);
-        securityContextRepository.saveContext(context, request, response);
+
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        body.getEmail(),
+                        body.getPassword()
+                )
+        );
+
+
+        User authenticatedUser = userRepository.findByEmail(body.getEmail())
+                .orElseThrow(() -> new BadCredentialsException("Cannot find user with email " + body.getEmail()));
+
+        String jwtToken = jwtService.generateToken(authenticatedUser);
+
+        LoginResponse loginResponse =  LoginResponse.builder().token(jwtToken).expiresIn(jwtService.getExpirationTime()).build();
+
+        return ResponseEntity.ok(loginResponse);
     }
 
     /**
@@ -81,11 +82,12 @@ public class AuthServiceImpl implements AuthService {
      */
     @Override
     @Transactional
-    public User getSession(HttpServletRequest request) {
-        User authenticatedUser = SecurityUtil.getAuthenticatedUser();
+    public ResponseEntity<User> getSession(HttpServletRequest request) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        return this.userRepository.findByEmail(authenticatedUser.getEmail())
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+        User currentUser = (User) authentication.getPrincipal();
+
+        return ResponseEntity.ok(currentUser);
     }
 
     /**
@@ -97,7 +99,21 @@ public class AuthServiceImpl implements AuthService {
      */
     @Override
     public void logout(HttpServletRequest request, HttpServletResponse response) {
+        String jwtToken = extractJwtFromRequest(request);
+
+        // Add token to blacklist
+        jwtService.blacklistToken(jwtToken);
+
+        // Clear Security Context
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        this.logoutHandler.logout(request, response, authentication);
+        logoutHandler.logout(request, response, authentication);
+    }
+
+    private String extractJwtFromRequest(HttpServletRequest request) {
+        String bearerToken = request.getHeader("Authorization");
+        if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
+            return bearerToken.substring(7);
+        }
+        return null;
     }
 }

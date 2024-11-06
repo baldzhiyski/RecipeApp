@@ -34,7 +34,6 @@ public class ValidEmailValidator implements ConstraintValidator<ValidEmail, Stri
 
     @Override
     public void initialize(ValidEmail constraintAnnotation) {
-        allowedDomains = constraintAnnotation.allowedDomains();
         emptyMessage = constraintAnnotation.emptyMessage();
         message = constraintAnnotation.message();
         invalidEmailMessage = constraintAnnotation.invalidDomainMessage();
@@ -58,16 +57,6 @@ public class ValidEmailValidator implements ConstraintValidator<ValidEmail, Stri
             AnnotationsUtil.setErrorMessage(context,message);
             return false;
         }
-
-        // Check if domain is allowed
-        String domain = email.substring(email.lastIndexOf("@") + 1);
-        for (String allowedDomain : allowedDomains) {
-            if (domain.equalsIgnoreCase(allowedDomain)) {
-                return true;
-            }
-        }
-
-        AnnotationsUtil.setErrorMessage(context,invalidEmailMessage);
-        return false;
+        return true;
     }
 }
