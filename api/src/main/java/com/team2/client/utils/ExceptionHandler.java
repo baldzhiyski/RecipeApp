@@ -1,11 +1,16 @@
 package com.team2.client.utils;
 
+import java.security.SignatureException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import com.team2.client.exception.ApiException;
+import com.team2.client.exception.JwtException;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.UnsupportedJwtException;
 import org.slf4j.Logger;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -131,4 +136,14 @@ public class ExceptionHandler extends ResponseEntityExceptionHandler {
         var response = HttpErrorResponse.of("Unexpected error", 500);
         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
+    // Handle JwtException (Custom exception)
+    @org.springframework.web.bind.annotation.ExceptionHandler(JwtException.class)
+    public ResponseEntity<String> handleJwtException(JwtException ex) {
+        // Return an appropriate HTTP status code and a meaningful message based on the exception
+        return ResponseEntity.status(ex.getStatus())  // Use the HttpStatus from the exception
+                .body(ex.getMessage()); // Include the message from the JwtException
+    }
+
+
 }

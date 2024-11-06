@@ -1,11 +1,12 @@
 package com.team2.client.service.impl;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+
+import com.team2.client.exception.JwtException;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -74,12 +75,24 @@ public class JwtService {
     }
 
     private Claims extractAllClaims(String token) {
-        return Jwts
-                .parserBuilder()
-                .setSigningKey(getSignInKey())
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
+        try {
+            return Jwts
+                    .parserBuilder()
+                    .setSigningKey(getSignInKey())
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
+        } catch (ExpiredJwtException ex) {
+            throw new com.team2.client.exception.JwtException("Token has expired, please log in again.", HttpStatus.UNAUTHORIZED);
+        } catch (MalformedJwtException ex) {
+            throw new JwtException("Malformed token, please check the format.", HttpStatus.BAD_REQUEST);
+        } catch (UnsupportedJwtException ex) {
+            throw new JwtException("Token type is not supported.", HttpStatus.BAD_REQUEST);
+        } catch (SignatureException ex) {
+            throw new JwtException("Invalid token signature.", HttpStatus.BAD_REQUEST);
+        } catch (Exception ex) {
+            throw new JwtException("An error occurred with the token.", HttpStatus.BAD_REQUEST);
+        }
     }
 
     private Key getSignInKey() {
