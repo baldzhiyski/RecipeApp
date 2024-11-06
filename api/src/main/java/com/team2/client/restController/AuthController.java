@@ -2,6 +2,7 @@ package com.team2.client.restController;
 
 import com.team2.client.domain.User;
 import com.team2.client.domain.dto.LoginRequest;
+import com.team2.client.domain.dto.LoginResponse;
 import com.team2.client.domain.dto.UserRegisterDto;
 import com.team2.client.service.AuthService;
 import com.team2.client.service.UserService;
@@ -24,22 +25,22 @@ public class AuthController {
         this.userService = userService;
     }
 
-    @PostMapping("/api/users/register")
+    @PostMapping("/api/auth/register")
     public ResponseEntity<User> createUser(@RequestBody @Valid UserRegisterDto userRegisterDto){
         User savedUser = userService.registerUser(userRegisterDto);
         return ResponseEntity.ok(savedUser);
     }
 
     @PostMapping("/api/auth/login")
-    public ResponseEntity<?> login(
-            HttpServletRequest request, HttpServletResponse response,@RequestBody @Valid LoginRequest body) throws org.springframework.security.core.AuthenticationException {
-        authService.login(request, response, body);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<?> login(@RequestBody @Valid LoginRequest body) throws org.springframework.security.core.AuthenticationException {
+        ResponseEntity<LoginResponse> loginResponse = authService.login(body);
+
+        return ResponseEntity.ok(loginResponse);
     }
 
     @GetMapping("/api/auth/me")
     public ResponseEntity<User> getSession(HttpServletRequest request) {
-        return ResponseEntity.ok(authService.getSession(request));
+        return authService.getSession(request);
     }
 
     @PostMapping("/api/auth/logout")

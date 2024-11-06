@@ -21,5 +21,5 @@ public @interface ValidEmail {
 
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
-    String[] allowedDomains() default {"abv.bg", "yahoo.com", "gmail.com"};
+
 }

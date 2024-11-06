@@ -29,6 +29,11 @@ spring:
     username: root
     url: jdbc:mariadb://${MYSQL_HOST:localhost}:${MYSQL_PORT:3306}/${MYSQL_DATABASE:programmentwurf2}?allowPublicKeyRetrieval=true&useSSL=false&createDatabaseIfNotExist=true&serverTimezone=UTC
 
+security:
+  jwt:
+    secret-key: 3cfa76ef14937c1c0ea519f8fc057a80fcd04a7420f8e8bcd0a7567c272e007
+    expiration-time: 3600000
+
 app:
   allowed-origins: http://localhost
   base-url: http://localhost:8080
