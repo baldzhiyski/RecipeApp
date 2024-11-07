@@ -17,7 +17,6 @@ import com.team2.client.exception.UserNotFound;
 import com.team2.client.repository.IngredientRepository;
 import com.team2.client.repository.RecipeRepository;
 import com.team2.client.repository.UserRepository;
-import com.team2.client.restController.RecipeController;
 import com.team2.client.service.RecipeService;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -135,8 +134,19 @@ public class RecipeServiceImpl implements RecipeService {
     }
 
     @Override
-    public Recipe getRecipeById(Long id) {
-        return recipeRepository.findById(id).orElseThrow(() -> new RecipeNotFoundException("No such recipe found in the db !"));
+    public RecipeDto getRecipeById(Long id) {
+        Recipe recipe = recipeRepository.findById(id).orElseThrow(() -> new RecipeNotFoundException("No such recipe found in the db !"));
+
+        List<RecipeIngredientDto> mappedIngredients = recipe.getRecipeIngredients().stream()
+                .map(recipeIngredient -> this.mapper.map(recipeIngredient, RecipeIngredientDto.class))
+                .toList();
+
+        RecipeDto mappedRecipe = mapper.map(recipe, RecipeDto.class);
+
+        mappedRecipe.setRecipeIngredients(mappedIngredients);
+
+        return mappedRecipe;
+
     }
 
     @Override

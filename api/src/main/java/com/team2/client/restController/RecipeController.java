@@ -47,11 +47,11 @@ public class RecipeController {
     }
 
     @GetMapping("/api/recipe/{id}")
-    public ResponseEntity<Recipe> getRecipeById(@PathVariable Long id) {
+    public ResponseEntity<RecipeDto> getRecipeById(@PathVariable Long id) {
         return ResponseEntity.ok(recipeService.getRecipeById(id));
     }
 
-    @GetMapping("/api/recipe/{recipeName}")
+    @GetMapping("/api/recipe/byName/{recipeName}")
     public ResponseEntity<Recipe> getRecipeByName(@PathVariable String recipeName) {
         return ResponseEntity.ok(recipeService.getRecipeByName(recipeName));
     }
