@@ -22,7 +22,7 @@ import jakarta.validation.Valid;
 import java.util.List;
 
 @RestController
-@Tag(name = "Recipe API", description = "API for managing recipes and ingredients.")
+@Tag(name = "Recipe Endpoints", description = "Managing recipes and ingredients.")
 public class RecipeController {
 
     private final RecipeService recipeService;

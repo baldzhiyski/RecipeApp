@@ -17,7 +17,7 @@ services:
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile
     ports:
-      - "8080:8080"
+      - "8082:8082"
     restart: unless-stopped
     networks:
       - app_net

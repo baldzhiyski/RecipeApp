@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.*;
  * Controller responsible for user authentication, including login, registration, session retrieval, and logout.
  */
 @RestController
-@Tag(name = "Authentication", description = "APIs for user authentication, registration, session management, and logout")
+@Tag(name = "Authentication", description = "User authentication, registration, session management, and logout")
 @Slf4j
 public class AuthController {
 
