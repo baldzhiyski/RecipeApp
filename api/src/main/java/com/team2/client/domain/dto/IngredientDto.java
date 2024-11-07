@@ -2,6 +2,7 @@ package com.team2.client.domain.dto;
 
 import jakarta.persistence.Column;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Positive;
 import lombok.Getter;
 import lombok.Setter;
@@ -17,5 +18,6 @@ public class IngredientDto {
 
     @Column
     @NotBlank
+    @Pattern(regexp = "^(grams|cup|milliliters)$", message = "Allowed units are grams, cup, or milliliters.")
     private String unit;
 }

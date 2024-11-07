@@ -1,6 +1,9 @@
 package com.team2.client.config;
 
 import com.team2.client.repository.UserRepository;
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.info.Contact;
+import io.swagger.v3.oas.models.info.Info;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -36,6 +39,24 @@ public class ApplicationConfiguration {
         return config.getAuthenticationManager();
     }
 
+    @Bean
+    public OpenAPI customOpenAPI() {
+        OpenAPI openAPI = new OpenAPI();
+
+        openAPI.setInfo(
+                new Info()
+                        .description("This is a recipe API.")
+                        .title("Recipes API")
+                        .version("0.0.1")
+                        .contact(
+                                new Contact()
+                                        .name("Baldzhiyski , Sariohlo , Stefan")
+                                        .email("recipe-api@gmail.com")
+                        )
+        );
+
+        return openAPI;
+    }
     @Bean
     AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
