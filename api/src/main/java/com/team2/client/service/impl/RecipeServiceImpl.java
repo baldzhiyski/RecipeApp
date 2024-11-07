@@ -30,7 +30,6 @@ import java.util.stream.Collectors;
 
 @Service
 public class RecipeServiceImpl implements RecipeService {
-    private final RecipeController recipeController;
     private final RecipeRepository recipeRepository;
     private RecipeRepository repository;
 
@@ -39,12 +38,11 @@ public class RecipeServiceImpl implements RecipeService {
     private UserRepository userRepository;
     private ModelMapper mapper;
 
-    public RecipeServiceImpl(RecipeRepository repository, ModelMapper mapper, IngredientRepository ingredientRepository, UserRepository userRepository, RecipeController recipeController, RecipeRepository recipeRepository) {
+    public RecipeServiceImpl(RecipeRepository repository, ModelMapper mapper, IngredientRepository ingredientRepository, UserRepository userRepository,RecipeRepository recipeRepository) {
         this.repository = repository;
         this.mapper = mapper;
         this.ingredientRepository=ingredientRepository;
         this.userRepository = userRepository;
-        this.recipeController = recipeController;
         this.recipeRepository = recipeRepository;
     }
 
