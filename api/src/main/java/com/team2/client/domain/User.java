@@ -56,7 +56,7 @@ public class User  extends BaseEntity implements UserDetails {
     private MealPlan mealPlan;
 
 
-    @OneToMany(mappedBy = "creator", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "creator",fetch = FetchType.EAGER)
     private List<Recipe> createdRecipes;
 
     @Override

@@ -1,6 +1,7 @@
 package com.team2.client.restController;
 
 import com.team2.client.domain.Recipe;
+import com.team2.client.domain.dto.RecipeDto;
 import com.team2.client.service.RecipeService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,8 +19,8 @@ public class RecipeController {
         this.recipeService = recipeService;
     }
 
-    @GetMapping("/recipes")
-    private ResponseEntity<List<Recipe>> getAllRecipes(){
+    @GetMapping("/api/recipes")
+    private ResponseEntity<List<RecipeDto>> getAllRecipes(){
         return ResponseEntity.ok(recipeService.getAllRecipies());
     }
 
