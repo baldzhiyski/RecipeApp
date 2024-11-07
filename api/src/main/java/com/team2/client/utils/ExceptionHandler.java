@@ -6,8 +6,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.team2.client.domain.User;
 import com.team2.client.exception.ApiException;
 import com.team2.client.exception.JwtException;
+import com.team2.client.exception.UserNotFound;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.UnsupportedJwtException;
@@ -142,6 +144,13 @@ public class ExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<String> handleJwtException(JwtException ex) {
         // Return an appropriate HTTP status code and a meaningful message based on the exception
         return ResponseEntity.status(ex.getStatus())  // Use the HttpStatus from the exception
+                .body(ex.getMessage()); // Include the message from the JwtException
+    }
+
+    @org.springframework.web.bind.annotation.ExceptionHandler(UserNotFound.class)
+    public ResponseEntity<String> handleUserNotFoundException(UserNotFound ex) {
+        // Return an appropriate HTTP status code and a meaningful message based on the exception
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST) // Use the HttpStatus from the exception
                 .body(ex.getMessage()); // Include the message from the JwtException
     }
 

@@ -1,5 +1,6 @@
 package com.team2.client.domain;
 
+import com.team2.client.domain.dto.AddRecipeDTO;
 import com.team2.client.domain.enums.DietaryPreference;
 import com.team2.client.domain.enums.MealType;
 import com.team2.client.domain.enums.RecipeType;
@@ -39,9 +40,12 @@ public class Recipe  extends BaseEntity{
     @NotBlank
     private String instructions;
 
+    @OneToMany(mappedBy = "recipe")
+    private List<RecipeIngredient> recipeIngredients;
 
     @ManyToOne
     private User creator;
+
 
 
 }
