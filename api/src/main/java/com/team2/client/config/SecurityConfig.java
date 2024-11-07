@@ -58,6 +58,8 @@ public class SecurityConfig {
                         .requestMatchers(antMatcher(HttpMethod.POST, "/api/auth/register")).permitAll()
                         .requestMatchers(antMatcher(HttpMethod.POST, "/api/auth/login")).permitAll()
                         .requestMatchers(antMatcher(HttpMethod.GET, "/api/auth/csrf")).permitAll()
+                        .requestMatchers(antMatcher(HttpMethod.GET, "/api-docs")).permitAll()
+                        .requestMatchers(HttpMethod.GET, "/swagger-ui/**", "swagger-ui.html", "/v3/api-docs/**").permitAll()
                         .anyRequest().authenticated()
                 )
 

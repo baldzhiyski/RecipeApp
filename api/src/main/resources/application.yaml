@@ -46,6 +46,11 @@ cloudinary :
   apiKey: ${CLOUDINARY_API_KEY}
   apiSecret : ${CLOUDINARY_API_SECRET}
 
+springdoc:
+  swagger-ui:
+    path: /api-docs
+
+
 logging:
   level:
     org:
@@ -60,3 +65,9 @@ logging:
 
 server:
   port: 8082
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"

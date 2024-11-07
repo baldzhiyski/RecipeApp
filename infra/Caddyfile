@@ -6,4 +6,5 @@ http://localhost:8080 {
     route * {
         reverse_proxy http://host.docker.internal:3000
     }
+
 }

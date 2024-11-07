@@ -38,9 +38,9 @@ public class UserServiceImpl implements UserService {
         mapped.setCreatedRecipes(new ArrayList<>());
         mapped.setUuid(UUID.randomUUID());
 
-//        // SAVE THE file ! ;
-//        String imageUrl = cloudinaryService.uploadPhoto(userRegisterDto.getProfileImage(), "users-accounts-photos");
-//        mapped.setProfileImageUrl(imageUrl);
+        // SAVE THE file ! ;
+        String imageUrl = cloudinaryService.uploadPhoto(userRegisterDto.getProfileImage(), "users-accounts-photos");
+        mapped.setProfileImageUrl(imageUrl);
 
         this.userRepository.saveAndFlush(mapped);
         return mapped;
