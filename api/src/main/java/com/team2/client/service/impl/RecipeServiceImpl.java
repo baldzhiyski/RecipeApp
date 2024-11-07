@@ -150,8 +150,17 @@ public class RecipeServiceImpl implements RecipeService {
     }
 
     @Override
-    public Recipe getRecipeByName(String name) {
-        return recipeRepository.findByRecipeName(name).orElseThrow(() -> new RecipeNotFoundException("No such recipe found in the db !"));
+    public RecipeDto getRecipeByName(String name) {
+        Recipe recipe = recipeRepository.findByRecipeName(name).orElseThrow(() -> new RecipeNotFoundException("No such recipe found in the db !"));
+
+        List<RecipeIngredientDto> mappedIngredients = recipe.getRecipeIngredients().stream()
+                .map(recipeIngredient -> this.mapper.map(recipeIngredient, RecipeIngredientDto.class))
+                .toList();
+
+        RecipeDto mappedRecipe = mapper.map(recipe, RecipeDto.class);
+
+        mappedRecipe.setRecipeIngredients(mappedIngredients);
+        return mappedRecipe;
     }
 
 }

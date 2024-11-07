@@ -52,7 +52,7 @@ public class RecipeController {
     }
 
     @GetMapping("/api/recipe/byName/{recipeName}")
-    public ResponseEntity<Recipe> getRecipeByName(@PathVariable String recipeName) {
+    public ResponseEntity<RecipeDto> getRecipeByName(@PathVariable String recipeName) {
         return ResponseEntity.ok(recipeService.getRecipeByName(recipeName));
     }
 

@@ -22,5 +22,5 @@ public interface RecipeService {
 
     RecipeDto getRecipeById(Long id);
 
-    Recipe getRecipeByName(String name);
+    RecipeDto getRecipeByName(String name);
 }
