@@ -7,9 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.team2.client.domain.User;
-import com.team2.client.exception.ApiException;
-import com.team2.client.exception.JwtException;
-import com.team2.client.exception.UserNotFound;
+import com.team2.client.exception.*;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.UnsupportedJwtException;
@@ -151,7 +149,28 @@ public class ExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<String> handleUserNotFoundException(UserNotFound ex) {
         // Return an appropriate HTTP status code and a meaningful message based on the exception
         return ResponseEntity.status(HttpStatus.BAD_REQUEST) // Use the HttpStatus from the exception
-                .body(ex.getMessage()); // Include the message from the JwtException
+                .body(ex.getMessage());
+    }
+
+    @org.springframework.web.bind.annotation.ExceptionHandler(InvalidTypeProvided.class)
+    public ResponseEntity<String> handleInvalidType(InvalidTypeProvided ex) {
+        // Return an appropriate HTTP status code and a meaningful message based on the exception
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST) // Use the HttpStatus from the exception
+                .body(ex.getMessage());
+    }
+
+    @org.springframework.web.bind.annotation.ExceptionHandler(RecipeNotFoundException.class)
+    public ResponseEntity<String> handleRecipeNotFound(RecipeNotFoundException ex) {
+        // Return an appropriate HTTP status code and a meaningful message based on the exception
+        return ResponseEntity.status(HttpStatus.NOT_FOUND) // Use the HttpStatus from the exception
+                .body(ex.getMessage());
+    }
+
+    @org.springframework.web.bind.annotation.ExceptionHandler(RecipeExistsException.class)
+    public ResponseEntity<String> handleRecipeExistsException(RecipeExistsException ex) {
+        // Return an appropriate HTTP status code and a meaningful message based on the exception
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST) // Use the HttpStatus from the exception
+                .body(ex.getMessage());
     }
 
 
