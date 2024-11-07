@@ -75,7 +75,7 @@ public class RecipeServiceImpl implements RecipeService {
                     }
 
                     RecipeIngredient recipeIngredient = new RecipeIngredient();
-                    recipeIngredient.setIngredient(byName.get());
+                    recipeIngredient.setIngredient(this.ingredientRepository.findByName(ingredientDtoName).get());
                     recipeIngredient.setRecipe(recipe);
                     recipeIngredient.setUnit(ingredientDto.getUnit());
                     recipeIngredient.setAmount(ingredientDto.getAmount());
