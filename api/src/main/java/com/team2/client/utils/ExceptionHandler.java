@@ -144,33 +144,36 @@ public class ExceptionHandler extends ResponseEntityExceptionHandler {
         return ResponseEntity.status(ex.getStatus())  // Use the HttpStatus from the exception
                 .body(ex.getMessage()); // Include the message from the JwtException
     }
-
     @org.springframework.web.bind.annotation.ExceptionHandler(UserNotFound.class)
-    public ResponseEntity<String> handleUserNotFoundException(UserNotFound ex) {
+    public ResponseEntity<HttpErrorResponse> handleUserNotFoundException(UserNotFound ex) {
         // Return an appropriate HTTP status code and a meaningful message based on the exception
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST) // Use the HttpStatus from the exception
-                .body(ex.getMessage());
+        HttpErrorResponse response = HttpErrorResponse.of(ex.getMessage(), HttpStatus.BAD_REQUEST.value(), null, null);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(response); // Wrap the message in HttpErrorResponse
     }
 
     @org.springframework.web.bind.annotation.ExceptionHandler(InvalidTypeProvided.class)
-    public ResponseEntity<String> handleInvalidType(InvalidTypeProvided ex) {
+    public ResponseEntity<HttpErrorResponse> handleInvalidType(InvalidTypeProvided ex) {
         // Return an appropriate HTTP status code and a meaningful message based on the exception
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST) // Use the HttpStatus from the exception
-                .body(ex.getMessage());
+        HttpErrorResponse response = HttpErrorResponse.of(ex.getMessage(), HttpStatus.BAD_REQUEST.value(), null, null);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(response); // Wrap the message in HttpErrorResponse
     }
 
     @org.springframework.web.bind.annotation.ExceptionHandler(RecipeNotFoundException.class)
-    public ResponseEntity<String> handleRecipeNotFound(RecipeNotFoundException ex) {
+    public ResponseEntity<HttpErrorResponse> handleRecipeNotFound(RecipeNotFoundException ex) {
         // Return an appropriate HTTP status code and a meaningful message based on the exception
-        return ResponseEntity.status(HttpStatus.NOT_FOUND) // Use the HttpStatus from the exception
-                .body(ex.getMessage());
+        HttpErrorResponse response = HttpErrorResponse.of(ex.getMessage(), HttpStatus.NOT_FOUND.value(), null, null);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(response); // Wrap the message in HttpErrorResponse
     }
 
     @org.springframework.web.bind.annotation.ExceptionHandler(RecipeExistsException.class)
-    public ResponseEntity<String> handleRecipeExistsException(RecipeExistsException ex) {
+    public ResponseEntity<HttpErrorResponse> handleRecipeExistsException(RecipeExistsException ex) {
         // Return an appropriate HTTP status code and a meaningful message based on the exception
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST) // Use the HttpStatus from the exception
-                .body(ex.getMessage());
+        HttpErrorResponse response = HttpErrorResponse.of(ex.getMessage(), HttpStatus.BAD_REQUEST.value(), null, null);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(response); // Wrap the message in HttpErrorResponse
     }
 
 
