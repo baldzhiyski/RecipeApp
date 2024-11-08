@@ -16,7 +16,10 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * Controller responsible for user authentication, including login, registration, session retrieval, and logout.
@@ -58,6 +61,29 @@ public class AuthController {
     public ResponseEntity<User> createUser(@RequestBody @Valid UserRegisterDto userRegisterDto) {
         User savedUser = userService.registerUser(userRegisterDto);
         return ResponseEntity.ok(savedUser);
+    }
+
+
+
+    @Operation(
+            summary = "Upload a profile image",
+            description = "Uploads a profile image for the authenticated user.",
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Profile image file",
+                    required = true,
+                    content = @Content(mediaType = "multipart/form-data",
+                            schema = @Schema(type = "string", format = "binary"))
+            ),
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Profile image uploaded successfully"),
+                    @ApiResponse(responseCode = "400", description = "Invalid file or request"),
+                    @ApiResponse(responseCode = "401", description = "Unauthorized - User must be authenticated")
+            }
+    )
+    @PostMapping(value = "/api/upload-profile-image", consumes = "multipart/form-data")
+    public ResponseEntity<String> uploadProfileImage(@RequestPart("profileImage") MultipartFile profileImage , @AuthenticationPrincipal UserDetails userDetails) {
+        userService.uploadProfileImage(userDetails.getUsername(), profileImage);
+        return ResponseEntity.ok("Profile image uploaded successfully.");
     }
 
     /**

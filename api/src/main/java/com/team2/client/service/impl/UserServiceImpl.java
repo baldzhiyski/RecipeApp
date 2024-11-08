@@ -3,12 +3,14 @@ package com.team2.client.service.impl;
 import com.team2.client.domain.User;
 import com.team2.client.domain.dto.UserRegisterDto;
 import com.team2.client.domain.enums.Role;
+import com.team2.client.exception.UserNotFound;
 import com.team2.client.repository.UserRepository;
 import com.team2.client.service.CloudinaryService;
 import com.team2.client.service.UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.UUID;
@@ -38,11 +40,17 @@ public class UserServiceImpl implements UserService {
         mapped.setCreatedRecipes(new ArrayList<>());
         mapped.setUuid(UUID.randomUUID());
 
-        // SAVE THE file ! ;
-        String imageUrl = cloudinaryService.uploadPhoto(userRegisterDto.getProfileImage(), "users-accounts-photos");
-        mapped.setProfileImageUrl(imageUrl);
-
         this.userRepository.saveAndFlush(mapped);
         return mapped;
+    }
+
+    @Override
+    public void uploadProfileImage(String email, MultipartFile profileImage) {
+        User user = this.userRepository.findByEmail(email).orElseThrow(() -> new UserNotFound("No such user !"));
+
+        // SAVE THE file ! ;
+        String imageUrl = cloudinaryService.uploadPhoto(profileImage, "users-accounts-photos");
+        user.setProfileImageUrl(imageUrl);
+        this.userRepository.saveAndFlush(user);
     }
 }

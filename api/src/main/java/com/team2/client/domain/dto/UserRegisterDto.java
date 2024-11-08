@@ -30,9 +30,6 @@ public class UserRegisterDto {
     @PasswordAnnotation
     private String confirmPassword;
 
-    @ValidFile
-    private MultipartFile profileImage;
-
     @NotBlank(message = "Email is required")
     @ValidEmail
     private String email;
