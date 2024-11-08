@@ -1,4 +1,5 @@
 version: '3.8'
+
 services:
   database:
     image: mariadb:latest
@@ -9,19 +10,24 @@ services:
       MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'  # Allow empty password for root user
     ports:
       - "3306:3306"
-    networks:
-      - app_net
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
 
-  caddy:
-    image: caddy:latest
-    volumes:
-      - ./Caddyfile:/etc/caddy/Caddyfile
+
+  recipe-api:
+    depends_on:
+      database:
+        condition: service_healthy
+    image: team02/recipe-api
+    restart: always
+    container_name: recipe-api
+    environment:
+      MYSQL_HOST: database
+      MYSQL_PORT: 3306
+      MYSQL_DATABASE: shopping-app
+      CLOUDINARY_NAME: ${CLOUDINARY_NAME}
+      CLOUDINARY_API_KEY: ${CLOUDINARY_API_KEY}
+      CLOUDINARY_API_SECRET: ${CLOUDINARY_API_SECRET}
     ports:
       - "8082:8082"
-    restart: unless-stopped
-    networks:
-      - app_net
 
-networks:
-  app_net:
-    driver: bridge
