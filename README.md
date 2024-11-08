@@ -1,9 +1,8 @@
-
 # Einkaufsplaner (Meal & Shopping Planner)
 
 **Team-2**  
 **Members:**  
-Hristo Baldzhiyski, Anastasiia Sariohlo , Stefan
+Hristo Baldzhiyski, Anastasiia Sariohlo, Stefan
 
 ## Overview
 Einkaufsplaner is a comprehensive meal and shopping planner that simplifies recipe management, meal planning, and grocery list generation. The application is designed to streamline weekly meal prep, shopping, and cooking efficiency, with an array of critical and optional features.
@@ -46,20 +45,8 @@ Einkaufsplaner is a comprehensive meal and shopping planner that simplifies reci
 - **Display Recipe Effort Level**  
   Show the time and difficulty required for each recipe.
 
-- **Mobile-Friendly Design**  
-  Optimized for use on mobile devices as well as desktop.
-
 - **Reverse Search**  
   Find recipes based on available ingredients.
-
-- **Online Import from Chefkoch**  
-  Import recipes directly from Chefkoch to save time.
-
-- **Multi-Tenancy Support**  
-  Suitable for multi-user environments.
-
-- **Share Recipes**  
-  Share recipes easily with others.
 
 ---
 
@@ -70,6 +57,9 @@ Einkaufsplaner is a comprehensive meal and shopping planner that simplifies reci
 - **Role-Based Authorization**  
   Differentiate access levels based on user roles, ensuring that users can only access their data.
 
+## Technologies Used
+- **Frontend**: Built with Next.js, providing a responsive and modern user interface.
+- **Backend**: Developed using Spring Boot, organized with a two-layer architecture (Controller and Service layers) for a clean and maintainable codebase.
 
 ## Getting Started
 
@@ -78,17 +68,27 @@ Einkaufsplaner is a comprehensive meal and shopping planner that simplifies reci
    git clone https://github.com/username/einkaufsplaner.git
    cd einkaufsplaner
    ```
+## 2. Build and Start the Docker Containers
 
-2. **Build and Start the Docker containers**:
-   Before starting the project, you need to build the Docker containers. Run the following command in your terminal:
-   ```bash
-   docker-compose up --build
+Before running the project, make sure you have a [Cloudinary](https://cloudinary.com/) account. Follow these steps:
+
+1. **Register on Cloudinary**: Sign up for a Cloudinary account if you don’t have one already.
+2. **Create an API Key**: In your Cloudinary dashboard, create an API key to use for this project.
+3. **Set Cloudinary Credentials**: Add the following environment variables with your Cloudinary details:
+
+    - `CLOUDINARY_NAME`
+    - `CLOUDINARY_API_KEY`
+    - `CLOUDINARY_API_SECRET`
+
+Once your Cloudinary setup is complete, you’re ready to build and start the Docker containers.
+
+Run the following command in your terminal:
+
+```bash
+docker-compose up --build
    ```
    This command will set up the database and the Caddy server as specified in the `docker-compose.yml` file.
 
-3. **Understanding the Caddyfile**:
-   The `Caddyfile` is configured to manage how incoming requests are routed. It specifies the rules for directing traffic to your application. Ensure you have the correct configuration to handle the requests your application will receive.
-
-4. **Access the Application**:
+3.**Access the Application**:
    Once the containers are running, you can access the application through your web browser at `http://localhost:8082`.
 
