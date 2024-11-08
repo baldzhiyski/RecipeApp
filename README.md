@@ -90,5 +90,5 @@ Einkaufsplaner is a comprehensive meal and shopping planner that simplifies reci
    The `Caddyfile` is configured to manage how incoming requests are routed. It specifies the rules for directing traffic to your application. Ensure you have the correct configuration to handle the requests your application will receive.
 
 4. **Access the Application**:
-   Once the containers are running, you can access the application through your web browser at `http://localhost:8080`.
+   Once the containers are running, you can access the application through your web browser at `http://localhost:8082`.
 
