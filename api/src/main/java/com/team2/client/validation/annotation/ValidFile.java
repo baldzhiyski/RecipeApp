@@ -25,5 +25,5 @@ public @interface ValidFile {
 
     long maxSize() default MAX_FILE_SIZE; // Maximum file size in bytes
 
-    String[] allowedTypes() default {"image/jpeg", "image/jpg","images/png"}; // Allowed MIME types
+    String[] allowedTypes() default {"image/jpeg", "image/jpg","image/png"}; // Allowed MIME types
 }

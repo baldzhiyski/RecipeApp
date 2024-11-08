@@ -3,6 +3,7 @@ package com.team2.client.restController;
 import com.team2.client.domain.User;
 import com.team2.client.domain.dto.LoginRequest;
 import com.team2.client.domain.dto.LoginResponse;
+import com.team2.client.domain.dto.UserProfileImageDto;
 import com.team2.client.domain.dto.UserRegisterDto;
 import com.team2.client.service.AuthService;
 import com.team2.client.service.UserService;
@@ -15,6 +16,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -80,12 +82,13 @@ public class AuthController {
                     @ApiResponse(responseCode = "401", description = "Unauthorized - User must be authenticated")
             }
     )
-    @PostMapping(value = "/api/upload-profile-image", consumes = "multipart/form-data")
-    public ResponseEntity<String> uploadProfileImage(@RequestPart("profileImage") MultipartFile profileImage , @AuthenticationPrincipal UserDetails userDetails) {
-        userService.uploadProfileImage(userDetails.getUsername(), profileImage);
+    @PostMapping(value = "/api/upload-profile-image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<String> uploadProfileImage(
+            @ModelAttribute @Valid UserProfileImageDto userProfileImageDto,
+            @AuthenticationPrincipal UserDetails userDetails) {
+        userService.uploadProfileImage(userDetails.getUsername(), userProfileImageDto.getProfileImage());
         return ResponseEntity.ok("Profile image uploaded successfully.");
     }
-
     /**
      * Log in with the provided email and password.
      *
