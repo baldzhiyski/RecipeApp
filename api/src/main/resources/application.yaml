@@ -36,15 +36,13 @@ security:
 
 app:
   allowed-origins: http://localhost
-  base-url: http://localhost:8080
+  base-url: http://localhost:8082
   application-name: Shopping App
-  login-page-url: ${app.base-url}/auth/login
-  login-success-url: ${app.base-url}/auth/login-success
 
 cloudinary :
-  cloud_name : ${CLOUDINARY_NAME}
-  apiKey: ${CLOUDINARY_API_KEY}
-  apiSecret : ${CLOUDINARY_API_SECRET}
+  cloud_name : ${CLOUDINARY_NAME:}
+  apiKey: ${CLOUDINARY_API_KEY:}
+  apiSecret : ${CLOUDINARY_API_SECRET:}
 
 springdoc:
   swagger-ui:
