@@ -34,6 +34,18 @@ services:
     volumes:
       - api_data:/app/data  # Mount app data to a named volume for persistence
 
+    frontend:
+      depends_on:
+        recipe-api:
+          condition: service_healthy
+      image: team02/frontend
+      restart: always
+      container_name: recipe-frontend
+      environment:
+        NEXT_PUBLIC_API_BASE_URL: http://localhost:8082/api
+      ports:
+        - "3000:3000"
+
 volumes:
   db_data:
   api_data:
