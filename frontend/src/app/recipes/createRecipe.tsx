@@ -1,6 +1,5 @@
 'use client';
 
-// components/RecipeDetails.tsx
 import {
   Modal,
   Button,
@@ -18,6 +17,9 @@ import { MealType } from '@/types/MealType';
 import { useState } from 'react';
 import { Ingredient } from '@entities/Ingredient';
 import { IngredientUnit } from '@/types/IngredientUnit';
+import { Recipe } from '@entities/Recipe';
+import apiClient from '@lib/apiClient';
+import { RecipeType } from '@/types/RecipeType';
 
 interface CreateRecipeProps {
   isOpen: boolean;
@@ -27,11 +29,14 @@ interface CreateRecipeProps {
 const CreateRecipe: React.FC<CreateRecipeProps> = ({ isOpen, onClose }) => {
   const [recipeName, setRecipeName] = useState<string>('');
   const [description, setDescription] = useState<string>('');
-  //const [instructions, setInstructions] = useState<string>('');
   const [mealType, setMealType] = useState<MealType | null>(null);
+  const [recipeType, setRecipeType] = useState<RecipeType | null>(null);
+
   const [dietaryPreference, setDietaryPreference] =
     useState<DietaryPreference | null>(null);
+  const [instructions, setInstructions] = useState<string>(''); // Added instructions
   const [ingredients, setIngredients] = useState<Ingredient[]>([]);
+  const [uploading, setUploading] = useState<boolean>(false);
 
   const addIngredient = () => {
     setIngredients((prevIngredients) => [
@@ -40,7 +45,6 @@ const CreateRecipe: React.FC<CreateRecipeProps> = ({ isOpen, onClose }) => {
     ]);
   };
 
-  // Update the updateIngredient function to expect a number for the 'amount' field
   const updateIngredient = (
     index: number,
     field: keyof Ingredient,
@@ -59,6 +63,49 @@ const CreateRecipe: React.FC<CreateRecipeProps> = ({ isOpen, onClose }) => {
     );
   };
 
+  const isFormValid = () => {
+    return (
+      recipeName !== '' &&
+      description !== '' &&
+      mealType !== null &&
+      dietaryPreference !== null &&
+      instructions !== '' &&
+      ingredients.every(
+        (ingredient) =>
+          ingredient.ingredientName !== '' &&
+          ingredient.amount > 0 &&
+          ingredient.unit !== null
+      )
+    );
+  };
+
+  const upLoadRecipe = async () => {
+    if (!isFormValid()) return;
+    setUploading(true);
+
+    const ingredientsList = ingredients.map((ingredient) => ({
+      name: ingredient.ingredientName,
+      amount: ingredient.amount,
+      unit: ingredient.unit,
+    }));
+
+    const requestBody = {
+      ingredientsList,
+      recipeType,
+      mealType,
+      dietaryPreference,
+      recipeName,
+      description,
+      instructions,
+    };
+
+    apiClient.post<Recipe>('recipes', requestBody);
+
+    // Once done:
+    setUploading(false);
+    onClose();
+  };
+
   return (
     <Modal isOpen={isOpen} placement="center" onClose={onClose}>
       <ModalContent className="text-black">
@@ -73,6 +120,20 @@ const CreateRecipe: React.FC<CreateRecipeProps> = ({ isOpen, onClose }) => {
             isInvalid={recipeName === ''}
             onValueChange={setRecipeName}
           />
+          <Select
+            label="Recipe Type"
+            placeholder="Select Recipe type"
+            value={recipeType || ''}
+            onChange={(event) =>
+              setRecipeType(event.target.value as unknown as RecipeType)
+            }
+          >
+            {Object.values(RecipeType).map((type) => (
+              <SelectItem key={type} value={type}>
+                {type}
+              </SelectItem>
+            ))}
+          </Select>
           <Select
             label="Meal Type"
             placeholder="Select meal type"
@@ -109,6 +170,13 @@ const CreateRecipe: React.FC<CreateRecipeProps> = ({ isOpen, onClose }) => {
             placeholder="Description"
             isInvalid={description === ''}
           />
+          <Textarea
+            label="Instructions"
+            placeholder="How to make this recipe"
+            value={instructions}
+            onValueChange={setInstructions}
+            isInvalid={instructions === ''}
+          />
           <div className="mt-4">
             <h3>Ingredients</h3>
             {ingredients.map((ingredient, index) => (
@@ -134,13 +202,13 @@ const CreateRecipe: React.FC<CreateRecipeProps> = ({ isOpen, onClose }) => {
                   label="Unit"
                   placeholder="Select unit"
                   value={ingredient.unit}
-                  onChange={(event) =>
-                    updateIngredient(
-                      index,
-                      'unit',
-                      event.target.value as IngredientUnit
-                    )
-                  }
+                  onChange={(event) => {
+                    const newUnit = event.target.value as IngredientUnit;
+                    // Only set valid units
+                    if (Object.values(IngredientUnit).includes(newUnit)) {
+                      updateIngredient(index, 'unit', newUnit);
+                    }
+                  }}
                 >
                   {Object.values(IngredientUnit).map((unit) => (
                     <SelectItem key={unit} value={unit}>
@@ -162,8 +230,12 @@ const CreateRecipe: React.FC<CreateRecipeProps> = ({ isOpen, onClose }) => {
           </div>
         </ModalBody>
         <ModalFooter>
-          <Button className="bg-success" onClick={onClose}>
-            Save
+          <Button
+            className="bg-success"
+            onClick={upLoadRecipe}
+            disabled={!isFormValid()}
+          >
+            {uploading ? 'Uploading...' : 'Save'}
           </Button>
           <Button className="bg-danger" onClick={onClose}>
             Close
