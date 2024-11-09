@@ -1,0 +1,9 @@
+export enum RecipeType {
+  APPETIZER,
+  MAIN_COURSE,
+  SIDE_DISH,
+  DESSERT,
+  SNACK,
+  BEVERAGE,
+  STREET_FOOD,
+}
