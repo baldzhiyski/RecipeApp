@@ -1,32 +1,46 @@
-// components/HeaderNavbar.tsx
 'use client'; // This file will use hooks
 
 import { useTranslations } from 'next-intl';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { useRouter } from 'next/navigation';
+import User from '@entities/User';
 
 const HeaderNavbar = () => {
   const t = useTranslations('NavBar');
+  const user = User.getInstance(); // Get the singleton instance of User
+  const isLoggedIn = user.isAuthenticated();
+  const username = isLoggedIn ? user.getUser()?.username : null;
 
-  const pathname = usePathname();
+  const router = useRouter();
 
-  const isActive = (path: string) => (pathname === path ? 'font-bold' : '');
+  const handleProfileClick = () => {
+    router.push('/profile');
+  };
+
+  const handleLoginClick = () => {
+    router.push('/login');
+  };
+
+  const handleTitleClick = () => {
+    router.push('/');
+  };
 
   return (
     <header className="hidden md:flex justify-between items-center bg-gray-800 text-white p-4">
-      <h1 className="text-xl font-bold">My SPA</h1>
+      <h1
+        onClick={handleTitleClick}
+        className="text-xl font-bold cursor-pointer"
+      >
+        My SPA
+      </h1>
       <nav>
         <ul className="flex space-x-4">
-          <li>
-            <Link href="/" className={isActive('/')}>
-              Home
-            </Link>
-          </li>
-          <li>
-            <Link href="/login" className={isActive('/login')}>
-              {t('login')}
-            </Link>
-          </li>
+          {isLoggedIn ? (
+            <li onClick={handleProfileClick}>
+              <div>Hello, {username}!</div>
+            </li>
+          ) : (
+            <li onClick={handleLoginClick}>{t('login')}</li>
+          )}
         </ul>
       </nav>
     </header>
