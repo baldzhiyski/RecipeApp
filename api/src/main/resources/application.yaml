@@ -35,7 +35,9 @@ security:
     expiration-time: 3600000
 
 app:
-  allowed-origins: http://localhost:3000
+  allowed-origins:
+    - http://localhost:3000
+    - http://localhost:8082
   base-url: http://localhost:8082
   application-name: Shopping App
 
