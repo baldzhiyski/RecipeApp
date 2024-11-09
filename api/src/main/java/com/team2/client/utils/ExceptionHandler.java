@@ -64,9 +64,9 @@ public class ExceptionHandler extends ResponseEntityExceptionHandler {
         });
 
         // Create a structured error response for validation errors.
-        HttpErrorResponse response = HttpErrorResponse.of("Unprocessable entity", 422, errors, generalErrors);
+        HttpErrorResponse response = HttpErrorResponse.of("Unprocessable entity", 400, errors, generalErrors);
 
-        return new ResponseEntity<>(response, HttpStatus.UNPROCESSABLE_ENTITY);
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
     /**
