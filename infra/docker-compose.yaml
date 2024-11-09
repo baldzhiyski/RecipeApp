@@ -22,6 +22,8 @@ services:
     build:
       context: ../api  # Change context to point to the correct folder (relative path)
       dockerfile: docker/Dockerfile  # Path to Dockerfile within the specified context
+      args:
+        - "--no-cache"
     restart: always
     container_name: recipe-api
     environment:
