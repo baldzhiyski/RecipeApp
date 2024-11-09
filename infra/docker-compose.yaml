@@ -19,7 +19,9 @@ services:
     depends_on:
       database:
         condition: service_healthy
-    image: team02/recipe-api
+    build:
+      context: ../api  # Change context to point to the correct folder (relative path)
+      dockerfile: docker/Dockerfile  # Path to Dockerfile within the specified context
     restart: always
     container_name: recipe-api
     environment:
@@ -33,6 +35,8 @@ services:
       - "8082:8082"
     volumes:
       - api_data:/app/data  # Mount app data to a named volume for persistence
+
+
 
   frontend:
       depends_on:
