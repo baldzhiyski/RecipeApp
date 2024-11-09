@@ -23,7 +23,9 @@ const RecipeCard: React.FC<RecipeCardProps> = ({ recipe }) => {
     <>
       <Card>
         <CardBody>
-          <div>{recipe.recipeName}</div>
+          <div className="w-full text-center content-center">
+            {recipe.recipeName}
+          </div>
           <div>{recipe.description}</div>
           <div>Meal Type: {recipe.mealType}</div>
           <div>Recipe created by: {recipe.creatorUsername}</div>

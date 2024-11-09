@@ -62,7 +62,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = async ({
 
   return (
     <html lang={locale}>
-      <body className={`h-screen select-none ${robot.className}`}>
+      <body className={`overflow-auto select-none ${robot.className}`}>
         <NextUIProvider>
           <NextIntlClientProvider messages={messages}>
             <HeaderNavbar />
