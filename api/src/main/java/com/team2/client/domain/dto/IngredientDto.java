@@ -16,8 +16,6 @@ public class IngredientDto {
     @Positive
     private double amount;
 
-    @Column
     @NotBlank
-    @Pattern(regexp = "^(grams|cup|milliliters)$", message = "Allowed units are grams, cup, or milliliters.")
     private String unit;
 }

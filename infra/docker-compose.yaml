@@ -13,13 +13,17 @@ services:
     volumes:
       - db_data:/var/lib/mysql  # Mount database data to a named volume for persistence
     healthcheck:
-      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      test: [ "CMD", "healthcheck.sh", "--connect", "--innodb_initialized" ]
 
   recipe-api:
     depends_on:
       database:
         condition: service_healthy
-    image: team02/recipe-api
+    build:
+      context: ../api  # Change context to point to the correct folder (relative path)
+      dockerfile: docker/Dockerfile  # Path to Dockerfile within the specified context
+      args:
+        - "--no-cache"
     restart: always
     container_name: recipe-api
     environment:
@@ -33,6 +37,20 @@ services:
       - "8082:8082"
     volumes:
       - api_data:/app/data  # Mount app data to a named volume for persistence
+
+
+
+  frontend:
+      depends_on:
+        recipe-api:
+          condition: service_healthy
+      image: team02/frontend
+      restart: always
+      container_name: recipe-frontend
+      environment:
+        NEXT_PUBLIC_API_BASE_URL: http://localhost:8082/api
+      ports:
+        - "3000:3000"
 
 volumes:
   db_data:

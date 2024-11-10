@@ -1,0 +1,9 @@
+export enum DishType {
+  APPETIZER,
+  MAIN_COURSE,
+  SIDE_DISH,
+  DESSERT,
+  SNACK,
+  BEVERAGE,
+  STREET_FOOD,
+}

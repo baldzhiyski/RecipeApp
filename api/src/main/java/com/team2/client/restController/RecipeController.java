@@ -54,8 +54,8 @@ public class RecipeController {
                     content = @Content(
                             mediaType = "application/json",
                             schema = @Schema(implementation = AddRecipeDTO.class),
-                            examples = @ExampleObject(value = "{\"name\":\"Green Smoothie\",\"description\":\"Healthy green smoothie.\",\"mealType\":\"BREAKFAST\",\"ingredients\":[{\"name\":\"Spinach\",\"amount\":\"1\" , \"unit\":\"cup\"},{\"name\":\"Banana\",\"amount\":\"500\",\"unit\" :\"grams\"}]}")))
-            @Valid AddRecipeDTO addRecipeDTO,
+                            examples = @ExampleObject(value = "{\"name\":\"Green Smoothie\",\"description\":\"Healthy green smoothie.\",\"mealType\":\"BREAKFAST\",\"dishType\":\"APPETIZER\",\"dietaryPreference\":\"VEGETARIAN\",\"ingredients\":[{\"name\":\"Spinach\",\"amount\":\"1\" , \"unit\":\"cup\"},{\"name\":\"Banana\",\"amount\":\"500\",\"unit\" :\"grams\"}]}")))
+            @org.springframework.web.bind.annotation.RequestBody @Valid AddRecipeDTO addRecipeDTO,
             @AuthenticationPrincipal UserDetails loggedInUser) {
         return ResponseEntity.ok(recipeService.addRecipe(addRecipeDTO, loggedInUser));
     }
