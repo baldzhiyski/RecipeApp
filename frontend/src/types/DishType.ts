@@ -1,4 +1,4 @@
-export enum RecipeType {
+export enum DishType {
   APPETIZER,
   MAIN_COURSE,
   SIDE_DISH,

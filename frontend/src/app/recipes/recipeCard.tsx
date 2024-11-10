@@ -28,6 +28,7 @@ const RecipeCard: React.FC<RecipeCardProps> = ({ recipe }) => {
           </div>
           <div>{recipe.description}</div>
           <div>Meal Type: {recipe.mealType}</div>
+          <div>Dish Type: {recipe.dishType}</div>
           <div>Recipe created by: {recipe.creatorUsername}</div>
           <Button onClick={handleOpenRecipeDetails}>View Recipe</Button>
         </CardBody>

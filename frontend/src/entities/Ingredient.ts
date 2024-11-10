@@ -1,11 +1,9 @@
-import { IngredientUnit } from "@/types/IngredientUnit";
-
 export class Ingredient {
   amount: number;
-  unit: IngredientUnit;
+  unit: string;
   ingredientName: string;
 
-  constructor(amount: number, unit: IngredientUnit, ingredientName: string) {
+  constructor(amount: number, unit: string, ingredientName: string) {
     this.amount = amount;
     this.unit = unit;
     this.ingredientName = ingredientName;

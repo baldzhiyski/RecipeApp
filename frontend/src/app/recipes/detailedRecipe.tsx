@@ -29,6 +29,7 @@ const RecipeDetails: React.FC<RecipeDetailsProps> = ({
         <ModalBody>
           <p>{recipe.description}</p>
           <p>Meal Type: {recipe.mealType}</p>
+          <p>Dish Type: {recipe.dishType}</p>
           <p>Dietary Preference: {recipe.dietaryPreference}</p>
           <p>Created by: {recipe.creatorUsername}</p>
           <h4>Ingredients:</h4>
