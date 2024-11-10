@@ -70,7 +70,12 @@ class ApiClient {
     const response = await fetch(url, config);
 
     if (!response.ok) {
-      throw new Error(`Failed to fetch: ${response.statusText}`);
+      if (config.body) {
+        console.log(config.body);
+      }
+      console.log(await response.text());
+
+      throw new Error(`Failed to fetch: ${response.json()}`);
     }
 
     return response.json();

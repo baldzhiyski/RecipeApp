@@ -16,10 +16,9 @@ import { DietaryPreference } from '@/types/DietaryPreference';
 import { MealType } from '@/types/MealType';
 import { useState } from 'react';
 import { Ingredient } from '@entities/Ingredient';
-import { IngredientUnit } from '@/types/IngredientUnit';
 import { Recipe } from '@entities/Recipe';
 import apiClient from '@lib/apiClient';
-import { RecipeType } from '@/types/RecipeType';
+import { DishType } from '@/types/DishType';
 
 interface CreateRecipeProps {
   isOpen: boolean;
@@ -30,7 +29,7 @@ const CreateRecipe: React.FC<CreateRecipeProps> = ({ isOpen, onClose }) => {
   const [recipeName, setRecipeName] = useState<string>('');
   const [description, setDescription] = useState<string>('');
   const [mealType, setMealType] = useState<MealType | null>(null);
-  const [recipeType, setRecipeType] = useState<RecipeType | null>(null);
+  const [dishType, setDishType] = useState<DishType | null>(null);
 
   const [dietaryPreference, setDietaryPreference] =
     useState<DietaryPreference | null>(null);
@@ -41,14 +40,14 @@ const CreateRecipe: React.FC<CreateRecipeProps> = ({ isOpen, onClose }) => {
   const addIngredient = () => {
     setIngredients((prevIngredients) => [
       ...prevIngredients,
-      new Ingredient(0, IngredientUnit.GRAMS, ''),
+      new Ingredient(0, '', ''),
     ]);
   };
 
   const updateIngredient = (
     index: number,
     field: keyof Ingredient,
-    value: string | IngredientUnit | number
+    value: string | number
   ) => {
     setIngredients((prevIngredients) =>
       prevIngredients.map((ingredient, i) =>
@@ -91,7 +90,7 @@ const CreateRecipe: React.FC<CreateRecipeProps> = ({ isOpen, onClose }) => {
 
     const requestBody = {
       ingredientsList,
-      recipeType,
+      dishType,
       mealType,
       dietaryPreference,
       recipeName,
@@ -99,7 +98,11 @@ const CreateRecipe: React.FC<CreateRecipeProps> = ({ isOpen, onClose }) => {
       instructions,
     };
 
-    apiClient.post<Recipe>('recipes', requestBody);
+    try {
+      apiClient.post<Recipe>('recipes/add', requestBody);
+    } catch (error) {
+      console.error('Failed to upload recipe:', error);
+    }
 
     // Once done:
     setUploading(false);
@@ -121,14 +124,14 @@ const CreateRecipe: React.FC<CreateRecipeProps> = ({ isOpen, onClose }) => {
             onValueChange={setRecipeName}
           />
           <Select
-            label="Recipe Type"
-            placeholder="Select Recipe type"
-            value={recipeType || ''}
+            label="Dish Type"
+            placeholder="Select Dish type"
+            value={dishType || ''}
             onChange={(event) =>
-              setRecipeType(event.target.value as unknown as RecipeType)
+              setDishType(event.target.value as unknown as DishType)
             }
           >
-            {Object.values(RecipeType).map((type) => (
+            {Object.values(DishType).map((type) => (
               <SelectItem key={type} value={type}>
                 {type}
               </SelectItem>
@@ -193,29 +196,20 @@ const CreateRecipe: React.FC<CreateRecipeProps> = ({ isOpen, onClose }) => {
                   label="Amount"
                   placeholder="Amount"
                   type="number"
+                  min="0"
                   value={ingredient.amount.toString()}
                   onValueChange={(value) =>
                     updateIngredient(index, 'amount', parseFloat(value))
                   }
                 />
-                <Select
+                <Input
                   label="Unit"
-                  placeholder="Select unit"
+                  placeholder="Your unit"
                   value={ingredient.unit}
-                  onChange={(event) => {
-                    const newUnit = event.target.value as IngredientUnit;
-                    // Only set valid units
-                    if (Object.values(IngredientUnit).includes(newUnit)) {
-                      updateIngredient(index, 'unit', newUnit);
-                    }
-                  }}
-                >
-                  {Object.values(IngredientUnit).map((unit) => (
-                    <SelectItem key={unit} value={unit}>
-                      {unit}
-                    </SelectItem>
-                  ))}
-                </Select>
+                  onValueChange={(value) =>
+                    updateIngredient(index, 'unit', value)
+                  }
+                />
                 <Button
                   className="bg-danger"
                   onClick={() => removeIngredient(index)}
