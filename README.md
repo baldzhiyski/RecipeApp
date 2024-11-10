@@ -2,7 +2,11 @@
 
 **Team-2**  
 **Members:**  
-Hristo Baldzhiyski, Anastasiia Sariohlo, Stefan
+Hristo Baldzhiyski - st187553@stud.unistuttgart.de
+
+Anastasiia Sariohlo - st188570@stud.uni-stuttgart.de 
+
+Stefan Moser - st195741@stud.uni-stuttgart.de
 
 ## Overview
 Einkaufsplaner is a comprehensive meal and shopping planner that simplifies recipe management, meal planning, and grocery list generation. The application is designed to streamline weekly meal prep, shopping, and cooking efficiency, with an array of critical and optional features.
