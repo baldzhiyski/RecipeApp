@@ -86,7 +86,7 @@ Before running the project, make sure you have a [Cloudinary](https://cloudinary
 
 Once your Cloudinary setup is complete, you’re ready to build and start the Docker containers.
 
-Run the following command in your terminal:
+Run the following command in the infra folder in your terminal:
 
 ```bash
 docker-compose up --build
