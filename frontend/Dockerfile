@@ -5,10 +5,7 @@ FROM node:18-alpine
 WORKDIR /app
 
 # 3. Copy the pre-built .next folder and other necessary files
-COPY .next ./.next
-COPY public ./public
-COPY next.config.js .
-COPY package.json .
+COPY . .
 
 # 4. Expose port 3000 to access the containerized app
 EXPOSE 3000
