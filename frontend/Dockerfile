@@ -1,42 +1,17 @@
-# Use official Node.js image as a base image
-FROM node:18-alpine as builder
+# 1. Use the official Node.js image as the base
+FROM node:18-alpine
 
-# Set working directory
+# 2. Set working directory inside the container
 WORKDIR /app
 
-# Copy package.json and package-lock.json to install dependencies
-COPY package.json package-lock.json ./
-
-# Install dependencies
-RUN npm install --frozen-lockfile
-
-# Copy the rest of the application code
-COPY . .
-
-# Build the Next.js application
-RUN npm run build --production
-
-# Start a new image for production
-FROM node:18-alpine as production
-
-# Set working directory for the production environment
-WORKDIR /app
-
-# Install only the production dependencies
-COPY package.json package-lock.json ./
-RUN npm install --frozen-lockfile --only=production
-
-# Copy built Next.js application from the builder stage
-COPY --from=builder /app/.next ./.next
-
-# Copy the public directory and other necessary files
+# 3. Copy the pre-built .next folder and other necessary files
+COPY .next ./.next
 COPY public ./public
+COPY next.config.js .
+COPY package.json .
 
-# Expose port 3000 for the Next.js application
+# 4. Expose port 3000 to access the containerized app
 EXPOSE 3000
 
-# Set the environment to production
-ENV NODE_ENV=production
-
-# Start the Next.js application
+# 5. Start the Next.js app in production mode
 CMD ["npm", "start"]
