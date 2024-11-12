@@ -65,6 +65,8 @@ services:
       CLOUDINARY_NAME: dcazwzpwt
       CLOUDINARY_API_KEY: 142434264428854
       CLOUDINARY_API_SECRET: s5aetyk1HKbM1uGc__C3U3dH660
+    ports:
+      - "8082:8082"
     volumes:
       - api_data:/app/data  # Mount app data to a named volume for persistence
     labels:
@@ -88,14 +90,14 @@ services:
     build: ../frontend
     restart: always
     environment:
-      - NEXT_PUBLIC_API_BASE_URL=https://localhost/apiProd/api
+      - NEXT_PUBLIC_API_BASE_URL=http://localhost:8082/api
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.website.rule=PathPrefix(`/`)"
       - "traefik.http.services.website.loadbalancer.server.port=3000"
       - "traefik.http.routers.website.entrypoints=websecure"
       - "traefik.http.routers.website.tls.certresolver=production"
-      - "traefik.docker.network=traefik"
+      - "traefik.docker.network=team2_traefik"
     networks:
       - traefik
     deploy:
