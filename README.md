@@ -94,5 +94,15 @@ docker-compose up --build
    This command will set up the database and the Caddy server as specified in the `docker-compose.yml` file.
 
 3.**Access the Application**:
-   Once the containers are running, you can access the application through your web browser at `http://localhost:8082`.
 
+Once the containers are running, you can access the application through your web browser:
+
+URL: https://localhost
+Since the application uses Traefik for local development, you may see a security warning when first accessing the site. This happens because the SSL certificate used by Traefik is self-signed, which is common in local development environments.
+
+To proceed safely:
+
+Open https://localhost in your browser.
+When you see a security warning, select the option to "Proceed" or "Continue" (the exact message may vary depending on your browser).
+This is a safe connection for development purposes, and your local environment remains secure.
+Note: This warning won’t appear in the production environment, as it will use a valid SSL certificate.
