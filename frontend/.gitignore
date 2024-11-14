@@ -13,9 +13,11 @@
 # testing
 /coverage
 
-# next.js
+
 .next/
-.vscode
+# next.js
+
+.vscode/
 out/
 
 # production
