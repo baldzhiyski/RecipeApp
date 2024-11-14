@@ -9,9 +9,7 @@ export default function Home() {
 
   const router = useRouter();
 
-  const handleSeeAllRecipes = () => {
-    router.push('/recipes');
-  };
+
 
   return (
     <div>

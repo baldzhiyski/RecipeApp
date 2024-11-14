@@ -4,11 +4,20 @@ import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import User from '@entities/User';
 import { useEffect, useState } from 'react';
+import apiClient from '@lib/apiClient';
+import SearchModal from '@components/globals/SearchModal';
 import {
   FiUser, FiLogIn, FiLogOut, FiHome, FiBookOpen, FiPlus, FiList, FiBarChart, FiCalendar
 } from 'react-icons/fi';
 
 const HeaderNavbar = () => {
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const openModal = () => setIsModalOpen(true);
+  const closeModal = () => setIsModalOpen(false);
+
+
   const t = useTranslations('NavBar');
   const user = User.getInstance();
   const isLoggedIn = user.isAuthenticated();
@@ -51,37 +60,52 @@ const HeaderNavbar = () => {
           <nav className="flex items-center space-x-6 ml-auto text-lg">
             {isLoggedIn ? (
               <>
-                <button onClick={() => handleNavigation('/profile')} className="flex items-center hover:text-[#C542FF] transition duration-300">
+
+
+                <button onClick={() => handleNavigation('/profile')}
+                        className="flex items-center hover:text-[#C542FF] transition duration-300">
                   <FiUser /> <span className="ml-1">Profile</span>
                 </button>
-                <button onClick={() => handleNavigation('/my-recipes')} className="flex items-center hover:text-[#C542FF] transition duration-300">
+                <button onClick={() => handleNavigation('/my-recipes')}
+                        className="flex items-center hover:text-[#C542FF] transition duration-300">
                   <FiBookOpen /> <span className="ml-1">My Recipes</span>
                 </button>
-                <button onClick={() => handleNavigation('/recipes')} className="flex items-center hover:text-[#C542FF] transition duration-300">
+                <button onClick={() => handleNavigation('/recipes')}
+                        className="flex items-center hover:text-[#C542FF] transition duration-300">
                   <FiBookOpen /> <span className="ml-1">All Recipes</span>
                 </button>
-                <button onClick={() => handleNavigation('/add-recipe')} className="flex items-center hover:text-[#C542FF] transition duration-300">
+                <button onClick={() => handleNavigation('/add-recipe')}
+                        className="flex items-center hover:text-[#C542FF] transition duration-300">
                   <FiPlus /> <span className="ml-1">Add Recipe</span>
                 </button>
-                <button onClick={() => handleNavigation('/shopping-list')} className="flex items-center hover:text-[#C542FF] transition duration-300">
+                <button onClick={() => handleNavigation('/shopping-list')}
+                        className="flex items-center hover:text-[#C542FF] transition duration-300">
                   <FiList /> <span className="ml-1">My Shopping List</span>
                 </button>
-                <button onClick={() => handleNavigation('/recipe-stats')} className="flex items-center hover:text-[#C542FF] transition duration-300">
+                <button onClick={() => handleNavigation('/recipe-stats')}
+                        className="flex items-center hover:text-[#C542FF] transition duration-300">
                   <FiBarChart /> <span className="ml-1">Recipe Stats</span>
                 </button>
-                <button onClick={() => handleNavigation('/weekly-plan')} className="flex items-center hover:text-[#C542FF] transition duration-300">
+                <button onClick={() => handleNavigation('/weekly-plan')}
+                        className="flex items-center hover:text-[#C542FF] transition duration-300">
                   <FiCalendar /> <span className="ml-1">My Weekly Plan</span>
                 </button>
-                <button onClick={() => handleNavigation('/logout')} className="flex items-center hover:text-[#C542FF] transition duration-300">
-                  <FiLogOut /> <span className="ml-1">Logout</span>
+
+                <button onClick={openModal}
+                        className="flex items-center hover:text-[#C542FF] transition duration-300">
+                  <FiUser /> <span className="ml-1">Search for recipe</span>
                 </button>
+
+
               </>
             ) : (
               <>
-                <button onClick={() => handleNavigation('/login')} className="flex items-center hover:text-[#C542FF] transition duration-300">
+                <button onClick={() => handleNavigation('/login')}
+                        className="flex items-center hover:text-[#C542FF] transition duration-300">
                   <FiLogIn /> <span className="ml-1">{t('login')}</span>
                 </button>
-                <button onClick={() => handleNavigation('/register')} className="text-lg px-4 py-2 border border-[#C542FF] rounded-full hover:bg-[#C542FF] hover:text-gray-900 transition duration-300">
+                <button onClick={() => handleNavigation('/register')}
+                        className="text-lg px-4 py-2 border border-[#C542FF] rounded-full hover:bg-[#C542FF] hover:text-gray-900 transition duration-300">
                   Sign Up
                 </button>
               </>
@@ -110,7 +134,9 @@ const HeaderNavbar = () => {
                 <li><button onClick={() => handleNavigation('/shopping-list')} className="hover:text-[#C542FF]">My Shopping List</button></li>
                 <li><button onClick={() => handleNavigation('/recipe-stats')} className="hover:text-[#C542FF]">Recipe Stats</button></li>
                 <li><button onClick={() => handleNavigation('/weekly-plan')} className="hover:text-[#C542FF]">My Weekly Plan</button></li>
-                <li><button onClick={() => handleNavigation('/logout')} className="hover:text-[#C542FF]">Logout</button></li>
+                <li><button onClick={() => {
+                  apiClient.logout();
+                }} className="hover:text-[#C542FF]">Logout</button></li>
               </>
             ) : (
               <>
@@ -121,6 +147,7 @@ const HeaderNavbar = () => {
           </ul>
         </div>
       )}
+      <SearchModal isOpen={isModalOpen} onClose={closeModal} />
     </header>
   );
 };
