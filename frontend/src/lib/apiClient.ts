@@ -48,13 +48,11 @@ class ApiClient {
     sessionStorage.removeItem('authToken');
     sessionStorage.removeItem('authTokenExpiration');
   }
-
   private async fetchApi<T>(
     endpoint: string,
     { method = 'GET', body, headers = {} }: FetchApiOptions = {}
   ): Promise<T> {
     const url = `${this.baseUrl}/${endpoint}`;
-
     const isFormData = body instanceof FormData;
 
     const config: RequestInit = {
@@ -62,7 +60,7 @@ class ApiClient {
       headers: {
         ...headers,
         ...(this.token ? { Authorization: `Bearer ${this.token}` } : {}),
-        'Content-Type': headers['Content-Type'] || 'application/json', // Use custom Content-Type if provided, default otherwise
+        'Content-Type': headers['Content-Type'] || (isFormData ? undefined : 'application/json'),
       },
       body: isFormData ? body : body ? JSON.stringify(body) : undefined,
     };
@@ -70,14 +68,26 @@ class ApiClient {
     const response = await fetch(url, config);
 
     if (!response.ok) {
-      if (config.body) {
-        console.log(config.body);
+      // Try to parse the error response to retrieve errors
+      let errorData;
+      try {
+        errorData = await response.json();
+      } catch (error) {
+        errorData = { message: 'An error occurred while parsing the error response.' };
       }
-      console.log(await response.text());
 
-      throw new Error(`Failed to fetch: ${response.json()}`);
+      // Check for specific and general errors and throw a detailed error
+      const errorMessage = errorData.message || 'Failed to fetch data from the API';
+      const fieldErrors = errorData.errors || {};
+      const generalErrors = errorData.generalErrors || [];
+
+      console.log(fieldErrors)
+      console.log(generalErrors)
+      // Throw an error containing all error details for the frontend to process
+      throw { message: errorMessage, fieldErrors, generalErrors };
     }
 
+    // If response is okay, parse and return JSON data
     return response.json();
   }
 

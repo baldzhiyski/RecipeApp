@@ -2,10 +2,13 @@
 import MaterialSymbol from '@components/globals/materialSymbol/MaterialSymbol';
 import { Button, Input } from '@nextui-org/react';
 import apiClient from '@lib/apiClient';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import user from '@entities/User';
+
 
 export default function LoginPage() {
+
   const [isVisible, setIsVisible] = React.useState(false);
   const [email, setEmail] = React.useState<string>('');
   const [password, setPassword] = React.useState<string>('');
@@ -15,6 +18,12 @@ export default function LoginPage() {
 
   const router = useRouter();
 
+  // If user is already logged in, redirect to the home page
+  useEffect(() => {
+    if (user) {
+      router.replace('/'); // Redirect to the home page ("/") if logged in
+    }
+  }, [user, router]);
   const handleRegisterClick = () => {
     router.push('/register');
   };
@@ -33,19 +42,17 @@ export default function LoginPage() {
     try {
       setError(null); // Clear any previous errors
       await apiClient.login(email, password);
-      window.location.href = '/recipes';
+      window.location.href = '/';
       // Redirect or perform other actions on successful login
     } catch (error) {
-      if (error instanceof Error) {
-        setError(error.message); // Set the error message to display
-      } else {
-        setError('An unexpected error occurred');
-      }
+        setError(error.message);
     }
   };
 
   return (
     <div>
+      {error && <div style={{ color: 'red' }}>{error}</div>} {/* Display error message here */}
+
       <Input
         label="Email"
         type="email"

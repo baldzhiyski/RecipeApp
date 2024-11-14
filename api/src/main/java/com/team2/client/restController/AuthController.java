@@ -18,10 +18,10 @@ import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 /**
  * Controller responsible for user authentication, including login, registration, session retrieval, and logout.
@@ -110,7 +110,7 @@ public class AuthController {
             }
     )
     @PostMapping("/api/auth/login")
-    public ResponseEntity<LoginResponse> login(@RequestBody @Valid LoginRequest body) throws org.springframework.security.core.AuthenticationException {
+    public ResponseEntity<LoginResponse> login(@RequestBody @Valid LoginRequest body) throws BadCredentialsException {
         return authService.login(body);
     }
 

@@ -74,10 +74,7 @@ const HeaderNavbar = () => {
                         className="flex items-center hover:text-[#C542FF] transition duration-300">
                   <FiBookOpen /> <span className="ml-1">All Recipes</span>
                 </button>
-                <button onClick={() => handleNavigation('/add-recipe')}
-                        className="flex items-center hover:text-[#C542FF] transition duration-300">
-                  <FiPlus /> <span className="ml-1">Add Recipe</span>
-                </button>
+
                 <button onClick={() => handleNavigation('/shopping-list')}
                         className="flex items-center hover:text-[#C542FF] transition duration-300">
                   <FiList /> <span className="ml-1">My Shopping List</span>

@@ -92,7 +92,7 @@ public class ExceptionHandler extends ResponseEntityExceptionHandler {
     @org.springframework.web.bind.annotation.ExceptionHandler(InternalAuthenticationServiceException.class)
     public ResponseEntity<HttpErrorResponse> handleException(InternalAuthenticationServiceException e) {
         log.info("Handling InternalAuthenticationServiceException: {}", e.getMessage());
-        var response = HttpErrorResponse.of("Authentication service error: " + e.getMessage(), 500, null, null);
+        var response = HttpErrorResponse.of( e.getMessage(), 500, null, null);
         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
@@ -133,7 +133,7 @@ public class ExceptionHandler extends ResponseEntityExceptionHandler {
     @org.springframework.web.bind.annotation.ExceptionHandler(Exception.class)
     public ResponseEntity<HttpErrorResponse> handleException(Exception e) {
         log.error("Unhandled exception", e);
-        var response = HttpErrorResponse.of("Unexpected error", 500);
+        var response = HttpErrorResponse.of("Unexpected error", 400);
         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
