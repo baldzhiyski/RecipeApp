@@ -4,7 +4,8 @@ import apiClient from '@lib/apiClient';
 import { Button, Input } from '@nextui-org/react';
 import React, { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import user from '@entities/User';
+
+import User from '@entities/User';
 
 export default function RegisterPage() {
   const [email, setEmail] = React.useState<string>('');
@@ -25,11 +26,14 @@ export default function RegisterPage() {
 
   const router = useRouter();
 
+  // If user is already logged in, redirect to the home page
   useEffect(() => {
-    if (user) {
+    const currentUser = User.getInstance().getUser(); // Get the current user instance
+    if (currentUser && currentUser.token) { // Check if the user is logged in
       router.replace('/'); // Redirect to the home page ("/") if logged in
     }
-  }, [user, router]);
+  }, [router]); // Only run this effect when the component mounts or router changes
+
   const handleRegisterClick = () => {
     router.push('/register');
   };

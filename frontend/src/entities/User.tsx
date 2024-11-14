@@ -12,6 +12,7 @@ class User {
   } | null = null;
 
   private constructor() {
+
     if (typeof window !== 'undefined' && window.sessionStorage) {
       const storedUser = sessionStorage.getItem('user');
       if (storedUser) {
