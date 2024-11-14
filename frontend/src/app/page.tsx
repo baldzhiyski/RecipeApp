@@ -15,7 +15,7 @@ export default function Home() {
 
   return (
     <div>
-      <Button onClick={handleSeeAllRecipes}>Recipes</Button>
+
     </div>
   );
 }
