@@ -16,7 +16,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Service;
@@ -54,7 +53,7 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public ResponseEntity<LoginResponse> login(
                       LoginRequest body
-    ) throws AuthenticationException {
+    ) throws BadCredentialsException {
 
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(

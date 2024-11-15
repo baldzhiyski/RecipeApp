@@ -1,1 +1,0 @@
-"use strict";exports.id=312,exports.ids=[312],exports.modules={43312:e=>{e.exports=JSON.parse('{"NavBar":{"login":"Anmelden"}}')}};

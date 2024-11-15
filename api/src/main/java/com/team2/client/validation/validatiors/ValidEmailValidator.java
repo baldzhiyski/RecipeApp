@@ -42,19 +42,17 @@ public class ValidEmailValidator implements ConstraintValidator<ValidEmail, Stri
 
     @Override
     public boolean isValid(String email, ConstraintValidatorContext context) {
-        if(this.userRepository.findByEmail(email).isPresent()){
-            AnnotationsUtil.setErrorMessage(context,alreadyInUseMessage);
-            return false;
-        }
-
         if (email == null || email.trim().isEmpty()) {
             AnnotationsUtil.setErrorMessage(context,emptyMessage);
             return false;
         }
-
         Matcher matcher = pattern.matcher(email);
         if (!matcher.matches()) {
             AnnotationsUtil.setErrorMessage(context,message);
+            return false;
+        }
+        if(this.userRepository.findByEmail(email).isPresent()){
+            AnnotationsUtil.setErrorMessage(context,alreadyInUseMessage);
             return false;
         }
         return true;

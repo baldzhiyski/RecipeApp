@@ -1,194 +1,174 @@
-'use client';
-
+"use client";
 import MaterialSymbol from '@components/globals/materialSymbol/MaterialSymbol';
 import apiClient from '@lib/apiClient';
-import { Button, Checkbox, CheckboxGroup, Input } from '@nextui-org/react';
-import React from 'react';
+import { Button, Input } from '@nextui-org/react';
+import React, { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
-export default function RegisterPage() {
-  const [isVisible, setIsVisible] = React.useState(false);
-  const [isVisible2nPassword, setIsVisible2nPassword] = React.useState(false);
+import User from '@entities/User';
+import { EyeFilledIcon, EyeSlashFilledIcon } from '@nextui-org/shared-icons';
 
+export default function RegisterPage() {
   const [email, setEmail] = React.useState<string>('');
   const [password, setPassword] = React.useState<string>('');
   const [verifyPassword, setVerifyPassword] = React.useState<string>('');
-  const [forname, setForname] = React.useState<string>('');
-  const [surename, setSurename] = React.useState<string>('');
+  const [firstName, setFirstName] = React.useState<string>('');
+  const [lastName, setLastName] = React.useState<string>('');
   const [username, setUsername] = React.useState<string>('');
   const [waitForRegister, setWaitForRegister] = React.useState<boolean>(false);
 
+  // State to handle password visibility
+  const [showPassword, setShowPassword] = React.useState<boolean>(false);
+  const [showVerifyPassword, setShowVerifyPassword] = React.useState<boolean>(false);
+
+  // Error messages from the backend
+  const [errorMessages, setErrorMessages] = React.useState<Record<string, string>>({});
+  const [generalErrors, setGeneralErrors] = React.useState<string[]>([]);
+
   const router = useRouter();
 
-  const toggleVisibility2ndPassword = () =>
-    setIsVisible2nPassword(!isVisible2nPassword);
+  // If user is already logged in, redirect to the home page
+  useEffect(() => {
+    const currentUser = User.getInstance().getUser(); // Get the current user instance
+    if (currentUser && currentUser.token) { // Check if the user is logged in
+      router.replace('/'); // Redirect to the home page ("/") if logged in
+    }
+  }, [router]); // Only run this effect when the component mounts or router changes
 
-  interface PasswordRequirement {
-    id: string;
-    label: string;
-    check: (password: string) => boolean;
-  }
-
-  // Define the requirements
-  const passwordRequirements: PasswordRequirement[] = [
-    {
-      id: 'uppercase',
-      label: 'At least one uppercase letter',
-      check: (password) => /[A-Z]/.test(password),
-    },
-    {
-      id: 'lowercase',
-      label: 'At least one lowercase letter',
-      check: (password) => /[a-z]/.test(password),
-    },
-    {
-      id: 'digit',
-      label: 'At least one digit',
-      check: (password) => /\d/.test(password),
-    },
-    {
-      id: 'special',
-      label: 'At least one special character',
-      check: (password) => /[\W_]/.test(password),
-    },
-    {
-      id: 'minLength',
-      label: 'Minimum length of 6 characters',
-      check: (password) => password.length >= 6,
-    },
-  ];
+  const handleRegisterClick = () => {
+    router.push('/register');
+  };
 
   const handleRegister = async () => {
     setWaitForRegister(true);
+    setErrorMessages({});
+    setGeneralErrors([]);
     try {
-      // Simulate API call or actual API call
-      await apiClient.register(
-        username,
-        email,
-        password,
-        verifyPassword,
-        forname,
-        surename
-      );
+      const response = await apiClient.register(username, email, password, verifyPassword, firstName, lastName);
 
-      // After successful registration, redirect to profile page
-      router.push('/profile');
-    } catch (error) {
-      console.error('Registration failed:', error);
-      // Handle error (e.g., show a toast notification or error message)
+      // Redirect if registration is successful
+      router.push('/');
+    } catch (error: any) {
+      console.error('Registration error:', error);
+      if (error.fieldErrors) {
+        setErrorMessages(error.fieldErrors);
+      }
+      if (error.generalErrors) {
+        setGeneralErrors(error.generalErrors);
+      }
     } finally {
-      setWaitForRegister(false); // Set loading state back to false
+      setWaitForRegister(false);
     }
   };
 
-  const toggleVisibility = () => setIsVisible(!isVisible);
-
-  const validateEmail = (email: string) =>
-    email.match(/^[A-Z0-9._%+-]+@[A-Z0-9.-]+.[A-Z]{2,4}$/i);
-
-  const isInvalidEmail = React.useMemo(() => {
-    if (email === '') return false;
-
-    return validateEmail(email) ? false : true;
-  }, [email]);
-
-  // Memoized password validation logic
-  const isInvalidPassword = React.useMemo(() => {
-    const unmetRequirements = passwordRequirements.filter(
-      (req) => !req.check(password)
-    );
-    return unmetRequirements.length > 0;
-  }, [password]);
-
-  // Memoized password validation logic
-  const isInvalid2ndPassword = React.useMemo(() => {
-    if (password === verifyPassword) return false;
-
-    return true;
-  }, [password, verifyPassword]);
-
-  // Get the ids of the unmet requirements
-  const checkedRequirements = passwordRequirements
-    .filter((req) => req.check(password))
-    .map((req) => req.id);
-
   return (
-    <div>
+    <div className="max-w-md mx-auto my-10 p-6 border shadow rounded-lg">
+      <h2 className="text-center text-3xl font-semibold mb-6">Create Account</h2>
+
       <Input
-        label="Email"
-        type="email"
-        placeholder="Enter your email"
-        value={email}
+        label="First Name"
+        value={firstName}
+        onChange={(e) => setFirstName(e.target.value)}
         variant="bordered"
-        isInvalid={isInvalidEmail}
-        color={isInvalidEmail ? 'danger' : 'default'}
-        onValueChange={setEmail}
+        color={errorMessages.firstName ? 'danger' : 'default'}
       />
+      <small className="text-red-600 text-sm mt-1">{errorMessages.firstName}</small>
+
+      <Input
+        label="Last Name"
+        value={lastName}
+        onChange={(e) => setLastName(e.target.value)}
+        variant="bordered"
+        color={errorMessages.lastName ? 'danger' : 'default'}
+      />
+      <small className="text-red-600 text-sm mt-1">{errorMessages.lastName}</small>
+
       <Input
         label="Username"
-        type="text"
-        placeholder="Enter your Username"
         value={username}
+        onChange={(e) => setUsername(e.target.value)}
         variant="bordered"
-        onValueChange={setUsername}
+        color={errorMessages.username ? 'danger' : 'default'}
       />
+      <small className="text-red-600 text-sm mt-1">{errorMessages.username}</small>
+
       <Input
-        label="Forname"
-        type="text"
-        placeholder="Enter your name"
-        value={forname}
+        label="Email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        type="email"
         variant="bordered"
-        onValueChange={setForname}
+        color={errorMessages.email ? 'danger' : 'default'}
       />
-      <Input
-        label="Surname"
-        type="text"
-        placeholder="Enter your name"
-        value={surename}
-        variant="bordered"
-        onValueChange={setSurename}
-      />
+      <small className="text-red-600 text-sm mt-1">{errorMessages.email}</small>
+
       <Input
         label="Password"
-        type={isVisible ? 'text' : 'password'}
         value={password}
+        onChange={(e) => setPassword(e.target.value)}
+        type={showPassword ? 'text' : 'password'}
         variant="bordered"
-        isInvalid={password ? isInvalidPassword : false}
-        placeholder="Enter your password"
-        onValueChange={setPassword}
+        color={errorMessages.password ? 'danger' : 'default'}
+        helperText={errorMessages.password || ''}
         endContent={
-          <Button isIconOnly={true} onClick={toggleVisibility}>
-            <MaterialSymbol name="search" />
+          <Button
+            isIconOnly
+            onClick={() => setShowPassword(prev => !prev)}
+            aria-label="toggle password visibility"
+            className="focus:outline-none"
+          >
+            {showPassword ? (
+              <EyeSlashFilledIcon className="text-2xl text-fuchsia-950 pointer-events-none " />
+            ) : (
+              <EyeFilledIcon className="text-2xl text-fuchsia-950 pointer-events-none" />
+            )}
           </Button>
         }
       />
+      <small className="text-red-600 text-sm mt-1">{errorMessages.password}</small>
+
       <Input
-        label="Verify Password"
-        type={isVisible2nPassword ? 'text' : 'password'}
-        placeholder="Enter your password"
+        label="Confirm Password"
         value={verifyPassword}
+        onChange={(e) => setVerifyPassword(e.target.value)}
+        type={showVerifyPassword ? 'text' : 'password'}
         variant="bordered"
-        onValueChange={setVerifyPassword}
-        isInvalid={isInvalid2ndPassword}
-        color={isInvalid2ndPassword ? 'danger' : 'default'}
+        color={errorMessages.confirmPassword ? 'danger' : 'default'}
         endContent={
-          <Button isIconOnly={true} onClick={toggleVisibility2ndPassword}>
-            <MaterialSymbol name="search" />
+          <Button
+            isIconOnly
+            onClick={() => setShowVerifyPassword(prev => !prev)}
+            aria-label="toggle password visibility"
+            className="focus:outline-none"
+          >
+            {showVerifyPassword ? (
+              <EyeSlashFilledIcon className="text-2xl text-fuchsia-950 pointer-events-none " />
+            ) : (
+              <EyeFilledIcon className="text-2xl text-fuchsia-950 pointer-events-none" />
+            )}
           </Button>
         }
       />
-      <Button onClick={handleRegister} disabled={waitForRegister}>
+      <small className="text-red-600 text-sm mt-1">{errorMessages.confirmPassword}</small>
+
+      <Button
+        onClick={handleRegister}
+        disabled={waitForRegister}
+        fullWidth
+        className="mt-4"
+      >
         {waitForRegister ? 'Registering...' : 'Register'}
       </Button>
-      <div className="flex flex-col gap-3">
-        <CheckboxGroup value={checkedRequirements} isDisabled>
-          {passwordRequirements.map((req) => (
-            <Checkbox key={req.id} value={req.id} radius="full">
-              {req.label}
-            </Checkbox>
+
+      {/* Display all general error messages at once */}
+      {generalErrors.length > 0 && (
+        <div className="mt-6 p-4 border-2 border-red-600 bg-red-50 rounded-md">
+          <h3 className="text-red-600 font-semibold mb-2">Please fix the following errors:</h3>
+          {generalErrors.map((error, index) => (
+            <p key={index} className="text-red-600 text-sm mb-2">{error}</p>
           ))}
-        </CheckboxGroup>
-      </div>
+        </div>
+      )}
     </div>
   );
 }

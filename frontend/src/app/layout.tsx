@@ -2,6 +2,7 @@ import BottomNavbar from '@components/navBar/BottomNavBar';
 import HeaderNavbar from '@components/navBar/HeaderNavBar';
 import { NextIntlClientProvider } from 'next-intl';
 import { Roboto } from 'next/font/google';
+import Footer from '@components/Footer';
 
 import { getLocale, getMessages } from 'next-intl/server';
 import './globals.css';
@@ -68,7 +69,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = async ({
             <HeaderNavbar />
             {/* Main Content Area */}
             <main className="flex-1 p-5">{children}</main>
-            <BottomNavbar />
+            <Footer />
           </NextIntlClientProvider>
         </NextUIProvider>
       </body>
