@@ -71,8 +71,8 @@ export default function RegisterPage() {
         onChange={(e) => setFirstName(e.target.value)}
         variant="bordered"
         color={errorMessages.firstName ? 'danger' : 'default'}
-
       />
+      <small className="text-red-600 text-sm mt-1">{errorMessages.firstName}</small>
 
       <Input
         label="Last Name"
@@ -80,8 +80,8 @@ export default function RegisterPage() {
         onChange={(e) => setLastName(e.target.value)}
         variant="bordered"
         color={errorMessages.lastName ? 'danger' : 'default'}
-
       />
+      <small className="text-red-600 text-sm mt-1">{errorMessages.lastName}</small>
 
       <Input
         label="Username"
@@ -89,8 +89,8 @@ export default function RegisterPage() {
         onChange={(e) => setUsername(e.target.value)}
         variant="bordered"
         color={errorMessages.username ? 'danger' : 'default'}
-
       />
+      <small className="text-red-600 text-sm mt-1">{errorMessages.username}</small>
 
       <Input
         label="Email"
@@ -100,6 +100,7 @@ export default function RegisterPage() {
         variant="bordered"
         color={errorMessages.email ? 'danger' : 'default'}
       />
+      <small className="text-red-600 text-sm mt-1">{errorMessages.email}</small>
 
       <Input
         label="Password"
@@ -124,6 +125,7 @@ export default function RegisterPage() {
           </Button>
         }
       />
+      <small className="text-red-600 text-sm mt-1">{errorMessages.password}</small>
 
       <Input
         label="Confirm Password"
@@ -132,7 +134,6 @@ export default function RegisterPage() {
         type={showVerifyPassword ? 'text' : 'password'}
         variant="bordered"
         color={errorMessages.confirmPassword ? 'danger' : 'default'}
-
         endContent={
           <Button
             isIconOnly
@@ -148,6 +149,7 @@ export default function RegisterPage() {
           </Button>
         }
       />
+      <small className="text-red-600 text-sm mt-1">{errorMessages.confirmPassword}</small>
 
       <Button
         onClick={handleRegister}
@@ -158,14 +160,12 @@ export default function RegisterPage() {
         {waitForRegister ? 'Registering...' : 'Register'}
       </Button>
 
-      {/* Display all error messages at once */}
-      {(Object.values(errorMessages).length > 0 || generalErrors.length > 0) && (
-        <div className="mt-4 text-red-600">
-          {Object.entries(errorMessages).map(([field, message], index) => (
-            <p key={index}>{message}</p>
-          ))}
+      {/* Display all general error messages at once */}
+      {generalErrors.length > 0 && (
+        <div className="mt-6 p-4 border-2 border-red-600 bg-red-50 rounded-md">
+          <h3 className="text-red-600 font-semibold mb-2">Please fix the following errors:</h3>
           {generalErrors.map((error, index) => (
-            <p key={index}>{error}</p>
+            <p key={index} className="text-red-600 text-sm mb-2">{error}</p>
           ))}
         </div>
       )}
