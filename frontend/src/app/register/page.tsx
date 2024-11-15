@@ -6,6 +6,7 @@ import React, { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
 import User from '@entities/User';
+import { EyeFilledIcon, EyeSlashFilledIcon } from '@nextui-org/shared-icons';
 
 export default function RegisterPage() {
   const [email, setEmail] = React.useState<string>('');
@@ -109,8 +110,17 @@ export default function RegisterPage() {
         color={errorMessages.password ? 'danger' : 'default'}
         helperText={errorMessages.password || ''}
         endContent={
-          <Button isIconOnly onClick={() => setShowPassword(prev => !prev)}>
-            <MaterialSymbol name={showPassword ? 'off' : 'see'} />
+          <Button
+            isIconOnly
+            onClick={() => setShowPassword(prev => !prev)}
+            aria-label="toggle password visibility"
+            className="focus:outline-none"
+          >
+            {showPassword ? (
+              <EyeSlashFilledIcon className="text-2xl text-fuchsia-950 pointer-events-none " />
+            ) : (
+              <EyeFilledIcon className="text-2xl text-fuchsia-950 pointer-events-none" />
+            )}
           </Button>
         }
       />
@@ -124,8 +134,17 @@ export default function RegisterPage() {
         color={errorMessages.confirmPassword ? 'danger' : 'default'}
 
         endContent={
-          <Button isIconOnly onClick={() => setShowVerifyPassword(prev => !prev)}>
-            <MaterialSymbol name={showVerifyPassword ? 'off' : 'see'} />
+          <Button
+            isIconOnly
+            onClick={() => setShowVerifyPassword(prev => !prev)}
+            aria-label="toggle password visibility"
+            className="focus:outline-none"
+          >
+            {showVerifyPassword ? (
+              <EyeSlashFilledIcon className="text-2xl text-fuchsia-950 pointer-events-none " />
+            ) : (
+              <EyeFilledIcon className="text-2xl text-fuchsia-950 pointer-events-none" />
+            )}
           </Button>
         }
       />

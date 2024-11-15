@@ -6,6 +6,7 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import apiClient from '@lib/apiClient';
 import User from '@entities/User';
+import { EyeFilledIcon, EyeSlashFilledIcon } from '@nextui-org/shared-icons';
 
 export default function LoginPage() {
   const [isVisible, setIsVisible] = React.useState(false);
@@ -106,9 +107,19 @@ export default function LoginPage() {
           isInvalid={isInvalidPassword}
           color={isInvalidPassword ? 'danger' : 'default'}
           endContent={
-            <Button isIconOnly={true} onClick={toggleVisibility}>
-              <MaterialSymbol name="see" />
+            <Button
+              isIconOnly
+              onClick={() => toggleVisibility()}
+              aria-label="toggle password visibility"
+              className="focus:outline-none"
+            >
+              {isVisible ? (
+                <EyeSlashFilledIcon className="text-2xl text-fuchsia-950 pointer-events-none " />
+              ) : (
+                <EyeFilledIcon className="text-2xl text-fuchsia-950 pointer-events-none" />
+              )}
             </Button>
+
           }
           className="mb-4"
           css={{
