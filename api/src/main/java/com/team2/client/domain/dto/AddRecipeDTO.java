@@ -15,7 +15,7 @@ import java.util.List;
 @Setter
 public class AddRecipeDTO {
 
-    @Size(min = 1)
+
     private List<IngredientDto> ingredientsList;
 
     @NotBlank(message = "{recipe.required}")

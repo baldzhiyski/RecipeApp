@@ -3,6 +3,7 @@ package com.team2.client.service.impl;
 import com.team2.client.domain.Ingredient;
 import com.team2.client.domain.Recipe;
 import com.team2.client.domain.RecipeIngredient;
+import com.team2.client.domain.User;
 import com.team2.client.domain.dto.AddRecipeDTO;
 import com.team2.client.domain.dto.AddRecipeResponse;
 import com.team2.client.domain.dto.RecipeDto;
@@ -15,6 +16,7 @@ import com.team2.client.exception.RecipeExistsException;
 import com.team2.client.exception.RecipeNotFoundException;
 import com.team2.client.exception.UserNotFound;
 import com.team2.client.repository.IngredientRepository;
+import com.team2.client.repository.RecipeIngredientRepository;
 import com.team2.client.repository.RecipeRepository;
 import com.team2.client.repository.UserRepository;
 import com.team2.client.service.RecipeService;
@@ -34,15 +36,18 @@ public class RecipeServiceImpl implements RecipeService {
 
     private IngredientRepository ingredientRepository;
 
+    private RecipeIngredientRepository recipeIngredientRepository;
+
     private UserRepository userRepository;
     private ModelMapper mapper;
 
-    public RecipeServiceImpl(RecipeRepository repository, ModelMapper mapper, IngredientRepository ingredientRepository, UserRepository userRepository,RecipeRepository recipeRepository) {
+    public RecipeServiceImpl(RecipeRepository repository, ModelMapper mapper, IngredientRepository ingredientRepository, UserRepository userRepository, RecipeRepository recipeRepository, RecipeIngredientRepository recipeIngredientRepository) {
         this.repository = repository;
         this.mapper = mapper;
         this.ingredientRepository=ingredientRepository;
         this.userRepository = userRepository;
         this.recipeRepository = recipeRepository;
+        this.recipeIngredientRepository = recipeIngredientRepository;
     }
 
 
@@ -67,11 +72,13 @@ public class RecipeServiceImpl implements RecipeService {
     @Override
     @Transactional
     public AddRecipeResponse addRecipe(AddRecipeDTO addRecipeDTO, UserDetails loggedInUser) {
+        // Check if recipe already exists
         Optional<Recipe> byRecipeName = this.repository.findByRecipeName(addRecipeDTO.getRecipeName());
-
-        if(byRecipeName.isPresent()){
-            throw new RecipeExistsException("The following recipe with name " + addRecipeDTO.getRecipeName() + " already exists !");
+        if (byRecipeName.isPresent()) {
+            throw new RecipeExistsException("The recipe with the name " + addRecipeDTO.getRecipeName() + " already exists!");
         }
+
+        // Create a new Recipe entity
         Recipe recipe = new Recipe();
         recipe.setRecipeName(addRecipeDTO.getRecipeName());
         recipe.setDescription(addRecipeDTO.getDescription());
@@ -80,35 +87,61 @@ public class RecipeServiceImpl implements RecipeService {
         recipe.setMealType(MealType.valueOf(addRecipeDTO.getMealType().toUpperCase()));
         recipe.setDietaryPreference(DietaryPreference.valueOf(addRecipeDTO.getDietaryPreference().toUpperCase()));
 
+        // Handle ingredients list
         List<RecipeIngredient> ingredientsForRecipe = addRecipeDTO.getIngredientsList().stream()
                 .map(ingredientDto -> {
-                    String ingredientDtoName = ingredientDto.getName().toLowerCase();
-                    ingredientDtoName = ingredientDtoName.substring(0, 1).toUpperCase() + ingredientDtoName.substring(1);
+                    String ingredientName = capitalizeFirstLetter(ingredientDto.getName().toLowerCase());
 
-                    Optional<Ingredient> byName = this.ingredientRepository.findByName(ingredientDtoName);
+                    // Check if ingredient exists, otherwise create a new one
+                    Ingredient ingredient = this.ingredientRepository.findByName(ingredientName)
+                            .orElseGet(() -> createNewIngredient(ingredientName));
 
-                    if(byName.isEmpty()){
-                        Ingredient ingredient = new Ingredient();
-                        ingredient.setName(ingredientDtoName);
-                        this.ingredientRepository.saveAndFlush(ingredient);
-                    }
-
+                    // Create RecipeIngredient object
                     RecipeIngredient recipeIngredient = new RecipeIngredient();
-                    recipeIngredient.setIngredient(this.ingredientRepository.findByName(ingredientDtoName).get());
+                    recipeIngredient.setIngredient(ingredient);
                     recipeIngredient.setRecipe(recipe);
                     recipeIngredient.setUnit(ingredientDto.getUnit());
                     recipeIngredient.setAmount(ingredientDto.getAmount());
-
 
                     return recipeIngredient;
                 }).toList();
 
         recipe.setRecipeIngredients(ingredientsForRecipe);
-        recipe.setCreator(userRepository.findByEmail(loggedInUser.getUsername()).orElseThrow(() -> new UserNotFound("Unauthorized !")));
 
+        // Set the creator for the recipe
+        User creator = userRepository.findByEmail(loggedInUser.getUsername())
+                .orElseThrow(() -> new UserNotFound("Unauthorized!"));
+        recipe.setCreator(creator);
+
+        // Save recipe to the repository
         this.repository.saveAndFlush(recipe);
-        return  AddRecipeResponse.builder().recipeName(addRecipeDTO.getRecipeName()).build();
+
+
+        // Save ingredients to the database
+        this.recipeIngredientRepository.saveAllAndFlush(ingredientsForRecipe);
+
+        // Return response with recipe name
+        return AddRecipeResponse.builder()
+                .recipeName(addRecipeDTO.getRecipeName())
+                .build();
     }
+
+    // Helper method to capitalize first letter
+    private String capitalizeFirstLetter(String name) {
+        if (name == null || name.isEmpty()) {
+            return name;
+        }
+        return name.substring(0, 1).toUpperCase() + name.substring(1);
+    }
+
+    // Helper method to create a new ingredient if not found
+    private Ingredient createNewIngredient(String ingredientName) {
+        Ingredient ingredient = new Ingredient();
+        ingredient.setName(ingredientName);
+        this.ingredientRepository.saveAndFlush(ingredient);
+        return ingredient;
+    }
+
 
     @Override
     public List<Object> getTypes(String type) {
