@@ -40,7 +40,7 @@ public class Recipe  extends BaseEntity{
     @NotBlank
     private String instructions;
 
-    @OneToMany(mappedBy = "recipe")
+    @OneToMany(mappedBy = "recipe",fetch = FetchType.EAGER)
     private List<RecipeIngredient> recipeIngredients;
 
     @ManyToOne

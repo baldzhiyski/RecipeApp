@@ -7,6 +7,7 @@ import com.team2.client.domain.dto.UserProfileImageDto;
 import com.team2.client.domain.dto.UserRegisterDto;
 import com.team2.client.service.AuthService;
 import com.team2.client.service.UserService;
+import com.team2.client.validation.annotation.ValidFile;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -22,6 +23,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * Controller responsible for user authentication, including login, registration, session retrieval, and logout.
@@ -82,11 +84,11 @@ public class AuthController {
                     @ApiResponse(responseCode = "401", description = "Unauthorized - User must be authenticated")
             }
     )
-    @PostMapping(value = "/api/upload-profile-image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "/api/upload-profile-image",consumes = "multipart/form-data")
     public ResponseEntity<String> uploadProfileImage(
-            @ModelAttribute @Valid UserProfileImageDto userProfileImageDto,
+            @RequestParam("profileImage")  @ValidFile  MultipartFile profileImage,
             @AuthenticationPrincipal UserDetails userDetails) {
-        userService.uploadProfileImage(userDetails.getUsername(), userProfileImageDto.getProfileImage());
+        userService.uploadProfileImage(userDetails.getUsername(), profileImage);
         return ResponseEntity.ok("Profile image uploaded successfully.");
     }
     /**

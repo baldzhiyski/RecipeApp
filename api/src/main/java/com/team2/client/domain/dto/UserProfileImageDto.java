@@ -11,6 +11,5 @@ import org.springframework.web.multipart.MultipartFile;
 @Setter
 public class UserProfileImageDto {
 
-    @ValidFile
     private MultipartFile profileImage;
 }

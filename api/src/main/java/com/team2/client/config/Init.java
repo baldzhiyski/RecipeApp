@@ -13,7 +13,6 @@ import javax.sql.DataSource;
 @Configuration
 public class Init {
 
-
     @Bean
     public DataSourceInitializer dataSourceInitializer(DataSource dataSource,
                                                       RecipeRepository repository,
