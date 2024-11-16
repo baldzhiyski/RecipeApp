@@ -13,8 +13,7 @@ export default function UpdateProfileImageForm() {
   const handleLogoChange = async (file: File) => {
     setIsLoading(true);
     let formData = new FormData();
-    formData.append("profileImage", file);
-    formData.append("profileImage", file); // Ensure correct form field name
+    formData.append("profileImage", file,file.name); // Ensure correct form field name
 
     console.log(formData);
 

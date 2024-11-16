@@ -84,7 +84,7 @@ public class AuthController {
                     @ApiResponse(responseCode = "401", description = "Unauthorized - User must be authenticated")
             }
     )
-    @PostMapping(value = "/api/upload-profile-image",consumes = "multipart/form-data")
+    @PostMapping(value = "/api/upload-profile-image",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<String> uploadProfileImage(
             @RequestParam("profileImage")  @ValidFile  MultipartFile profileImage,
             @AuthenticationPrincipal UserDetails userDetails) {

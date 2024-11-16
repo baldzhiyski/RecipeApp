@@ -242,9 +242,9 @@ class ApiClient {
   public async uploadProfileImage(formData: FormData): Promise<{ imageUrl: string }> {
     return this.fetchApi<{ imageUrl: string }>('upload-profile-image', {
       method: 'POST',
-      body: formData,
+      body: formData, // Send the raw file directly
       headers: {
-        Authorization: `Bearer ${this.token}`
+        Authorization: `Bearer ${this.token}`, // Optional: Add auth token
       }
     });
   }

@@ -69,7 +69,6 @@ export default function FileUpload({
         type="file"
         id={id}
         className="hidden"
-        encType="multipart/form-data"
         disabled={disabled}
         onChange={handleChange}
         accept={allowedTypes?.join(",")}
