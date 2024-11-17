@@ -21,16 +21,29 @@ const RecipeCard: React.FC<RecipeCardProps> = ({ recipe }) => {
 
   return (
     <>
-      <Card>
-        <CardBody>
-          <div className="w-full text-center content-center">
-            {recipe.recipeName}
+      <Card className="w-full max-w-md mx-auto p-4 bg-gradient-to-r from-blue-50 to-blue-100 shadow-lg rounded-lg transition-transform transform hover:scale-105">
+        <CardBody className="space-y-4">
+          <div className="text-center">
+            <h3 className="text-xl font-bold text-blue-700">{recipe.recipeName}</h3>
           </div>
-          <div>{recipe.description}</div>
-          <div>Meal Type: {recipe.mealType}</div>
-          <div>Dish Type: {recipe.dishType}</div>
-          <div>Recipe created by: {recipe.creatorUsername}</div>
-          <Button onClick={handleOpenRecipeDetails}>View Recipe</Button>
+          <p className="text-gray-600">{recipe.description}</p>
+          <div className="flex flex-col space-y-2 text-sm">
+            <div>
+              <span className="font-semibold text-blue-700">Meal Type:</span> {recipe.mealType}
+            </div>
+            <div>
+              <span className="font-semibold text-blue-700">Dish Type:</span> {recipe.dishType}
+            </div>
+            <div>
+              <span className="font-semibold text-blue-700">Created by:</span> {recipe.creatorUsername}
+            </div>
+          </div>
+          <Button
+            className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md font-medium shadow-md hover:shadow-lg transition"
+            onClick={handleOpenRecipeDetails}
+          >
+            View Recipe
+          </Button>
         </CardBody>
       </Card>
       <RecipeDetails

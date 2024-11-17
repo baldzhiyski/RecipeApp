@@ -1,4 +1,4 @@
--- Zutaten einfügen
+  -- Zutaten einfügen
 INSERT INTO ingredients (id, name) VALUES
                                        (1, 'Spaghetti'),
                                        (2, 'Ground Beef'),
