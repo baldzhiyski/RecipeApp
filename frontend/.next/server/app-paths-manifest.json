@@ -1,8 +1,9 @@
 {
+  "/favicon.ico/route": "app/favicon.ico/route.js",
   "/manifest.webmanifest/route": "app/manifest.webmanifest/route.js",
-  "/page": "app/page.js",
+  "/_not-found/page": "app/_not-found/page.js",
   "/login/page": "app/login/page.js",
-  "/register/page": "app/register/page.js",
-  "/profile/page": "app/profile/page.js",
-  "/recipes/page": "app/recipes/page.js"
+  "/page": "app/page.js",
+  "/recipes/page": "app/recipes/page.js",
+  "/profile/page": "app/profile/page.js"
 }

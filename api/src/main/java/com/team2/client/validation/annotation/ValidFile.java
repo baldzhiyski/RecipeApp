@@ -13,7 +13,7 @@ import static com.team2.client.utils.Constants.MAX_FILE_SIZE;
 
 
 @Constraint(validatedBy = FileNotEmptyValidator.class)
-@Target({ElementType.FIELD})
+@Target({ElementType.PARAMETER, ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ValidFile {
     String message() default "{file.invalid}";

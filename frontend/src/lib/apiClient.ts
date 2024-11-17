@@ -237,6 +237,17 @@ class ApiClient {
   ): Promise<T> {
     return this.fetchApi<T>(endpoint, { method: 'DELETE', headers });
   }
+
+  // Method to upload the profile image
+  public async uploadProfileImage(formData: FormData): Promise<{ imageUrl: string }> {
+    return this.fetchApi<{ imageUrl: string }>('upload-profile-image', {
+      method: 'POST',
+      body: formData, // Send the raw file directly
+      headers: {
+        Authorization: `Bearer ${this.token}`, // Optional: Add auth token
+      }
+    });
+  }
 }
 
 // Create a singleton instance and export it

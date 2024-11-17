@@ -4,10 +4,10 @@ spring:
     resources:
       static-locations: classpath:/static/
   servlet:
-    multipart:
-      max-file-size: 10MB
-      max-request-size: 10MB
-      enabled: true
+      multipart:
+        enabled: true
+        max-file-size: 10MB
+        max-request-size: 10MB
   mode: DEVELOPMENT
   devtools:
     restart:
@@ -23,7 +23,7 @@ spring:
   mvc:
     hiddenmethod:
       filter:
-        enabled: 'true'
+        enabled: true
   datasource:
     driverClassName: org.mariadb.jdbc.Driver
     username: root
