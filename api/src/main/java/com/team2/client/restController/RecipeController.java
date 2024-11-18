@@ -4,6 +4,7 @@ import com.team2.client.domain.Ingredient;
 import com.team2.client.domain.dto.AddRecipeDTO;
 import com.team2.client.domain.dto.AddRecipeResponse;
 import com.team2.client.domain.dto.RecipeDto;
+import com.team2.client.exception.RecipeNotFoundException;
 import com.team2.client.service.RecipeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -13,13 +14,15 @@ import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
-import java.util.List;
+
+import java.util.*;
 
 @RestController
 @Tag(name = "Recipe Endpoints", description = "Managing recipes and ingredients.")
@@ -38,7 +41,7 @@ public class RecipeController {
     })
     @GetMapping("/api/recipes")
     public ResponseEntity<List<RecipeDto>> getAllRecipes() {
-        return ResponseEntity.ok(recipeService.getAllRecipies());
+        return ResponseEntity.ok(recipeService.getAllRecipes());
     }
 
     @Operation(summary = "Add a new recipe", description = "Create a new recipe entry.")
@@ -103,5 +106,54 @@ public class RecipeController {
     public ResponseEntity<RecipeDto> getRecipeByName(@PathVariable String recipeName) {
         return ResponseEntity.ok(recipeService.getRecipeByName(recipeName));
     }
+
+    @Operation(summary = "Get recipes created by the logged-in user",
+            description = "Retrieve a list of recipes created by the currently authenticated user.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "List of user's recipes",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = RecipeDto.class)))
+    })
+    @GetMapping("/api/my-recipes")
+    public ResponseEntity<List<RecipeDto>> getMyRecipes(@AuthenticationPrincipal UserDetails userDetails) {
+        return ResponseEntity.ok(recipeService.getLoggedUserCreatedRecipes(userDetails.getUsername()));
+    }
+
+    @Operation(summary = "Delete recipes from user's collection",
+            description = "Delete specific recipes from the user's collection based on the provided recipe IDs.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "All recipes deleted successfully"),
+            @ApiResponse(responseCode = "206", description = "Some recipes failed to delete",
+                    content = @Content(mediaType = "application/json",
+                            examples = @ExampleObject(value = "{\"successfulDeletes\":[1,2],\"errors\":{\"3\":\"Recipe not found\"}}")))
+    })
+    @DeleteMapping("/api/delete-recipe")
+    public ResponseEntity<Map<String, Object>> deleteRecipeFromCollection(
+            @org.springframework.web.bind.annotation.RequestBody ArrayList<Long> recipesIds,
+            @AuthenticationPrincipal UserDetails userDetails) {
+        String username = userDetails.getUsername();
+        List<Long> successfulDeletes = new ArrayList<>();
+        Map<Long, String> errors = new HashMap<>();
+
+        for (Long recipeId : recipesIds) {
+            try {
+                this.recipeService.deleteFromRecipes(recipeId, username);
+                successfulDeletes.add(recipeId);
+            } catch (RecipeNotFoundException e) {
+                errors.put(recipeId, e.getMessage());
+            }
+        }
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("successfulDeletes", successfulDeletes);
+        response.put("errors", errors);
+
+        if (errors.isEmpty()) {
+            return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
+        } else {
+            return new ResponseEntity<>(response, HttpStatus.PARTIAL_CONTENT);
+        }
+    }
+
 
 }

@@ -43,6 +43,9 @@ public class Recipe  extends BaseEntity{
     @OneToMany(mappedBy = "recipe",fetch = FetchType.EAGER)
     private List<RecipeIngredient> recipeIngredients;
 
+    @Column
+    private boolean isPrivate;
+
     @ManyToOne
     private User creator;
 

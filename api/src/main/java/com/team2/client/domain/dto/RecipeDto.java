@@ -17,6 +17,8 @@ public class RecipeDto {
 
     private RecipeType dishType;
 
+    private boolean isPrivate;
+
 
     private MealType mealType; // Add meal type field
 
