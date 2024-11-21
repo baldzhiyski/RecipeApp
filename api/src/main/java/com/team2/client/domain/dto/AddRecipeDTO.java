@@ -15,6 +15,7 @@ import java.util.List;
 @Setter
 public class AddRecipeDTO {
 
+    private boolean isPrivate;
 
     private List<IngredientDto> ingredientsList;
 

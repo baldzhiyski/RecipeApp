@@ -20,6 +20,7 @@ import com.team2.client.repository.RecipeIngredientRepository;
 import com.team2.client.repository.RecipeRepository;
 import com.team2.client.repository.UserRepository;
 import com.team2.client.service.RecipeService;
+import com.team2.client.utils.Constants;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -52,24 +53,6 @@ public class RecipeServiceImpl implements RecipeService {
 
 
     @Override
-    public List<RecipeDto> getAllRecipies() {
-        return repository.findAll()
-                .stream()
-                .map(recipe -> {
-                    List<RecipeIngredientDto> mappedIngredients = recipe.getRecipeIngredients().stream()
-                            .map(recipeIngredient -> this.mapper.map(recipeIngredient, RecipeIngredientDto.class))
-                            .toList();
-
-                    RecipeDto mappedRecipe = mapper.map(recipe, RecipeDto.class);
-
-                    mappedRecipe.setRecipeIngredients(mappedIngredients);
-
-                    return  mappedRecipe;
-                })
-                .collect(Collectors.toList());
-    }
-
-    @Override
     @Transactional
     public AddRecipeResponse addRecipe(AddRecipeDTO addRecipeDTO, UserDetails loggedInUser) {
         // Check if recipe already exists
@@ -78,8 +61,10 @@ public class RecipeServiceImpl implements RecipeService {
             throw new RecipeExistsException("The recipe with the name " + addRecipeDTO.getRecipeName() + " already exists!");
         }
 
+
         // Create a new Recipe entity
         Recipe recipe = new Recipe();
+        recipe.setPrivate(addRecipeDTO.isPrivate());
         recipe.setRecipeName(addRecipeDTO.getRecipeName());
         recipe.setDescription(addRecipeDTO.getDescription());
         recipe.setInstructions(addRecipeDTO.getInstructions());
@@ -195,5 +180,55 @@ public class RecipeServiceImpl implements RecipeService {
         mappedRecipe.setRecipeIngredients(mappedIngredients);
         return mappedRecipe;
     }
+
+    @Override
+    @Transactional
+    public void deleteFromRecipes(Long id, String username) {
+        Recipe recipe = recipeRepository.findById(id).orElseThrow(() -> new RecipeNotFoundException("Recipe with id :  " + id + " is not in the DB !"));
+        User user = this.userRepository.findByUsername(username).orElseThrow(() -> new UserNotFound("Unauthorized!"));
+
+        user.getCreatedRecipes().remove(recipe);
+        recipe.setCreator(null);
+
+        this.userRepository.saveAndFlush(user);
+        this.recipeRepository.delete(recipe);
+
+    }
+
+    @Override
+    public List<RecipeDto> getAllRecipes() {
+        return repository.findAll()
+                .stream()
+                .filter(recipe -> !recipe.isPrivate())
+                .map(this::mapRecipeToDto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<RecipeDto> getLoggedUserCreatedRecipes(String username) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UserNotFound("Unauthorized!"));
+
+        return user.getCreatedRecipes()
+                .stream()
+                .map(this::mapRecipeToDto)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Helper method to map Recipe to RecipeDto.
+     */
+    private RecipeDto mapRecipeToDto(Recipe recipe) {
+        List<RecipeIngredientDto> mappedIngredients = recipe.getRecipeIngredients()
+                .stream()
+                .map(recipeIngredient -> mapper.map(recipeIngredient, RecipeIngredientDto.class))
+                .toList();
+
+        RecipeDto mappedRecipe = mapper.map(recipe, RecipeDto.class);
+        mappedRecipe.setRecipeIngredients(mappedIngredients);
+
+        return mappedRecipe;
+    }
+
 
 }
