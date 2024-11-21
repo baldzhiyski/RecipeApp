@@ -47,15 +47,17 @@ public class UserServiceImpl implements UserService {
         mapped.setCreatedRecipes(new ArrayList<>());
         mapped.setUuid(UUID.randomUUID());
 
-        MealPlan mealPlan = new MealPlan();
+
         ShoppingList shoppingList = new ShoppingList();
+        shoppingList.setIngredients(new ArrayList<>());
         mapped.setShoppingList(shoppingList);
-        mapped.setMealPlan(mealPlan);
 
         // TODO : Handle logic with Meal Plan
 
-        this.shoppingListRepository.saveAndFlush(shoppingList);
+
+        this.shoppingListRepository.save(shoppingList);
         this.userRepository.saveAndFlush(mapped);
+
         return mapped;
     }
 

@@ -8,10 +8,12 @@ import com.team2.client.service.IngredientService;
 import com.team2.client.service.RecipeService;
 import com.team2.client.service.ShoppingListService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -21,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@Tag(name = "Shopping List Endpoints", description = "Managing ingredients for the shopping list.")
 public class ShoppingListController {
     private final IngredientService ingredientService;
 
@@ -51,28 +54,37 @@ public class ShoppingListController {
         return ResponseEntity.status(HttpStatus.CREATED).body(ingredientService.addIngredient(newIngredient));
     }
 
+    @Operation(summary = "Add ingredient to the shopping list of the logged user",
+            description = "Adds an ingredient to the authenticated user's shopping list.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Ingredient successfully added"),
+            @ApiResponse(responseCode = "404", description = "Ingredient or user not found")
+    })
     @PostMapping("/{ingredientId}/add-to-list")
     public ResponseEntity<ShoppingListDto> addIngredientToTheList(
-            @PathVariable("ingredientId") Long ingredientId, // Ingredient ID from the URL
+            @Parameter(description = "ID of the ingredient to add", example = "1")
+            @PathVariable("ingredientId") Long ingredientName,
+
             @AuthenticationPrincipal UserDetails userDetails) {
 
-        // Call service method to add ingredient to user's shopping list
-        ShoppingListDto updatedShoppingList = shoppingListService.addIngredientToList(ingredientId, userDetails.getUsername());
-
-        // Return the updated shopping list
+        ShoppingListDto updatedShoppingList = shoppingListService.addIngredientToList(ingredientName, userDetails.getUsername());
         return ResponseEntity.ok(updatedShoppingList);
     }
 
-    // Remove Ingredient from Shopping List
-    @DeleteMapping("/{ingredientId}/remove")
+    @Operation(summary = "Remove ingredient from the shopping list",
+            description = "Removes an ingredient from the authenticated user's shopping list.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Ingredient successfully removed"),
+            @ApiResponse(responseCode = "404", description = "Ingredient or user not found")
+    })
+    @DeleteMapping("/{ingredientId}/remove-ingredient")
     public ResponseEntity<ShoppingListDto> deleteIngredientFromList(
-            @PathVariable("ingredientId") Long ingredientId, // Ingredient ID from the URL
+            @Parameter(description = "ID of the ingredient to remove", example = "1")
+            @PathVariable("ingredientId") Long ingredientId,
+
             @AuthenticationPrincipal UserDetails userDetails) {
 
-        // Call service method to remove ingredient from user's shopping list
         ShoppingListDto updatedShoppingList = shoppingListService.removeIngredientFromList(ingredientId, userDetails.getUsername());
-
-        // Return the updated shopping list
         return ResponseEntity.ok(updatedShoppingList);
     }
 }

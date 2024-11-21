@@ -9,7 +9,7 @@ import com.team2.client.repository.IngredientRepository;
 import com.team2.client.repository.ShoppingListRepository;
 import com.team2.client.repository.UserRepository;
 import com.team2.client.service.ShoppingListService;
-import com.team2.client.utils.Constants;
+import com.team2.client.service.helper.HelperService;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Service;
@@ -20,20 +20,23 @@ public class ShoppingListServiceImpl implements ShoppingListService {
     private UserRepository userRepository;
     private ShoppingListRepository shoppingListRepository;
 
+    private HelperService helperService;
+
     private ModelMapper mapper;
 
-    public ShoppingListServiceImpl(IngredientRepository ingredientRepository, UserRepository userRepository, ShoppingListRepository shoppingListRepository, ModelMapper mapper) {
+    public ShoppingListServiceImpl(IngredientRepository ingredientRepository, UserRepository userRepository, ShoppingListRepository shoppingListRepository, HelperService helperService, ModelMapper mapper) {
         this.ingredientRepository = ingredientRepository;
         this.userRepository = userRepository;
         this.shoppingListRepository = shoppingListRepository;
+        this.helperService = helperService;
         this.mapper = mapper;
     }
 
     @Override
     public ShoppingListDto addIngredientToList(Long ingredientId, String username) {
-        // Fetch the ingredient from the repository using the ingredientId
+        // Fetch the ingredient from the repository using the ingredientName
         Ingredient ingredient = ingredientRepository.findById(ingredientId)
-                .orElseThrow(() -> new BadCredentialsException("Invalid ingredient id"));
+                .orElseThrow(() -> new BadCredentialsException("Ingredient with id " + ingredientId + " is not in the DB !"));
 
         // Fetch the user using the provided username (email in this case)
         User loggedUser = userRepository.findByEmail(username)
