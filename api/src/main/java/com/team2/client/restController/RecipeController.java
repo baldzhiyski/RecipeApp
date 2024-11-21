@@ -73,15 +73,6 @@ public class RecipeController {
         return ResponseEntity.ok(recipeService.getTypes(type));
     }
 
-    @Operation(summary = "Get all ingredients", description = "Retrieve a list of all available ingredients.")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "List of all ingredients",
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = Ingredient.class)))
-    })
-    @GetMapping("/api/ingredients")
-    public ResponseEntity<List<Ingredient>> getAllIngredients() {
-        return ResponseEntity.ok(recipeService.getAllIngredients());
-    }
 
     @Operation(summary = "Get recipe by ID", description = "Retrieve a specific recipe by its unique ID.")
     @ApiResponses({

@@ -20,6 +20,7 @@ import com.team2.client.repository.RecipeIngredientRepository;
 import com.team2.client.repository.RecipeRepository;
 import com.team2.client.repository.UserRepository;
 import com.team2.client.service.RecipeService;
+import com.team2.client.service.helper.HelperService;
 import com.team2.client.utils.Constants;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -35,6 +36,8 @@ public class RecipeServiceImpl implements RecipeService {
     private final RecipeRepository recipeRepository;
     private RecipeRepository repository;
 
+    private HelperService helperService;
+
     private IngredientRepository ingredientRepository;
 
     private RecipeIngredientRepository recipeIngredientRepository;
@@ -42,8 +45,9 @@ public class RecipeServiceImpl implements RecipeService {
     private UserRepository userRepository;
     private ModelMapper mapper;
 
-    public RecipeServiceImpl(RecipeRepository repository, ModelMapper mapper, IngredientRepository ingredientRepository, UserRepository userRepository, RecipeRepository recipeRepository, RecipeIngredientRepository recipeIngredientRepository) {
+    public RecipeServiceImpl(RecipeRepository repository, HelperService helperService, ModelMapper mapper, IngredientRepository ingredientRepository, UserRepository userRepository, RecipeRepository recipeRepository, RecipeIngredientRepository recipeIngredientRepository) {
         this.repository = repository;
+        this.helperService = helperService;
         this.mapper = mapper;
         this.ingredientRepository=ingredientRepository;
         this.userRepository = userRepository;
@@ -79,7 +83,7 @@ public class RecipeServiceImpl implements RecipeService {
 
                     // Check if ingredient exists, otherwise create a new one
                     Ingredient ingredient = this.ingredientRepository.findByName(ingredientName)
-                            .orElseGet(() -> createNewIngredient(ingredientName));
+                            .orElseGet(() -> helperService.createIngredient(ingredientName));
 
                     // Create RecipeIngredient object
                     RecipeIngredient recipeIngredient = new RecipeIngredient();
@@ -119,15 +123,6 @@ public class RecipeServiceImpl implements RecipeService {
         return name.substring(0, 1).toUpperCase() + name.substring(1);
     }
 
-    // Helper method to create a new ingredient if not found
-    private Ingredient createNewIngredient(String ingredientName) {
-        Ingredient ingredient = new Ingredient();
-        ingredient.setName(ingredientName);
-        this.ingredientRepository.saveAndFlush(ingredient);
-        return ingredient;
-    }
-
-
     @Override
     public List<Object> getTypes(String type) {
         switch (type.toUpperCase()){
@@ -144,11 +139,6 @@ public class RecipeServiceImpl implements RecipeService {
                 throw new InvalidTypeProvided("No such type : " + type);
             }
         }
-    }
-
-    @Override
-    public List<Ingredient> getAllIngredients() {
-        return ingredientRepository.findAll();
     }
 
     @Override
