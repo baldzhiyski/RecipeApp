@@ -14,6 +14,6 @@ import java.util.List;
 @Setter
 public class MealPlan extends BaseEntity{
 
-    @OneToMany(mappedBy = "mealPlan")
+    @OneToMany
     private List<MealPlanRecipe> mealPlanRecipes;
 }

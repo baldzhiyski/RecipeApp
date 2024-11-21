@@ -15,13 +15,9 @@ public class MealPlanRecipe extends BaseEntity {
 
     @Column
     private DayOfWeek dayOfWeek;
-    @OneToOne
+    @ManyToOne
     private Recipe recipe;
 
     @Column
     private LocalDate date;
-
-
-    @ManyToOne
-    private MealPlan mealPlan;
 }

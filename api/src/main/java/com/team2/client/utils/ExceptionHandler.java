@@ -176,5 +176,22 @@ public class ExceptionHandler extends ResponseEntityExceptionHandler {
                 .body(response); // Wrap the message in HttpErrorResponse
     }
 
+    @org.springframework.web.bind.annotation.ExceptionHandler(AlreadyAddedRecipeException.class)
+    public ResponseEntity<HttpErrorResponse> handleAlreadyAddedRecipeException(AlreadyAddedRecipeException ex) {
+        // Return an appropriate HTTP status code and a meaningful message based on the exception
+        HttpErrorResponse response = HttpErrorResponse.of(ex.getMessage(), HttpStatus.BAD_REQUEST.value(), null, null);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(response); // Wrap the message in HttpErrorResponse
+    }
+
+    @org.springframework.web.bind.annotation.ExceptionHandler(NotExistingRecipeInTheFollowingDay.class)
+    public ResponseEntity<HttpErrorResponse> handleNotExistingRecipeInTheFollowingDay(NotExistingRecipeInTheFollowingDay ex) {
+        // Return an appropriate HTTP status code and a meaningful message based on the exception
+        HttpErrorResponse response = HttpErrorResponse.of(ex.getMessage(), HttpStatus.BAD_REQUEST.value(), null, null);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(response); // Wrap the message in HttpErrorResponse
+    }
+
+
 
 }
