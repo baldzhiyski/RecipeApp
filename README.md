@@ -93,7 +93,7 @@ docker-compose up --build
    ```
    This command will set up the database and the Caddy server as specified in the `docker-compose.yml` file.
 
-3.**Access the Application**:
+3.**Locally Testing**:
 
 Once the containers are running, you can access the application through your web browser:
 
@@ -106,3 +106,6 @@ Open https://localhost in your browser.
 When you see a security warning, select the option to "Proceed" or "Continue" (the exact message may vary depending on your browser).
 This is a safe connection for development purposes, and your local environment remains secure.
 Note: This warning won’t appear in the production environment, as it will use a valid SSL certificate.
+
+4.**Access the Application**
+The application is currently available at http://193.196.54.242:3000.
