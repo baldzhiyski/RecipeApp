@@ -9,5 +9,4 @@ import java.util.Optional;
 
 @Repository
 public interface ShoppingListRepository extends JpaRepository<ShoppingList,Long> {
-    Optional<ShoppingList> findByUser(User user);
 }

@@ -23,7 +23,12 @@ export default function UpdateProfileImageForm() {
         console.log(`${key}:`, value);
       }
       // Let axios set the correct 'Content-Type' header
-      await apiClient.uploadProfileImage(formData);
+      const response = await apiClient.uploadProfileImage(formData);
+      const uploadedImageUrl = response.imageUrl; // The URL returned from the backend
+
+      console.log("Image : " + uploadedImageUrl);
+      User.getInstance().setProfileImageUrl(uploadedImageUrl);
+      window.location.reload(); // This will refresh the page and update the UI with the new image URL
       toast.success("Profile picture updated successfully");
     } catch (error: any) {
       const errorMessage =

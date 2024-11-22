@@ -71,6 +71,14 @@ class User {
     this.user = null;
     sessionStorage.removeItem('user');
   }
+  // Method to update the profile image URL
+  public setProfileImageUrl(profileImageUrl: string) {
+    if (this.user) {
+      this.user.profileImageUrl = profileImageUrl;
+      // Save the updated user data to sessionStorage
+      sessionStorage.setItem('user', JSON.stringify(this.user));
+    }
+  }
 }
 
 export default User;

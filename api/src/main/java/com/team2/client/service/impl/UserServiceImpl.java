@@ -1,8 +1,8 @@
 package com.team2.client.service.impl;
 
-import com.team2.client.domain.MealPlan;
 import com.team2.client.domain.ShoppingList;
 import com.team2.client.domain.User;
+import com.team2.client.domain.dto.ImageResponseDto;
 import com.team2.client.domain.dto.UserRegisterDto;
 import com.team2.client.domain.enums.Role;
 import com.team2.client.exception.UserNotFound;
@@ -62,12 +62,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void uploadProfileImage(String email, MultipartFile profileImage) {
+    public ImageResponseDto uploadProfileImage(String email, MultipartFile profileImage) {
         User user = this.userRepository.findByEmail(email).orElseThrow(() -> new UserNotFound("No such user !"));
 
         // SAVE THE file ! ;
         String imageUrl = cloudinaryService.uploadPhoto(profileImage, "users-accounts-photos");
         user.setProfileImageUrl(imageUrl);
         this.userRepository.saveAndFlush(user);
+
+        return new ImageResponseDto(imageUrl);
     }
 }

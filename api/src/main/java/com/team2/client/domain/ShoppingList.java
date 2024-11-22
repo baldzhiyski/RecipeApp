@@ -1,9 +1,6 @@
 package com.team2.client.domain;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -15,10 +12,8 @@ import java.util.List;
 @Getter
 public class ShoppingList extends BaseEntity {
 
-    @OneToMany
+    @OneToMany(fetch = FetchType.EAGER)
     private List<Ingredient> ingredients;
 
-    @OneToOne(mappedBy = "shoppingList")
-    private User user;
 
 }
