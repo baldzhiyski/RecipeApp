@@ -143,49 +143,6 @@ class ApiClient {
       method: 'POST',
       body: { firstName, lastName, username, password, confirmPassword, email },
     });
-
-    // Step 2: Log in the user immediately after registration
-
-
-    // Step 3: Upload profile image if provided
-    if (profileImageFile) {
-      const formData = new FormData();
-      formData.append('profileImage', profileImageFile);
-
-      // Use the fetchApi method to upload the image
-      await this.fetchApi<{ imageUrl: string }>('upload-profile-image', {
-        method: 'POST',
-        body: formData,
-        headers: {
-          'Content-Type': 'multipart/form-data', // Use multipart/form-data for file uploads
-        },
-      });
-
-      // Step 4: Update the user profile with the profile image URL
-      const userProfile = await this.fetchApi<{
-        id: number;
-        username: string;
-        firstName: string;
-        lastName: string;
-        email: string;
-        profileImageUrl: string;
-        uuid: string;
-      }>('auth/me', {
-        method: 'GET',
-        headers: { Authorization: `Bearer ${this.token}` },
-      });
-
-      User.getInstance().setUser(
-        userProfile.id,
-        userProfile.username,
-        userProfile.firstName,
-        userProfile.lastName,
-        userProfile.email,
-        userProfile.profileImageUrl,
-        userProfile.uuid,
-        this.token!
-      );
-    }
   }
 
   public async logout(): Promise<void> {
