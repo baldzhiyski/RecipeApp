@@ -1,10 +1,7 @@
 package com.team2.client.restController;
 
 import com.team2.client.domain.User;
-import com.team2.client.domain.dto.LoginRequest;
-import com.team2.client.domain.dto.LoginResponse;
-import com.team2.client.domain.dto.UserProfileImageDto;
-import com.team2.client.domain.dto.UserRegisterDto;
+import com.team2.client.domain.dto.*;
 import com.team2.client.service.AuthService;
 import com.team2.client.service.UserService;
 import com.team2.client.validation.annotation.ValidFile;
@@ -85,11 +82,11 @@ public class AuthController {
             }
     )
     @PostMapping(value = "/api/upload-profile-image",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<String> uploadProfileImage(
+    public ResponseEntity<ImageResponseDto> uploadProfileImage(
             @RequestParam("profileImage")  @ValidFile  MultipartFile profileImage,
             @AuthenticationPrincipal UserDetails userDetails) {
-        userService.uploadProfileImage(userDetails.getUsername(), profileImage);
-        return ResponseEntity.ok("Profile image uploaded successfully.");
+        ImageResponseDto imageUrlDto = userService.uploadProfileImage(userDetails.getUsername(), profileImage);
+        return ResponseEntity.ok(imageUrlDto);
     }
     /**
      * Log in with the provided email and password.

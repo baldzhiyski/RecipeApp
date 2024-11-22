@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation';
 
 import User from '@entities/User';
 import { EyeFilledIcon, EyeSlashFilledIcon } from '@nextui-org/shared-icons';
+import { toast } from 'sonner';
 
 export default function RegisterPage() {
   const [email, setEmail] = React.useState<string>('');
@@ -43,11 +44,13 @@ export default function RegisterPage() {
     setWaitForRegister(true);
     setErrorMessages({});
     setGeneralErrors([]);
+
     try {
       const response = await apiClient.register(username, email, password, verifyPassword, firstName, lastName);
 
-      // Redirect if registration is successful
-      router.push('/');
+      toast.success('Registration successful! Please log in.');
+      // Redirect to login page with success query parameter
+      router.push('/login?success=true'); // You can use a query parameter to indicate success
     } catch (error: any) {
       console.error('Registration error:', error);
       if (error.fieldErrors) {

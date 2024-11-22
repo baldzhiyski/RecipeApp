@@ -1,5 +1,7 @@
 import User from '@entities/User';
 
+import {AddIngredientType,Ingredient } from "@types/IngredientType"
+
 // lib/apiClient.ts
 type RequestMethod = 'GET' | 'POST' | 'PUT' | 'DELETE';
 
@@ -60,7 +62,8 @@ class ApiClient {
       headers: {
         ...headers,
         ...(this.token ? { Authorization: `Bearer ${this.token}` } : {}),
-        'Content-Type': headers['Content-Type'] || (isFormData ? undefined : 'application/json'),
+        // Only add 'Content-Type' if the body is not FormData
+        ...(isFormData ? {} : { 'Content-Type': 'application/json' }),
       },
       body: isFormData ? body : body ? JSON.stringify(body) : undefined,
     };
@@ -140,49 +143,6 @@ class ApiClient {
       method: 'POST',
       body: { firstName, lastName, username, password, confirmPassword, email },
     });
-
-    // Step 2: Log in the user immediately after registration
-    await this.login(email, password);
-
-    // Step 3: Upload profile image if provided
-    if (profileImageFile) {
-      const formData = new FormData();
-      formData.append('profileImage', profileImageFile);
-
-      // Use the fetchApi method to upload the image
-      await this.fetchApi<{ imageUrl: string }>('upload-profile-image', {
-        method: 'POST',
-        body: formData,
-        headers: {
-          'Content-Type': 'multipart/form-data', // Use multipart/form-data for file uploads
-        },
-      });
-
-      // Step 4: Update the user profile with the profile image URL
-      const userProfile = await this.fetchApi<{
-        id: number;
-        username: string;
-        firstName: string;
-        lastName: string;
-        email: string;
-        profileImageUrl: string;
-        uuid: string;
-      }>('auth/me', {
-        method: 'GET',
-        headers: { Authorization: `Bearer ${this.token}` },
-      });
-
-      User.getInstance().setUser(
-        userProfile.id,
-        userProfile.username,
-        userProfile.firstName,
-        userProfile.lastName,
-        userProfile.email,
-        userProfile.profileImageUrl,
-        userProfile.uuid,
-        this.token!
-      );
-    }
   }
 
   public async logout(): Promise<void> {
@@ -240,12 +200,56 @@ class ApiClient {
 
   // Method to upload the profile image
   public async uploadProfileImage(formData: FormData): Promise<{ imageUrl: string }> {
-    return this.fetchApi<{ imageUrl: string }>('upload-profile-image', {
-      method: 'POST',
-      body: formData, // Send the raw file directly
-      headers: {
-        Authorization: `Bearer ${this.token}`, // Optional: Add auth token
+    try {
+      const response = await this.fetchApi<{ imageUrl: string }>('upload-profile-image', {
+        method: 'POST',
+        body: formData, // Send the raw FormData directly
+      });
+
+      // Check if response is OK
+      if (!response || !response.imageUrl) {
+        throw new Error('Image upload failed or image URL not found.');
       }
+
+      return response;
+    } catch (error) {
+      console.error('Error uploading profile image:', error);
+      throw error; // Re-throw or handle error
+    }
+  }
+
+  public async getAllAvailableIngredients(): Promise<{ ingredients: Array<Ingredient> }> {
+    return this.fetchApi<{ ingredients: Array<Ingredient> }>(`ingredients`, {
+      method: 'GET',
+    });
+  }
+
+  public async addIngredientToDb(ingredient: AddIngredientType): Promise<{ ingredients: Array<Ingredient> }> {
+    return this.fetchApi<{ ingredients: Array<Ingredient> }>(`ingredients/add`, {
+      method: 'POST',
+      body: ingredient
+    });
+  }
+
+
+  public async addIngredientToShoppingList(ingredientId: string | number): Promise<{ ingredients: Array<Ingredient> }> {
+    return this.fetchApi<{ ingredients: Array<Ingredient> }>(`${ingredientId}/add-to-list`, {
+      method: 'POST',
+    });
+  }
+
+
+  // Remove ingredient from shopping list
+
+  public async removeIngredientFromList(ingredientId: string | number): Promise<{ ingredients: Array<Ingredient> }> {
+    return this.fetchApi<{ ingredients: Array<Ingredient> }>(`${ingredientId}/remove-ingredient`, {
+      method: 'DELETE',
+    });
+  }
+
+  public async getShoppingListForLoggedUser() : Promise<{ingredients : Array<Ingredient> }> {
+    return this.fetchApi<{ ingredients: Array<Ingredient> }>(`shopping-list`, {
+      method: 'GET',
     });
   }
 }
