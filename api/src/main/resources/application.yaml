@@ -63,7 +63,7 @@ logging:
     blog: WARN
 
 server:
-  address: ${API_IP:193.196.54.242}
+  address: ${API_IP:localhost}
   port: ${API_PORT:8082}
 
 management:
