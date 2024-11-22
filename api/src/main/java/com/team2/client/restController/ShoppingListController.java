@@ -2,6 +2,7 @@ package com.team2.client.restController;
 
 import com.team2.client.domain.Ingredient;
 import com.team2.client.domain.ShoppingList;
+import com.team2.client.domain.dto.AllIngredientsDto;
 import com.team2.client.domain.dto.IngredientDto;
 import com.team2.client.domain.dto.ShoppingListDto;
 import com.team2.client.service.IngredientService;
@@ -40,8 +41,13 @@ public class ShoppingListController {
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = Ingredient.class)))
     })
     @GetMapping("/api/ingredients")
-    public ResponseEntity<List<Ingredient>> getAllIngredients() {
+    public ResponseEntity<AllIngredientsDto> getAllIngredients() {
         return ResponseEntity.ok(ingredientService.getAllIngredients());
+    }
+
+    @GetMapping("/api/shopping-list")
+    public ResponseEntity<ShoppingListDto> getShoppingList(@AuthenticationPrincipal UserDetails userDetails) {
+        return ResponseEntity.ok(shoppingListService.getShoppingList(userDetails.getUsername()));
     }
 
     @Operation(summary = "Add a new ingredient", description = "Allow users to add a new ingredient if it is not already in the database.")
@@ -60,7 +66,7 @@ public class ShoppingListController {
             @ApiResponse(responseCode = "200", description = "Ingredient successfully added"),
             @ApiResponse(responseCode = "404", description = "Ingredient or user not found")
     })
-    @PostMapping("/{ingredientId}/add-to-list")
+    @PostMapping("/api/{ingredientId}/add-to-list")
     public ResponseEntity<ShoppingListDto> addIngredientToTheList(
             @Parameter(description = "ID of the ingredient to add", example = "1")
             @PathVariable("ingredientId") Long ingredientName,
@@ -77,7 +83,7 @@ public class ShoppingListController {
             @ApiResponse(responseCode = "200", description = "Ingredient successfully removed"),
             @ApiResponse(responseCode = "404", description = "Ingredient or user not found")
     })
-    @DeleteMapping("/{ingredientId}/remove-ingredient")
+    @DeleteMapping("/api/{ingredientId}/remove-ingredient")
     public ResponseEntity<ShoppingListDto> deleteIngredientFromList(
             @Parameter(description = "ID of the ingredient to remove", example = "1")
             @PathVariable("ingredientId") Long ingredientId,

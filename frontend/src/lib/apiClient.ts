@@ -1,6 +1,6 @@
 import User from '@entities/User';
 
-type Ingredient = { name: string };
+import {AddIngredientType,Ingredient } from "@types/IngredientType"
 
 // lib/apiClient.ts
 type RequestMethod = 'GET' | 'POST' | 'PUT' | 'DELETE';
@@ -219,21 +219,21 @@ class ApiClient {
   }
 
   public async getAllAvailableIngredients(): Promise<{ ingredients: Array<Ingredient> }> {
-    return this.fetchApi<{ ingredients: Array<Ingredient> }>(`/ingredients`, {
+    return this.fetchApi<{ ingredients: Array<Ingredient> }>(`ingredients`, {
       method: 'GET',
     });
   }
 
-  public async addIngredientToDb(ingredient: Ingredient): Promise<{ shoppingList: Array<Ingredient> }> {
-    return this.fetchApi<{ shoppingList: Array<Ingredient> }>(`/ingredients/add`, {
+  public async addIngredientToDb(ingredient: AddIngredientType): Promise<{ ingredients: Array<Ingredient> }> {
+    return this.fetchApi<{ ingredients: Array<Ingredient> }>(`ingredients/add`, {
       method: 'POST',
       body: ingredient
     });
   }
 
 
-  public async addIngredientToShoppingList(ingredientId: string | number): Promise<{ shoppingList: Array<Ingredient> }> {
-    return this.fetchApi<{ shoppingList: Array<Ingredient> }>(`/shoppingList/${ingredientId}/add-to-list`, {
+  public async addIngredientToShoppingList(ingredientId: string | number): Promise<{ ingredients: Array<Ingredient> }> {
+    return this.fetchApi<{ ingredients: Array<Ingredient> }>(`${ingredientId}/add-to-list`, {
       method: 'POST',
     });
   }
@@ -241,12 +241,17 @@ class ApiClient {
 
   // Remove ingredient from shopping list
 
-  public async removeIngredientFromList(ingredientId: string | number): Promise<{ shoppingList: Array<Ingredient> }> {
-    return this.fetchApi<{ shoppingList: Array<Ingredient> }>(`/shoppingList/${ingredientId}/remove-ingredient`, {
-      method: 'POST',
+  public async removeIngredientFromList(ingredientId: string | number): Promise<{ ingredients: Array<Ingredient> }> {
+    return this.fetchApi<{ ingredients: Array<Ingredient> }>(`${ingredientId}/remove-ingredient`, {
+      method: 'DELETE',
     });
   }
 
+  public async getShoppingListForLoggedUser() : Promise<{ingredients : Array<Ingredient> }> {
+    return this.fetchApi<{ ingredients: Array<Ingredient> }>(`shopping-list`, {
+      method: 'GET',
+    });
+  }
 }
 
 // Create a singleton instance and export it

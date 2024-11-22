@@ -1,13 +1,12 @@
 package com.team2.client.service.impl;
 
 import com.team2.client.domain.Ingredient;
+import com.team2.client.domain.dto.AllIngredientsDto;
 import com.team2.client.domain.dto.IngredientDto;
 import com.team2.client.repository.IngredientRepository;
 import com.team2.client.service.IngredientService;
 import com.team2.client.service.helper.HelperService;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 public class IngredientServiceImpl  implements IngredientService {
@@ -25,7 +24,7 @@ public class IngredientServiceImpl  implements IngredientService {
     }
 
     @Override
-    public List<Ingredient> getAllIngredients() {
-        return ingredientRepository.findAll();
+    public AllIngredientsDto getAllIngredients() {
+        return new AllIngredientsDto(ingredientRepository.findAll());
     }
 }

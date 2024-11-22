@@ -8,4 +8,6 @@ public interface ShoppingListService {
 
 
     ShoppingListDto removeIngredientFromList(Long ingredientId, String username);
+
+    ShoppingListDto getShoppingList(String username);
 }

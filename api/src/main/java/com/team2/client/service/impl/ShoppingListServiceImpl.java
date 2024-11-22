@@ -4,6 +4,7 @@ import com.team2.client.domain.Ingredient;
 import com.team2.client.domain.ShoppingList;
 import com.team2.client.domain.User;
 import com.team2.client.domain.dto.ShoppingListDto;
+import com.team2.client.exception.AlreadyAddedIngredientToList;
 import com.team2.client.exception.UserNotFound;
 import com.team2.client.repository.IngredientRepository;
 import com.team2.client.repository.ShoppingListRepository;
@@ -45,6 +46,9 @@ public class ShoppingListServiceImpl implements ShoppingListService {
         // Fetch the shopping list for the logged user, or create a new one if not found
         ShoppingList shoppingList = loggedUser.getShoppingList();
 
+        if(shoppingList.getIngredients().contains(ingredient)){
+            throw new AlreadyAddedIngredientToList("Ingredient with name  " +ingredient.getName()  + " already added !");
+        }
         // Add the ingredient to the shopping list
         shoppingList.getIngredients().add(ingredient);
 
@@ -53,7 +57,10 @@ public class ShoppingListServiceImpl implements ShoppingListService {
         userRepository.saveAndFlush(loggedUser);
 
         // Convert the updated shopping list to a DTO and return it
-        return this.mapper.map(shoppingList,ShoppingListDto.class);
+        ShoppingListDto map = this.mapper.map(shoppingList, ShoppingListDto.class);
+        map.setUserUsername(loggedUser.getUsername());
+
+        return map;
     }
 
     @Override
@@ -70,7 +77,7 @@ public class ShoppingListServiceImpl implements ShoppingListService {
         ShoppingList shoppingList = loggedUser.getShoppingList();
 
         // Check if the shopping list is null or the ingredient doesn't exist in the list
-        if (shoppingList == null || !shoppingList.getIngredients().contains(ingredient)) {
+        if (!shoppingList.getIngredients().contains(ingredient)) {
             throw new BadCredentialsException("Ingredient not found in the shopping list.");
         }
 
@@ -84,7 +91,25 @@ public class ShoppingListServiceImpl implements ShoppingListService {
         userRepository.saveAndFlush(loggedUser);
 
         // Convert the updated shopping list to a DTO and return it
-        return this.mapper.map(shoppingList, ShoppingListDto.class);
+        ShoppingListDto map = this.mapper.map(shoppingList, ShoppingListDto.class);
+        map.setUserUsername(loggedUser.getUsername());
+
+        return map;
+    }
+
+    @Override
+    public ShoppingListDto getShoppingList(String email) {
+        // Fetch the user using the provided username (email in this case)
+        User loggedUser = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserNotFound("Unauthorized!"));
+
+        // Fetch the shopping list for the logged user, or create a new one if not found
+        ShoppingList shoppingList = loggedUser.getShoppingList();
+
+        ShoppingListDto map = this.mapper.map(shoppingList, ShoppingListDto.class);
+        map.setUserUsername(loggedUser.getUsername());
+
+        return map;
     }
 
 }
