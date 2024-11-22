@@ -3,10 +3,12 @@ import MaterialSymbol from '@components/globals/materialSymbol/MaterialSymbol';
 import { Button, Input } from '@nextui-org/react';
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import apiClient from '@lib/apiClient';
+import 'react-toastify/dist/ReactToastify.css'; // Import toast styles
 import User from '@entities/User';
 import { EyeFilledIcon, EyeSlashFilledIcon } from '@nextui-org/shared-icons';
+import { toast, ToastContainer } from 'react-toastify';
 
 export default function LoginPage() {
   const [isVisible, setIsVisible] = React.useState(false);
@@ -18,23 +20,31 @@ export default function LoginPage() {
   const toggleVisibility = () => setIsVisible(!isVisible);
 
   const router = useRouter();
-
+  const searchParams = useSearchParams(); // To access query parameters
   // Use the useEffect hook to set the user on load
   useEffect(() => {
-    const currentUser = User.getInstance().getUser(); // Get the current user instance
+    const currentUser = User.getInstance(); // Get the current user instance
     setUser(currentUser); // Set the user state based on sessionStorage
   }, []); // Empty dependency array ensures this runs only on component mount
 
   // If user is already logged in, redirect to the home page
   useEffect(() => {
-    if (user && user.token) { // Ensure user data is valid
+    if (user && user.getUser()?.token) { // Ensure user data is valid
       router.replace('/'); // Redirect to the home page ("/") if logged in
     }
   }, [user, router]); // Re-run whenever the user state changes
 
+  useEffect(() => {
+    // Check for success query parameter
+    if (searchParams.get('success') === 'true') {
+      toast.success('Registration successful! Please log in.');
+    }
+  }, [searchParams]); // Run when searchParams change (i.e., when URL changes)
+
   const handleRegisterClick = () => {
     router.push('/register');
   };
+
 
   const validateEmail = (email: string) =>
     email.match(/^[A-Z0-9._%+-]+@[A-Z0-9.-]+.[A-Z]{2,4}$/i);
@@ -151,6 +161,7 @@ export default function LoginPage() {
           </Link>
         </div>
       </div>
+      <ToastContainer />
     </div>
   );
 }
