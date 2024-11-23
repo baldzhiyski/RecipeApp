@@ -10,6 +10,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class HelperService {
@@ -22,13 +23,22 @@ public class HelperService {
     }
 
     public Ingredient createIngredient(String ingredientName) {
-        Ingredient ingredient = new Ingredient();
-        ingredient.setName(ingredientName);
-        this.ingredientRepository.saveAndFlush(ingredient);
-        return ingredient;
+        String result = convertNameIngredient(ingredientName);
+        Optional<Ingredient> byName = this.ingredientRepository.findByName(result);
+        if (byName.isEmpty()) {
+            Ingredient ingredient = new Ingredient();
+            ingredient.setName(result);
+            this.ingredientRepository.saveAndFlush(ingredient);
+            return ingredient;
+        }
+        return byName.get();
     }
 
-    public MealPlanDto getMealPlanDto(MealPlan mealPlan){
+    public  String convertNameIngredient(String ingredientName) {
+        return ingredientName.toLowerCase().substring(0, 1).toUpperCase() + ingredientName.toLowerCase().substring(1);
+    }
+
+    public MealPlanDto getMealPlanDto(MealPlan mealPlan) {
         List<MealPlanRecipeDto> listMappedMealPlanRecipes = mealPlan.getMealPlanRecipes().stream()
                 .map(mealPlanRecipe1 -> this.mapper.map(mealPlanRecipe1, MealPlanRecipeDto.class))
                 .toList();

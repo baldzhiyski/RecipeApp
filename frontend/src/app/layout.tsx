@@ -68,7 +68,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = async ({
           <NextIntlClientProvider messages={messages}>
             <HeaderNavbar />
             {/* Main Content Area */}
-            <main className="flex-1 p-5">{children}</main>
+            <main >{children}</main>
             <Footer />
           </NextIntlClientProvider>
         </NextUIProvider>

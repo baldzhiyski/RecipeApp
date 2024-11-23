@@ -79,11 +79,12 @@ public class RecipeServiceImpl implements RecipeService {
         // Handle ingredients list
         List<RecipeIngredient> ingredientsForRecipe = addRecipeDTO.getIngredientsList().stream()
                 .map(ingredientDto -> {
-                    String ingredientName = capitalizeFirstLetter(ingredientDto.getName().toLowerCase());
+
 
                     // Check if ingredient exists, otherwise create a new one
-                    Ingredient ingredient = this.ingredientRepository.findByName(ingredientName)
-                            .orElseGet(() -> helperService.createIngredient(ingredientName));
+                    Ingredient ingredient = this.ingredientRepository.findByName(this.helperService.convertNameIngredient(ingredientDto.getName()))
+                            .orElseGet(() -> helperService.createIngredient(ingredientDto.getName()));
+                    this.ingredientRepository.saveAndFlush(ingredient);
 
                     // Create RecipeIngredient object
                     RecipeIngredient recipeIngredient = new RecipeIngredient();
@@ -113,14 +114,6 @@ public class RecipeServiceImpl implements RecipeService {
         return AddRecipeResponse.builder()
                 .recipeName(addRecipeDTO.getRecipeName())
                 .build();
-    }
-
-    // Helper method to capitalize first letter
-    private String capitalizeFirstLetter(String name) {
-        if (name == null || name.isEmpty()) {
-            return name;
-        }
-        return name.substring(0, 1).toUpperCase() + name.substring(1);
     }
 
     @Override
