@@ -5,8 +5,10 @@ import com.team2.client.domain.dto.MealPlanDto;
 import java.time.DayOfWeek;
 
 public interface MealPlanService {
-    MealPlanDto createWeeklyMealPlan(String username);
+
     MealPlanDto addRecipeToDay(String username, DayOfWeek dayOfWeek, Long recipeId);
 
     MealPlanDto removeRecipe(String username, DayOfWeek dayOfWeek, Long recipeId);
+
+    MealPlanDto getWeeklyPlan(String username);
 }
