@@ -28,18 +28,13 @@ public class MealPlanController {
     }
 
 
-    @PostMapping("/api/meal-plans/create")
-
-    @Operation(summary = "Create a weekly meal plan", description = "Creates a new empty meal plan for the user if it does not already exist for the current week.")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Meal plan created successfully",
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = MealPlanDto.class))),
-            @ApiResponse(responseCode = "401", description = "Unauthorized user")
-    })
-    public ResponseEntity<MealPlanDto> createWeeklyMealPlan(@AuthenticationPrincipal UserDetails userDetails) {
-        MealPlanDto mealPlan = mealPlanService.createWeeklyMealPlan(userDetails.getUsername());
+    @GetMapping("/api/weekly-plan")
+    public ResponseEntity<MealPlanDto> getWeeklyPlan(@AuthenticationPrincipal UserDetails userDetails) {
+        MealPlanDto mealPlan = mealPlanService.getWeeklyPlan(userDetails.getUsername());
         return ResponseEntity.ok(mealPlan);
     }
+
+
 
     @PostMapping("/api/meal-plans/{dayOfWeek}/add-recipe")
     @Operation(summary = "Add a recipe to a specific day of the weekly plan", description = "Adds a recipe to the specified day in the user's meal plan.")
@@ -52,10 +47,10 @@ public class MealPlanController {
     })
     public ResponseEntity<MealPlanDto> addRecipeToDay(
             @AuthenticationPrincipal UserDetails userDetails,
-            @PathVariable("dayOfWeek") DayOfWeek dayOfWeek,
+            @PathVariable("dayOfWeek") String dayOfWeek,
             @RequestParam("recipeId") Long recipeId) {
 
-        MealPlanDto updatedPlan = mealPlanService.addRecipeToDay(userDetails.getUsername(), dayOfWeek, recipeId);
+        MealPlanDto updatedPlan = mealPlanService.addRecipeToDay(userDetails.getUsername(), DayOfWeek.valueOf(dayOfWeek), recipeId);
         return ResponseEntity.ok(updatedPlan);
     }
 

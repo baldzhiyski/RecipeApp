@@ -1,24 +1,26 @@
-"use client";
+'use client';
 import React, { useState, useEffect } from 'react';
-import { toast, ToastContainer } from 'react-toastify'; // Import react-toastify
-import 'react-toastify/dist/ReactToastify.css'; // Import toast styles
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import apiClient from '@lib/apiClient';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import './ShoppingList.css'; // Import custom CSS
 import { Ingredient } from '@types/IngredientType';
 
 const ShoppingListPage = () => {
   const [availableIngredients, setAvailableIngredients] = useState<any[]>([]);
   const [shoppingList, setShoppingList] = useState<Ingredient[]>([]);
   const [newIngredient, setNewIngredient] = useState<string>('');
+  const [searchQuery, setSearchQuery] = useState<string>(''); // State for search query
   const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
-    // Clear any existing error on page reload
     const fetchShoppingList = async () => {
       try {
         const shoppingListData = await apiClient.getShoppingListForLoggedUser();
         setShoppingList(shoppingListData.ingredients);
       } catch (err) {
-        toast.error('Failed to fetch shopping list'); // Toast error message
+        toast.error('Failed to fetch shopping list');
       }
     };
 
@@ -27,7 +29,7 @@ const ShoppingListPage = () => {
         const ingredientsData = await apiClient.getAllAvailableIngredients();
         setAvailableIngredients(ingredientsData.ingredients);
       } catch (err) {
-        toast.error('Failed to fetch ingredients'); // Toast error message
+        toast.error('Failed to fetch ingredients');
       }
     };
 
@@ -44,7 +46,7 @@ const ShoppingListPage = () => {
       toast.success('Ingredient added to shopping list');
     } catch (err) {
       setLoading(false);
-      toast.error(err.message); // Toast error message
+      toast.error(err.message);
     }
   };
 
@@ -57,7 +59,7 @@ const ShoppingListPage = () => {
       toast.success('Ingredient removed from shopping list');
     } catch (err) {
       setLoading(false);
-      toast.error(err.message); // Toast error message
+      toast.error(err.message);
     }
   };
 
@@ -74,73 +76,107 @@ const ShoppingListPage = () => {
       toast.success('Ingredient added to database');
     } catch (err) {
       setLoading(false);
-      toast.error(err.message); // Toast error message
+      toast.error(err.message);
     }
   };
 
+  const filteredIngredients = availableIngredients.filter((ingredient) =>
+    ingredient.name.toLowerCase().includes(searchQuery.toLowerCase()),
+  );
+
   return (
-    <div className="max-w-4xl mx-auto p-6">
-      <h2 className="text-3xl font-semibold mb-6">Shopping List</h2>
+    <div id="shopping-list-page" >
+      {/* All page content here */}
+      <div className="container mt-5">
+        <h2 className="text-center mb-5 text-primary">Shopping List</h2>
 
-      <div className="mb-8">
-        <h4 className="text-xl font-medium mb-2">Add Ingredient (Manual)</h4>
-        <div className="flex items-center space-x-4">
-          <input
-            type="text"
-            value={newIngredient}
-            onChange={(e) => setNewIngredient(e.target.value)}
-            className="border border-gray-300 p-2 w-full rounded"
-            placeholder="Enter ingredient name"
-          />
-          <button
-            onClick={handleAddManualIngredient}
-            disabled={loading}
-            className="bg-blue-500 text-white py-2 px-4 rounded disabled:bg-gray-300"
-          >
-            {loading ? 'Adding...' : 'Add'}
-          </button>
-        </div>
-      </div>
-
-      <div className="mb-8">
-        <h4 className="text-xl font-medium mb-2">All Ingredients</h4>
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-          {availableIngredients.map((ingredient) => (
-            <div key={ingredient.id} className="border border-gray-300 rounded shadow-lg p-4">
-              <h5 className="text-lg font-semibold mb-2">{ingredient.name}</h5>
+        {/* Add Ingredient Form */}
+        <div className="card shadow-lg p-4 mb-4">
+          <div className="card-body">
+            <h4 className="card-title text-secondary">Add Ingredient (Manual)</h4>
+            <div className="input-group">
+              <input
+                type="text"
+                value={newIngredient}
+                onChange={(e) => setNewIngredient(e.target.value)}
+                className="form-control custom-input"
+                placeholder="Enter ingredient name"
+              />
               <button
-                onClick={() => handleAddIngredient(ingredient.id)}
+                onClick={handleAddManualIngredient}
                 disabled={loading}
-                className="bg-green-500 text-white py-2 px-4 rounded w-full disabled:bg-gray-300"
+                className="btn btn-primary"
               >
-                Add to Shopping List
+                {loading ? 'Adding...' : 'Add'}
               </button>
             </div>
-          ))}
+          </div>
         </div>
-      </div>
 
-      <div>
-        <h4 className="text-xl font-medium mb-2">Your Shopping List</h4>
-        <ul className="space-y-4">
-          {shoppingList.map((ingredient) => (
-            <li
-              key={ingredient.id}
-              className="flex justify-between items-center border border-gray-300 rounded p-4"
-            >
-              <span className="text-lg">{ingredient.name}</span>
-              <button
-                onClick={() => handleRemoveIngredient(ingredient.id)}
-                disabled={loading}
-                className="bg-red-500 text-white py-2 px-4 rounded disabled:bg-gray-300"
-              >
-                Remove
-              </button>
-            </li>
-          ))}
-        </ul>
+        <div className="row">
+          {/* Available Ingredients */}
+          <div className="col-lg-8 mb-4">
+            <h4 className="mb-3 text-secondary">All Ingredients</h4>
+            <input
+              type="text"
+              className="form-control custom-input mb-3"
+              placeholder="Search ingredients..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+            <div className="d-flex flex-wrap gap-3 overflow-auto ingredient-grid">
+              {filteredIngredients.map((ingredient) => (
+                <div key={ingredient.id} className="card ingredient-card">
+                  <div className="card-body text-center">
+                    <h5 className="card-title text-truncate">{ingredient.name}</h5>
+                    <button
+                      onClick={() => handleAddIngredient(ingredient.id)}
+                      disabled={loading}
+                      className="btn btn-dark btn-sm w-100"
+                    >
+                      Add
+                    </button>
+                  </div>
+                </div>
+              ))}
+              {filteredIngredients.length === 0 && (
+                <p className="text-center text-muted">No ingredients found</p>
+              )}
+            </div>
+          </div>
+
+          {/* Shopping List */}
+          <div className="col-lg-4">
+            <h4 className="mb-3 text-secondary">Your Shopping List</h4>
+            <div className="list-group shopping-list overflow-auto">
+              {shoppingList.map((ingredient) => (
+                <div
+                  key={ingredient.id}
+                  className="list-group-item d-flex justify-content-between align-items-center shopping-list-item"
+                >
+                  <span className="ingredient-name">{ingredient.name}</span>
+                  <button
+                    onClick={() => handleRemoveIngredient(ingredient.id)}
+                    disabled={loading}
+                    className="btn btn-danger btn-sm"
+                  >
+                    Remove
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <ToastContainer
+          position="bottom-right"
+          autoClose={5000}
+          hideProgressBar={false}
+          newestOnTop={true}
+          closeOnClick
+          pauseOnHover
+        />
       </div>
-      <ToastContainer position="bottom-right" autoClose={5000} hideProgressBar={false} newestOnTop={true} closeOnClick pauseOnHover />
     </div>
   );
 };

@@ -5,6 +5,8 @@ import com.team2.client.domain.MealPlanRecipe;
 import com.team2.client.domain.Recipe;
 import com.team2.client.domain.User;
 import com.team2.client.domain.dto.MealPlanDto;
+import com.team2.client.domain.dto.MealPlanRecipeDto;
+import com.team2.client.domain.dto.RecipeDto;
 import com.team2.client.exception.AlreadyAddedRecipeException;
 import com.team2.client.exception.NotExistingRecipeInTheFollowingDay;
 import com.team2.client.exception.RecipeExistsException;
@@ -22,7 +24,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class MealPlanServiceImpl implements MealPlanService {
@@ -45,26 +49,6 @@ public class MealPlanServiceImpl implements MealPlanService {
         this.mapper = mapper;
     }
 
-    @Override
-    public MealPlanDto createWeeklyMealPlan(String username) {
-        User user = userRepository.findByEmail(username)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
-        MealPlan mealPlan = new MealPlan();
-        mealPlan.setMealPlanRecipes(new ArrayList<>());
-
-
-        // Save meal plan and recipes
-        this.mealPlanRepository.saveAndFlush(mealPlan);
-        user.setMealPlan(mealPlan);
-        this.userRepository.saveAndFlush(user);
-
-        MealPlanDto mealPlanDto = new MealPlanDto();
-        mealPlanDto.setMealPlanRecipeDtos(new ArrayList<>());
-
-
-        return mealPlanDto;
-    }
 
     @Override
     @Transactional
@@ -123,6 +107,45 @@ public class MealPlanServiceImpl implements MealPlanService {
         this.mealPlanRecipeRepository.delete(byRecipeAndDayOfWeek.get());
 
         return helperService.getMealPlanDto(this.mealPlanRepository.saveAndFlush(mealPlan));
+    }
+
+    @Override
+    public MealPlanDto getWeeklyPlan(String username) {
+
+        User user = userRepository.findByEmail(username)
+                .orElseThrow(() -> new BadCredentialsException("User not found"));
+
+        MealPlan mealPlan = user.getMealPlan();
+        if (mealPlan == null) {
+            MealPlan createdMealPlan = new MealPlan();
+            createdMealPlan.setMealPlanRecipes(new ArrayList<>());
+
+
+            // Save meal plan and recipes
+            this.mealPlanRepository.saveAndFlush(createdMealPlan);
+            user.setMealPlan(createdMealPlan);
+            this.userRepository.saveAndFlush(user);
+
+            MealPlanDto mealPlanDto = new MealPlanDto();
+            mealPlanDto.setMealPlanRecipeDtos(new ArrayList<>());
+
+
+            return mealPlanDto;
+        }
+
+        MealPlanDto mealPlanDto= new MealPlanDto();
+        List<MealPlanRecipeDto> mappedList = mealPlan.getMealPlanRecipes()
+                .stream()
+                .map(mealPlanRecipe -> {
+                    MealPlanRecipeDto map = this.mapper.map(mealPlanRecipe, MealPlanRecipeDto.class);
+                    map.setRecipe(this.mapper.map(mealPlanRecipe.getRecipe(), RecipeDto.class));
+                    return map;
+                })
+                .collect(Collectors.toList());
+
+        mealPlanDto.setMealPlanRecipeDtos(mappedList);
+
+        return  mealPlanDto;
     }
 
 }
