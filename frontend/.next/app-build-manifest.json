@@ -22,17 +22,6 @@
       "static/chunks/main-app.js",
       "static/css/app/shopping-list/page.css",
       "static/chunks/app/shopping-list/page.js"
-    ],
-    "/profile/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/profile/page.js"
-    ],
-    "/weekly-plan/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/css/app/weekly-plan/page.css",
-      "static/chunks/app/weekly-plan/page.js"
     ]
   }
 }
