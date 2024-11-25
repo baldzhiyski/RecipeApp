@@ -13,10 +13,10 @@
 # testing
 /coverage
 
-
+.next
 .next/
 # next.js
-
+.vscode
 .vscode/
 out/
 
