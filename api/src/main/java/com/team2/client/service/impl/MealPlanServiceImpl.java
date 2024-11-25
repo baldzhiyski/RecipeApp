@@ -65,11 +65,12 @@ public class MealPlanServiceImpl implements MealPlanService {
                 .orElseThrow(() -> new RecipeExistsException("Recipe not found!"));
 
 
-        if (this.mealPlanRecipeRepository.findByRecipeAndDayOfWeek(recipe,dayOfWeek).isPresent()) {
+        if (this.mealPlanRecipeRepository.findByRecipeAndDayOfWeekAndMealPlan(recipe,dayOfWeek,mealPlan).isPresent()) {
             throw new AlreadyAddedRecipeException("Recipe already added to the following day");
         }
 
         MealPlanRecipe mealPlanRecipe = new MealPlanRecipe();
+        mealPlanRecipe.setMealPlan(mealPlan);
         mealPlanRecipe.setRecipe(recipe);
         mealPlanRecipe.setDate(LocalDate.now());
         mealPlanRecipe.setDayOfWeek(dayOfWeek);
@@ -96,7 +97,7 @@ public class MealPlanServiceImpl implements MealPlanService {
                 .orElseThrow(() -> new RecipeExistsException("Recipe not found!"));
 
 
-        Optional<MealPlanRecipe> byRecipeAndDayOfWeek = this.mealPlanRecipeRepository.findByRecipeAndDayOfWeek(recipe, dayOfWeek);
+        Optional<MealPlanRecipe> byRecipeAndDayOfWeek = this.mealPlanRecipeRepository.findByRecipeAndDayOfWeekAndMealPlan(recipe, dayOfWeek,mealPlan);
 
         if (byRecipeAndDayOfWeek.isEmpty()) {
             throw new NotExistingRecipeInTheFollowingDay(String.format("Recipe with id %d is not added to  the following day of week : %s",recipeId,dayOfWeek.toString()));

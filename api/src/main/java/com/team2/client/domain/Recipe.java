@@ -1,5 +1,6 @@
 package com.team2.client.domain;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.team2.client.domain.dto.AddRecipeDTO;
 import com.team2.client.domain.enums.DietaryPreference;
 import com.team2.client.domain.enums.MealType;
@@ -41,6 +42,7 @@ public class Recipe  extends BaseEntity{
     private String instructions;
 
     @OneToMany(mappedBy = "recipe",fetch = FetchType.EAGER)
+    @JsonManagedReference
     private List<RecipeIngredient> recipeIngredients;
 
     @Column

@@ -50,7 +50,7 @@ public class MealPlanController {
             @PathVariable("dayOfWeek") String dayOfWeek,
             @RequestParam("recipeId") Long recipeId) {
 
-        MealPlanDto updatedPlan = mealPlanService.addRecipeToDay(userDetails.getUsername(), DayOfWeek.valueOf(dayOfWeek), recipeId);
+        MealPlanDto updatedPlan = mealPlanService.addRecipeToDay(userDetails.getUsername(), DayOfWeek.valueOf(dayOfWeek.toUpperCase()), recipeId);
         return ResponseEntity.ok(updatedPlan);
     }
 
@@ -65,10 +65,10 @@ public class MealPlanController {
     @PostMapping("/api/meal-plans/{dayOfWeek}/remove-recipe")
     public ResponseEntity<MealPlanDto> removeRecipe(
             @AuthenticationPrincipal UserDetails userDetails,
-            @PathVariable("dayOfWeek") DayOfWeek dayOfWeek,
+            @PathVariable("dayOfWeek") String dayOfWeek,
             @RequestParam("recipeId") Long recipeId) {
 
-        MealPlanDto updatedPlan = mealPlanService.removeRecipe(userDetails.getUsername(), dayOfWeek, recipeId);
+        MealPlanDto updatedPlan = mealPlanService.removeRecipe(userDetails.getUsername(), DayOfWeek.valueOf(dayOfWeek.toUpperCase()), recipeId);
         return ResponseEntity.ok(updatedPlan);
     }
 

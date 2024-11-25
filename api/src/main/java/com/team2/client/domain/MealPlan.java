@@ -15,6 +15,6 @@ import java.util.List;
 @Setter
 public class MealPlan extends BaseEntity{
 
-    @OneToMany(fetch = FetchType.EAGER)
+    @OneToMany(fetch = FetchType.EAGER,mappedBy = "mealPlan")
     private List<MealPlanRecipe> mealPlanRecipes;
 }

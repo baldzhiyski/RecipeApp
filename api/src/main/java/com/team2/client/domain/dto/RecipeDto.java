@@ -13,6 +13,7 @@ import java.util.List;
 @Setter
 public class RecipeDto {
 
+    private Long id;
     private List<RecipeIngredientDto> recipeIngredients;
 
     private RecipeType dishType;

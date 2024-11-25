@@ -1,5 +1,6 @@
 package com.team2.client.repository;
 
+import com.team2.client.domain.MealPlan;
 import com.team2.client.domain.MealPlanRecipe;
 import com.team2.client.domain.Recipe;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -12,5 +13,5 @@ import java.util.Optional;
 public interface MealPlanRecipeRepository extends JpaRepository<MealPlanRecipe,Long> {
 
 
-    Optional<MealPlanRecipe> findByRecipeAndDayOfWeek(Recipe recipe, DayOfWeek dayOfWeek);
+    Optional<MealPlanRecipe> findByRecipeAndDayOfWeekAndMealPlan(Recipe recipe, DayOfWeek dayOfWeek, MealPlan mealPlan);
 }
