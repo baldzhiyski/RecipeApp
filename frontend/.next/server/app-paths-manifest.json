@@ -1,5 +1,8 @@
 {
   "/manifest.webmanifest/route": "app/manifest.webmanifest/route.js",
+  "/favicon.ico/route": "app/favicon.ico/route.js",
+  "/page": "app/page.js",
   "/shopping-list/page": "app/shopping-list/page.js",
-  "/login/page": "app/login/page.js"
+  "/login/page": "app/login/page.js",
+  "/weekly-plan/page": "app/weekly-plan/page.js"
 }

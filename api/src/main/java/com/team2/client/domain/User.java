@@ -1,5 +1,6 @@
 package com.team2.client.domain;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.team2.client.domain.enums.Role;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
@@ -50,6 +51,7 @@ public class User  extends BaseEntity implements UserDetails {
     private Role roleType;
 
     @OneToOne
+    @JsonManagedReference
     private ShoppingList shoppingList;
 
     @OneToOne

@@ -1,0 +1,55 @@
+.weekly-plan {
+    position: relative; /* Ensure the content stays on top of the background */
+    background: url('/images/weekly-plan.jpg') center/cover no-repeat;
+
+    font-family: 'Arial', sans-serif;
+    color: #333;
+    margin: 0; /* Remove default margin */
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+}
+
+.weekly-plan::before {
+    content: ''; /* Create a pseudo-element */
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5); /* Darker black with higher opacity for a more intense dark effect */
+    z-index: -1; /* Put it behind the body content */
+}
+
+.card-header {
+    background: linear-gradient(45deg, #007bff, #0056b3);
+}
+
+.text-primary {
+    color: #007bff !important;
+}
+
+.bg-gradient-primary {
+    background: linear-gradient(90deg, #6a11cb, #2575fc);
+}
+
+button {
+    transition: all 0.3s ease-in-out;
+}
+
+button:hover {
+    transform: scale(1.05);
+}
+
+.modal-header .modal-title {
+    font-weight: bold;
+    color: #6a11cb;
+}
+
+.modal-body select {
+    border: 1px solid #6a11cb;
+}
+
+.modal-content {
+    border-radius: 1rem;
+}

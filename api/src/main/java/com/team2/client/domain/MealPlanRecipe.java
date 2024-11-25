@@ -12,8 +12,10 @@ import java.time.LocalDate;
 @Getter
 @Setter
 public class MealPlanRecipe extends BaseEntity {
+    @ManyToOne
+    private MealPlan mealPlan;
 
-    @Column
+    @Enumerated(EnumType.STRING)
     private DayOfWeek dayOfWeek;
     @ManyToOne
     private Recipe recipe;
