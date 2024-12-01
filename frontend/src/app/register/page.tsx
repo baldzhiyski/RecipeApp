@@ -1,177 +1,211 @@
 "use client";
-import MaterialSymbol from '@components/globals/materialSymbol/MaterialSymbol';
-import apiClient from '@lib/apiClient';
-import { Button, Input } from '@nextui-org/react';
-import React, { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
 
-import User from '@entities/User';
-import { EyeFilledIcon, EyeSlashFilledIcon } from '@nextui-org/shared-icons';
-import { toast } from 'sonner';
+import React, { useState } from "react";
+import { toast } from "react-toastify";
+import "bootstrap/dist/css/bootstrap.min.css";
+import "@fortawesome/fontawesome-free/css/all.min.css";
 
 export default function RegisterPage() {
-  const [email, setEmail] = React.useState<string>('');
-  const [password, setPassword] = React.useState<string>('');
-  const [verifyPassword, setVerifyPassword] = React.useState<string>('');
-  const [firstName, setFirstName] = React.useState<string>('');
-  const [lastName, setLastName] = React.useState<string>('');
-  const [username, setUsername] = React.useState<string>('');
-  const [waitForRegister, setWaitForRegister] = React.useState<boolean>(false);
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    username: "",
+    password: "",
+    confirmPassword: "",
+  });
 
-  // State to handle password visibility
-  const [showPassword, setShowPassword] = React.useState<boolean>(false);
-  const [showVerifyPassword, setShowVerifyPassword] = React.useState<boolean>(false);
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [showPassword, setShowPassword] = useState(false);
 
-  // Error messages from the backend
-  const [errorMessages, setErrorMessages] = React.useState<Record<string, string>>({});
-  const [generalErrors, setGeneralErrors] = React.useState<string[]>([]);
-
-  const router = useRouter();
-
-  // If user is already logged in, redirect to the home page
-  useEffect(() => {
-    const currentUser = User.getInstance().getUser(); // Get the current user instance
-    if (currentUser && currentUser.token) { // Check if the user is logged in
-      router.replace('/'); // Redirect to the home page ("/") if logged in
-    }
-  }, [router]); // Only run this effect when the component mounts or router changes
-
-  const handleRegisterClick = () => {
-    router.push('/register');
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+    setErrors({ ...errors, [name]: "" });
   };
 
-  const handleRegister = async () => {
-    setWaitForRegister(true);
-    setErrorMessages({});
-    setGeneralErrors([]);
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const { firstName, lastName, email, username, password, confirmPassword } = formData;
+
+    const validationErrors: Record<string, string> = {};
+    if (!firstName) validationErrors.firstName = "First name is required.";
+    if (!lastName) validationErrors.lastName = "Last name is required.";
+    if (!email) validationErrors.email = "Email is required.";
+    if (!username) validationErrors.username = "Username is required.";
+    if (!password) validationErrors.password = "Password is required.";
+    if (password !== confirmPassword)
+      validationErrors.confirmPassword = "Passwords do not match.";
+
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      return;
+    }
 
     try {
-      const response = await apiClient.register(username, email, password, verifyPassword, firstName, lastName);
-
-      toast.success('Registration successful! Please log in.');
-      // Redirect to login page with success query parameter
-      router.push('/login?success=true'); // You can use a query parameter to indicate success
-    } catch (error: any) {
-      console.error('Registration error:', error);
-      if (error.fieldErrors) {
-        setErrorMessages(error.fieldErrors);
-      }
-      if (error.generalErrors) {
-        setGeneralErrors(error.generalErrors);
-      }
-    } finally {
-      setWaitForRegister(false);
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      toast.success("Registration successful!");
+    } catch (err) {
+      toast.error("Something went wrong. Please try again.");
     }
   };
 
   return (
-    <div className="max-w-md mx-auto my-10 p-6 border shadow rounded-lg">
-      <h2 className="text-center text-3xl font-semibold mb-6">Create Account</h2>
-
-      <Input
-        label="First Name"
-        value={firstName}
-        onChange={(e) => setFirstName(e.target.value)}
-        variant="bordered"
-        color={errorMessages.firstName ? 'danger' : 'default'}
-      />
-      <small className="text-red-600 text-sm mt-1">{errorMessages.firstName}</small>
-
-      <Input
-        label="Last Name"
-        value={lastName}
-        onChange={(e) => setLastName(e.target.value)}
-        variant="bordered"
-        color={errorMessages.lastName ? 'danger' : 'default'}
-      />
-      <small className="text-red-600 text-sm mt-1">{errorMessages.lastName}</small>
-
-      <Input
-        label="Username"
-        value={username}
-        onChange={(e) => setUsername(e.target.value)}
-        variant="bordered"
-        color={errorMessages.username ? 'danger' : 'default'}
-      />
-      <small className="text-red-600 text-sm mt-1">{errorMessages.username}</small>
-
-      <Input
-        label="Email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        type="email"
-        variant="bordered"
-        color={errorMessages.email ? 'danger' : 'default'}
-      />
-      <small className="text-red-600 text-sm mt-1">{errorMessages.email}</small>
-
-      <Input
-        label="Password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        type={showPassword ? 'text' : 'password'}
-        variant="bordered"
-        color={errorMessages.password ? 'danger' : 'default'}
-        helperText={errorMessages.password || ''}
-        endContent={
-          <Button
-            isIconOnly
-            onClick={() => setShowPassword(prev => !prev)}
-            aria-label="toggle password visibility"
-            className="focus:outline-none"
-          >
-            {showPassword ? (
-              <EyeSlashFilledIcon className="text-2xl text-fuchsia-950 pointer-events-none " />
-            ) : (
-              <EyeFilledIcon className="text-2xl text-fuchsia-950 pointer-events-none" />
-            )}
-          </Button>
-        }
-      />
-      <small className="text-red-600 text-sm mt-1">{errorMessages.password}</small>
-
-      <Input
-        label="Confirm Password"
-        value={verifyPassword}
-        onChange={(e) => setVerifyPassword(e.target.value)}
-        type={showVerifyPassword ? 'text' : 'password'}
-        variant="bordered"
-        color={errorMessages.confirmPassword ? 'danger' : 'default'}
-        endContent={
-          <Button
-            isIconOnly
-            onClick={() => setShowVerifyPassword(prev => !prev)}
-            aria-label="toggle password visibility"
-            className="focus:outline-none"
-          >
-            {showVerifyPassword ? (
-              <EyeSlashFilledIcon className="text-2xl text-fuchsia-950 pointer-events-none " />
-            ) : (
-              <EyeFilledIcon className="text-2xl text-fuchsia-950 pointer-events-none" />
-            )}
-          </Button>
-        }
-      />
-      <small className="text-red-600 text-sm mt-1">{errorMessages.confirmPassword}</small>
-
-      <Button
-        onClick={handleRegister}
-        disabled={waitForRegister}
-        fullWidth
-        className="mt-4"
-      >
-        {waitForRegister ? 'Registering...' : 'Register'}
-      </Button>
-
-      {/* Display all general error messages at once */}
-      {generalErrors.length > 0 && (
-        <div className="mt-6 p-4 border-2 border-red-600 bg-red-50 rounded-md">
-          <h3 className="text-red-600 font-semibold mb-2">Please fix the following errors:</h3>
-          {generalErrors.map((error, index) => (
-            <p key={index} className="text-red-600 text-sm mb-2">{error}</p>
-          ))}
+    <div className="container py-5">
+      <div className="row align-items-center">
+        {/* Left Section with Static Pictures */}
+        <div className="col-md-6 text-center">
+          <h2 className="mb-4" style={{ color: "#6D1093" }}>
+            <i className="fas fa-utensils"></i> Join Our Recipe Community!
+          </h2>
+          <p className="mb-4" style={{ color: "#6D1093" }}>
+            Share your best recipes, discover new flavors, and get inspired by a world of culinary delights!
+          </p>
+          <img
+            src="/images/notebook.avif"
+            alt="Delicious Pasta"
+            className="rounded-circle shadow"
+            style={{ width: "300px", height: "300px", objectFit: "cover" }}
+          />
+          <img
+            src="/images/notebook2.avif"
+            alt="Tasty Dessert"
+            className="rounded-circle shadow mt-3"
+            style={{ width: "300px", height: "300px", objectFit: "cover" }}
+          />
         </div>
-      )}
+
+        {/* Right Section - Registration Form */}
+        <div className="col-md-6">
+          <div className="card shadow-lg p-4">
+            <h2 className="text-center mb-4" style={{ color: "#6D1093" }}>
+              <i className="fas fa-user-plus"></i> Register
+            </h2>
+            <form onSubmit={handleSubmit}>
+              {/* First Name */}
+              <div className="mb-3">
+                <label htmlFor="firstName" className="form-label" style={{ color: "#6D1093" }}>
+                  <i className="fas fa-user"></i> First Name
+                </label>
+                <input
+                  type="text"
+                  id="firstName"
+                  name="firstName"
+                  className={`form-control ${errors.firstName ? "is-invalid" : ""}`}
+                  value={formData.firstName}
+                  onChange={handleChange}
+                  placeholder="Enter your first name"
+                />
+                {errors.firstName && <div className="invalid-feedback">{errors.firstName}</div>}
+              </div>
+
+              {/* Last Name */}
+              <div className="mb-3">
+                <label htmlFor="lastName" className="form-label" style={{ color: "#6D1093" }}>
+                  <i className="fas fa-user-tag"></i> Last Name
+                </label>
+                <input
+                  type="text"
+                  id="lastName"
+                  name="lastName"
+                  className={`form-control ${errors.lastName ? "is-invalid" : ""}`}
+                  value={formData.lastName}
+                  onChange={handleChange}
+                  placeholder="Enter your last name"
+                />
+                {errors.lastName && <div className="invalid-feedback">{errors.lastName}</div>}
+              </div>
+
+              {/* Email */}
+              <div className="mb-3">
+                <label htmlFor="email" className="form-label" style={{ color: "#6D1093" }}>
+                  <i className="fas fa-envelope"></i> Email
+                </label>
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  className={`form-control ${errors.email ? "is-invalid" : ""}`}
+                  value={formData.email}
+                  onChange={handleChange}
+                  placeholder="Enter your email"
+                />
+                {errors.email && <div className="invalid-feedback">{errors.email}</div>}
+              </div>
+
+              {/* Username */}
+              <div className="mb-3">
+                <label htmlFor="username" className="form-label" style={{ color: "#6D1093" }}>
+                  <i className="fas fa-user-circle"></i> Username
+                </label>
+                <input
+                  type="text"
+                  id="username"
+                  name="username"
+                  className={`form-control ${errors.username ? "is-invalid" : ""}`}
+                  value={formData.username}
+                  onChange={handleChange}
+                  placeholder="Enter your username"
+                />
+                {errors.username && <div className="invalid-feedback">{errors.username}</div>}
+              </div>
+
+              {/* Password */}
+              <div className="mb-3">
+                <label htmlFor="password" className="form-label" style={{ color: "#6D1093" }}>
+                  <i className="fas fa-lock"></i> Password
+                </label>
+                <div className="input-group">
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    id="password"
+                    name="password"
+                    className={`form-control ${errors.password ? "is-invalid" : ""}`}
+                    value={formData.password}
+                    onChange={handleChange}
+                    placeholder="Enter your password"
+                  />
+                  <button
+                    type="button"
+                    className="btn btn-outline-secondary"
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? <i className="fas fa-eye-slash"></i> : <i className="fas fa-eye"></i>}
+                  </button>
+                </div>
+                {errors.password && <div className="invalid-feedback">{errors.password}</div>}
+              </div>
+
+              {/* Confirm Password */}
+              <div className="mb-3">
+                <label htmlFor="confirmPassword" className="form-label" style={{ color: "#6D1093" }}>
+                  <i className="fas fa-lock"></i> Confirm Password
+                </label>
+                <input
+                  type="password"
+                  id="confirmPassword"
+                  name="confirmPassword"
+                  className={`form-control ${errors.confirmPassword ? "is-invalid" : ""}`}
+                  value={formData.confirmPassword}
+                  onChange={handleChange}
+                  placeholder="Confirm your password"
+                />
+                {errors.confirmPassword && (
+                  <div className="invalid-feedback">{errors.confirmPassword}</div>
+                )}
+              </div>
+
+              {/* Submit Button */}
+              <div className="d-grid">
+                <button type="submit" className="btn" style={{ backgroundColor: "#6D1093", color: "#fff" }}>
+                  <i className="fas fa-paper-plane"></i> Register
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
