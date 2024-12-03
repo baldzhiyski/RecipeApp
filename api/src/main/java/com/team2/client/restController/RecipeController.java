@@ -146,5 +146,28 @@ public class RecipeController {
         }
     }
 
+    @Operation(summary = "Toggle recipe privacy", description = "Switch a recipe's privacy between private and public.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Successfully updated recipe privacy status")
+    })
+    @PutMapping("/api/recipes/{recipeId}/toggle-privacy")
+    public ResponseEntity<Void> togglePrivacy(@PathVariable Long recipeId) {
+        recipeService.toggleRecipePrivacy(recipeId);
+        return ResponseEntity.ok().build();
+    }
+
+
+    @Operation(summary = "Delete recipe", description = "Delete a recipe created by the logged-in user.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "Successfully deleted recipe")
+    })
+    @DeleteMapping("/api/recipes/{recipeId}")
+    public ResponseEntity<Void> deleteRecipe(@PathVariable Long recipeId) {
+        recipeService.deleteRecipe(recipeId);
+        return ResponseEntity.noContent().build();
+    }
+
+
+
 
 }

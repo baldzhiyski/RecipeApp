@@ -7,6 +7,7 @@ import { DishType } from '@/types/DishType';
 export class Recipe {
   recipeName: string;
   description: string;
+  private :boolean;
   mealType: MealType;
   dishType: DishType;
   dietaryPreference: DietaryPreference;
@@ -22,6 +23,7 @@ export class Recipe {
     dietaryPreference: DietaryPreference,
     recipeIngredients: Ingredient[],
     instructions: string,
+    isPrivate :boolean,
     creatorUsername: string
   ) {
     this.recipeName = recipeName;
@@ -31,6 +33,7 @@ export class Recipe {
     this.dietaryPreference = dietaryPreference;
     this.recipeIngredients = recipeIngredients;
     this.instructions = instructions;
+    this.private=isPrivate;
     this.creatorUsername = creatorUsername;
   }
 

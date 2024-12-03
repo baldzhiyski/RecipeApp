@@ -90,6 +90,9 @@ class ApiClient {
       throw { message: errorMessage, fieldErrors, generalErrors };
     }
 
+    if (response.status === 204 || response.headers.get('Content-Length') === '0') {
+      return; // No body to parse
+    }
     // If response is okay, parse and return JSON data
     return response.json();
   }

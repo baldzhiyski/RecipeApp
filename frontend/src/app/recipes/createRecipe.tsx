@@ -11,6 +11,7 @@ import {
   Input,
   Select,
   SelectItem,
+  Checkbox,  // Import Checkbox component
 } from '@nextui-org/react';
 import { DietaryPreference } from '@/types/DietaryPreference';
 import { MealType } from '@/types/MealType';
@@ -23,19 +24,20 @@ import { DishType } from '@/types/DishType';
 interface CreateRecipeProps {
   isOpen: boolean;
   onClose: () => void;
+  onRecipeAdded:() => void;
+
 }
 
-const CreateRecipe: React.FC<CreateRecipeProps> = ({ isOpen, onClose }) => {
+const CreateRecipe: React.FC<CreateRecipeProps> = ({ isOpen, onClose,onRecipeAdded }) => {
   const [recipeName, setRecipeName] = useState<string>('');
   const [description, setDescription] = useState<string>('');
   const [mealType, setMealType] = useState<MealType | null>(null);
   const [dishType, setDishType] = useState<DishType | null>(null);
-
-  const [dietaryPreference, setDietaryPreference] =
-    useState<DietaryPreference | null>(null);
-  const [instructions, setInstructions] = useState<string>(''); // Added instructions
+  const [dietaryPreference, setDietaryPreference] = useState<DietaryPreference | null>(null);
+  const [instructions, setInstructions] = useState<string>('');
   const [ingredients, setIngredients] = useState<Ingredient[]>([]);
   const [uploading, setUploading] = useState<boolean>(false);
+  const [isPrivate, setIsPrivate] = useState<boolean>(false);  // New state for privacy
 
   const addIngredient = () => {
     setIngredients((prevIngredients) => [
@@ -96,10 +98,13 @@ const CreateRecipe: React.FC<CreateRecipeProps> = ({ isOpen, onClose }) => {
       recipeName,
       description,
       instructions,
+      isPrivate,  // Include isPrivate in the request body
     };
 
     try {
-      apiClient.post<Recipe>('recipes/add', requestBody);
+      await apiClient.post<Recipe>('recipes/add', requestBody);
+      console.log(requestBody)
+      onRecipeAdded(); // Notify parent about the new recipe
     } catch (error) {
       console.error('Failed to upload recipe:', error);
     }
@@ -222,6 +227,13 @@ const CreateRecipe: React.FC<CreateRecipeProps> = ({ isOpen, onClose }) => {
               + Add Ingredient
             </Button>
           </div>
+
+          {/* Checkbox for privacy */}
+          <Checkbox label="Make this recipe private"
+                    isSelected={isPrivate}
+                    onChange={(e) => setIsPrivate(e.target.checked)}> Do you want to stay private ? </Checkbox>
+
+
         </ModalBody>
         <ModalFooter>
           <Button

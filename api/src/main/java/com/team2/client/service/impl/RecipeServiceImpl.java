@@ -29,6 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -68,7 +69,7 @@ public class RecipeServiceImpl implements RecipeService {
 
         // Create a new Recipe entity
         Recipe recipe = new Recipe();
-        recipe.setPrivate(addRecipeDTO.isPrivate());
+        recipe.setIsPrivate(addRecipeDTO.getIsPrivate());
         recipe.setRecipeName(addRecipeDTO.getRecipeName());
         recipe.setDescription(addRecipeDTO.getDescription());
         recipe.setInstructions(addRecipeDTO.getInstructions());
@@ -182,20 +183,38 @@ public class RecipeServiceImpl implements RecipeService {
     public List<RecipeDto> getAllRecipes() {
         return repository.findAll()
                 .stream()
-                .filter(recipe -> !recipe.isPrivate())
+                .filter(recipe -> !recipe.getIsPrivate())
                 .map(this::mapRecipeToDto)
                 .collect(Collectors.toList());
     }
 
     @Override
     public List<RecipeDto> getLoggedUserCreatedRecipes(String username) {
-        User user = userRepository.findByUsername(username)
+        User user = userRepository.findByEmail(username)
                 .orElseThrow(() -> new UserNotFound("Unauthorized!"));
 
         return user.getCreatedRecipes()
                 .stream()
                 .map(this::mapRecipeToDto)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public void toggleRecipePrivacy(Long recipeId) {
+        Recipe recipe = recipeRepository.findById(recipeId).orElseThrow(() -> new RecipeNotFoundException("Recipe with id :  " + recipeId + " is not in the DB !"));
+
+        recipe.setIsPrivate(!recipe.getIsPrivate());
+        this.recipeRepository.saveAndFlush(recipe);
+
+    }
+
+    @Override
+    @Transactional
+    public void deleteRecipe(Long recipeId) {
+        Recipe recipe = recipeRepository.findById(recipeId).orElseThrow(() -> new RecipeNotFoundException("Recipe with id :  " + recipeId + " is not in the DB !"));
+        this.recipeIngredientRepository.deleteAll(recipe.getRecipeIngredients());
+        this.recipeRepository.delete(recipe);
+
     }
 
     /**
