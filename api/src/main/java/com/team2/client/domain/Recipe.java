@@ -46,7 +46,8 @@ public class Recipe  extends BaseEntity{
     private List<RecipeIngredient> recipeIngredients;
 
     @Column
-    private boolean isPrivate;
+    private Boolean isPrivate;
+
 
     @ManyToOne
     private User creator;

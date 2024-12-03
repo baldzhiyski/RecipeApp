@@ -27,7 +27,7 @@ spring:
   datasource:
     driverClassName: org.mariadb.jdbc.Driver
     username: root
-    url: jdbc:mariadb://${MYSQL_HOST:localhost}:${MYSQL_PORT:3306}/${MYSQL_DATABASE:programmentwurf2}?allowPublicKeyRetrieval=true&useSSL=false&createDatabaseIfNotExist=true&serverTimezone=UTC
+    url: jdbc:mariadb://${MYSQL_HOST:localhost}:${MYSQL_PORT:3306}/${MYSQL_DATABASE:team02-aeb}?allowPublicKeyRetrieval=true&useSSL=false&createDatabaseIfNotExist=true&serverTimezone=UTC
 
 security:
   jwt:

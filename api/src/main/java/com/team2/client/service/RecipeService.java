@@ -8,6 +8,7 @@ import com.team2.client.domain.dto.RecipeDto;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.List;
+import java.util.UUID;
 
 public interface RecipeService {
     List<RecipeDto> getAllRecipes();
@@ -25,4 +26,8 @@ public interface RecipeService {
     void deleteFromRecipes(Long longs, String username);
 
     List<RecipeDto> getLoggedUserCreatedRecipes(String username);
+
+    void toggleRecipePrivacy(Long recipeId);
+
+    void deleteRecipe(Long recipeId);
 }

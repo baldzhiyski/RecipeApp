@@ -15,7 +15,6 @@ import java.util.List;
 @Setter
 public class AddRecipeDTO {
 
-    private boolean isPrivate;
 
     private List<IngredientDto> ingredientsList;
 
@@ -37,5 +36,6 @@ public class AddRecipeDTO {
     @NotBlank(message = "{recipe.required}")
     private String instructions;
 
+    private Boolean isPrivate;
 
 }
