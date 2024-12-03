@@ -1,5 +1,6 @@
 package com.team2.client.domain;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.team2.client.domain.enums.Role;
 import jakarta.persistence.*;
@@ -36,7 +37,6 @@ public class User  extends BaseEntity implements UserDetails {
     @NotEmpty
     private String password;
 
-
     @Column
     @NotEmpty
     private String email;
@@ -51,14 +51,16 @@ public class User  extends BaseEntity implements UserDetails {
     private Role roleType;
 
     @OneToOne
-    @JsonManagedReference
+    @JsonBackReference
     private ShoppingList shoppingList;
 
     @OneToOne
+    @JsonManagedReference
     private MealPlan mealPlan;
 
 
     @OneToMany(mappedBy = "creator",fetch = FetchType.EAGER)
+    @JsonBackReference
     private List<Recipe> createdRecipes;
 
     @Override

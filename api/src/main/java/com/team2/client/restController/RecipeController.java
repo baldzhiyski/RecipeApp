@@ -150,7 +150,7 @@ public class RecipeController {
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Successfully updated recipe privacy status")
     })
-    @PatchMapping("/api/recipes/{recipeId}/toggle-privacy")
+    @PutMapping("/api/recipes/{recipeId}/toggle-privacy")
     public ResponseEntity<Void> togglePrivacy(@PathVariable Long recipeId) {
         recipeService.toggleRecipePrivacy(recipeId);
         return ResponseEntity.ok().build();

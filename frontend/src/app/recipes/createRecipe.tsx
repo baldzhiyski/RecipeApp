@@ -24,9 +24,11 @@ import { DishType } from '@/types/DishType';
 interface CreateRecipeProps {
   isOpen: boolean;
   onClose: () => void;
+  onRecipeAdded:() => void;
+
 }
 
-const CreateRecipe: React.FC<CreateRecipeProps> = ({ isOpen, onClose }) => {
+const CreateRecipe: React.FC<CreateRecipeProps> = ({ isOpen, onClose,onRecipeAdded }) => {
   const [recipeName, setRecipeName] = useState<string>('');
   const [description, setDescription] = useState<string>('');
   const [mealType, setMealType] = useState<MealType | null>(null);
@@ -102,6 +104,7 @@ const CreateRecipe: React.FC<CreateRecipeProps> = ({ isOpen, onClose }) => {
     try {
       await apiClient.post<Recipe>('recipes/add', requestBody);
       console.log(requestBody)
+      onRecipeAdded(); // Notify parent about the new recipe
     } catch (error) {
       console.error('Failed to upload recipe:', error);
     }

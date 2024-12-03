@@ -66,10 +66,6 @@ const HeaderNavbar = () => {
                         className="flex items-center hover:text-[#C542FF] transition duration-300">
                   <FiUser /> <span className="ml-1">Profile</span>
                 </button>
-                <button onClick={() => handleNavigation('/my-recipes')}
-                        className="flex items-center hover:text-[#C542FF] transition duration-300">
-                  <FiBookOpen /> <span className="ml-1">My Recipes</span>
-                </button>
                 <button onClick={() => handleNavigation('/recipes')}
                         className="flex items-center hover:text-[#C542FF] transition duration-300">
                   <FiBookOpen /> <span className="ml-1">All Recipes</span>
@@ -87,12 +83,6 @@ const HeaderNavbar = () => {
                         className="flex items-center hover:text-[#C542FF] transition duration-300">
                   <FiCalendar /> <span className="ml-1">My Weekly Plan</span>
                 </button>
-
-                <button onClick={openModal}
-                        className="flex items-center hover:text-[#C542FF] transition duration-300">
-                  <FiUser /> <span className="ml-1">Search for recipe</span>
-                </button>
-
 
               </>
             ) : (

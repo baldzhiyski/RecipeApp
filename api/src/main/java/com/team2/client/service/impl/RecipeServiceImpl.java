@@ -190,7 +190,7 @@ public class RecipeServiceImpl implements RecipeService {
 
     @Override
     public List<RecipeDto> getLoggedUserCreatedRecipes(String username) {
-        User user = userRepository.findByUsername(username)
+        User user = userRepository.findByEmail(username)
                 .orElseThrow(() -> new UserNotFound("Unauthorized!"));
 
         return user.getCreatedRecipes()
