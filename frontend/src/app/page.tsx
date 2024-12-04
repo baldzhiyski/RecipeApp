@@ -4,6 +4,8 @@ import { Button } from '@nextui-org/react'; // NextUI button
 import { useRouter } from 'next/navigation';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
+import { ToastContainer } from 'react-toastify';
+import React from 'react';
 
 export default function Home() {
   const router = useRouter();
@@ -89,7 +91,7 @@ export default function Home() {
 
         </div>
       </div>
-
     </div>
+
   );
 }

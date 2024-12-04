@@ -1,9 +1,13 @@
 "use client";
 
 import React, { useState } from "react";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from 'react-toastify';
 import "bootstrap/dist/css/bootstrap.min.css";
 import "@fortawesome/fontawesome-free/css/all.min.css";
+import "react-toastify/dist/ReactToastify.css";
+import apiClient from '@lib/apiClient';
+import { useRouter } from 'next/navigation';
+
 
 export default function RegisterPage() {
   const [formData, setFormData] = useState({
@@ -17,10 +21,10 @@ export default function RegisterPage() {
 
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [showPassword, setShowPassword] = useState(false);
-
+  const router = useRouter();
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    setFormData({ ...formData, [name]: value});
     setErrors({ ...errors, [name]: "" });
   };
 
@@ -44,14 +48,26 @@ export default function RegisterPage() {
     }
 
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      toast.success("Registration successful!");
-    } catch (err) {
-      toast.error("Something went wrong. Please try again.");
+      await apiClient.register(username, email, password, confirmPassword, firstName, lastName);
+      router.push('/login?success=true');
+
+    } catch (err: any) {
+      console.warn(err)
+      // Display all error messages returned from the server
+      if (err.fieldErrors) {
+        console.log(err.fieldErrors)
+        const fieldErrors = err.fieldErrors;
+        Object.keys(fieldErrors).forEach((key) => {
+          toast.error(fieldErrors[key]);
+        });
+      } else {
+        toast.error("An unexpected error occurred. Please try again.");
+      }
     }
   };
 
   return (
+
     <div className="container py-5">
       <div className="row align-items-center">
         {/* Left Section with Static Pictures */}
@@ -191,14 +207,14 @@ export default function RegisterPage() {
                   onChange={handleChange}
                   placeholder="Confirm your password"
                 />
-                {errors.confirmPassword && (
+                {errors.confirmPassword &&
                   <div className="invalid-feedback">{errors.confirmPassword}</div>
-                )}
+                }
               </div>
 
               {/* Submit Button */}
               <div className="d-grid">
-                <button type="submit" className="btn" style={{ backgroundColor: "#6D1093", color: "#fff" }}>
+                <button type="submit" className="btn" style={{ backgroundColor: "#6D1093", color: "#fff" }} >
                   <i className="fas fa-paper-plane"></i> Register
                 </button>
               </div>
@@ -206,6 +222,18 @@ export default function RegisterPage() {
           </div>
         </div>
       </div>
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
     </div>
+
   );
 }
