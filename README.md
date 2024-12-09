@@ -78,34 +78,31 @@ Before running the project, make sure you have a [Cloudinary](https://cloudinary
 
 1. **Register on Cloudinary**: Sign up for a Cloudinary account if you don’t have one already.
 2. **Create an API Key**: In your Cloudinary dashboard, create an API key to use for this project.
-3. **Set Cloudinary Credentials**: Add the following environment variables with your Cloudinary details:
+3. **Set Cloudinary Credentials**: Add the following environment variables with your Cloudinary details or use the provided ones:
 
     - `CLOUDINARY_NAME`
     - `CLOUDINARY_API_KEY`
     - `CLOUDINARY_API_SECRET`
 
-Once your Cloudinary setup is complete, you’re ready to build and start the Docker containers.
-
-Run the following command in the infra folder in your terminal:
-
+Once your Cloudinary setup is complete, you’re ready to start the app. Make sure to have a running MariaDB database.
+Run the following command so u make sure u have the db :
 ```bash
 docker-compose up --build
    ```
-   This command will set up the database and the Caddy server as specified in the `docker-compose.yml` file.
+   This command will set up the database and the api server as specified in the `docker-compose.yml` file.
+
+Then you need to go to the frontend folder and write : 
+```bash
+npm install
+npm run dev
+   ```
 
 3.**Locally Testing**:
 
-Once the containers are running, you can access the application through your web browser:
+Once the containers are running and the frontend is started:
 
-URL: https://localhost
-Since the application uses Traefik for local development, you may see a security warning when first accessing the site. This happens because the SSL certificate used by Traefik is self-signed, which is common in local development environments.
+URL: https://localhost:3000
 
-To proceed safely:
-
-Open https://localhost in your browser.
-When you see a security warning, select the option to "Proceed" or "Continue" (the exact message may vary depending on your browser).
-This is a safe connection for development purposes, and your local environment remains secure.
-Note: This warning won’t appear in the production environment, as it will use a valid SSL certificate.
 
 4.**Access the Application**
 The application is currently available at http://193.196.54.242:3000.
