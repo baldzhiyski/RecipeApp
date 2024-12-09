@@ -32,8 +32,8 @@ INSERT INTO ingredients (id, name) VALUES
                                        (30, 'Cilantro');
 
 -- Insert the first admin user
-INSERT INTO users (id, username, password, email, uuid, role_type) VALUES
-    (1, 'admin', 'some-password', 'admin@example.com', UUID(), 'ADMIN');
+INSERT INTO users (id, username, password, email,created, uuid, role_type) VALUES
+    (1, 'admin', 'some-password', 'admin@example.com',NOW(),UUID(), 'ADMIN');
 
 -- Insert recipes with categories and dietary preferences, setting creator to the admin user (id = 1)
 INSERT INTO recipes (id, recipe_name, description, instructions, dish_type, meal_type, dietary_preference, creator_id,is_private) VALUES

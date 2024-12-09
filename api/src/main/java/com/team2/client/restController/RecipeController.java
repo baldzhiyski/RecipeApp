@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 @Tag(name = "Recipe Endpoints", description = "Managing recipes and ingredients.")
@@ -167,7 +168,42 @@ public class RecipeController {
         return ResponseEntity.noContent().build();
     }
 
+    @GetMapping("/api/recipes-total")
+    public Long getTotalRecipes() {
+        return recipeService.countRecipes();
+    }
 
 
+    @GetMapping("/api/recipes-by-meal-type")
+    public Map<String, Long> getRecipesByMealType() {
+        List<Object[]> results = recipeService.countRecipesByMealType();
+        return results.stream()
+                .collect(Collectors.toMap(
+                        result -> result[0].toString(),  // Convert the key to String
+                        result -> (Long) result[1]       // Cast the count to Long
+                ));
+    }
+
+    // 2. Get recipe count by Dietary Preference
+    @GetMapping("/api/recipes-by-dietary-preference")
+    public Map<String, Long> getRecipesByDietaryPreference() {
+        List<Object[]> results = recipeService.countRecipesByDietaryPreference();
+        return results.stream()
+                .collect(Collectors.toMap(
+                        result -> result[0].toString(),  // Convert the key to String
+                        result -> (Long) result[1]       // Cast the count to Long
+                ));
+    }
+
+
+    @GetMapping("/api/recipes-by-type")
+    public Map<String, Long> getRecipesByType() {
+        List<Object[]> results = recipeService.countRecipesByType();
+        return results.stream()
+                .collect(Collectors.toMap(
+                        result -> result[0].toString(),  // Convert the key to String
+                        result -> (Long) result[1]       // Cast the count to Long
+                ));
+    }
 
 }

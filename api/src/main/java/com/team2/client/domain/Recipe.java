@@ -30,6 +30,7 @@ public class Recipe  extends BaseEntity{
     private DietaryPreference dietaryPreference;
 
     @Column
+
     @NotBlank
     private String recipeName;
 

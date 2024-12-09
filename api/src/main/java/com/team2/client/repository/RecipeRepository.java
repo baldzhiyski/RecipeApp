@@ -14,7 +14,15 @@ import java.util.Optional;
 public interface RecipeRepository extends JpaRepository<Recipe,Long> {
    Optional<Recipe> findByRecipeName(String name);
 
+   @Query("SELECT r.mealType, COUNT(r) FROM Recipe r GROUP BY r.mealType")
+   List<Object[]> countRecipesByMealType();
 
+   @Query("SELECT r.dietaryPreference, COUNT(r) FROM Recipe r GROUP BY r.dietaryPreference")
+   List<Object[]> countRecipesByDietaryPreference();
+
+
+   @Query("SELECT r.dishType, COUNT(r) FROM Recipe r GROUP BY r.dishType")
+   List<Object[]> countRecipesByType();
 
 
 }

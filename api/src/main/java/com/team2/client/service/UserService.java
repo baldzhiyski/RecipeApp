@@ -6,9 +6,15 @@ import com.team2.client.domain.dto.ImageResponseDto;
 import com.team2.client.domain.dto.UserRegisterDto;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Map;
+
 public interface UserService {
 
      User registerUser(UserRegisterDto userRegisterDto);
 
     ImageResponseDto uploadProfileImage(String username, MultipartFile profileImage);
+
+    long countUsers();
+
+    Map<String, Long> getRegistrationsByWeek();
 }

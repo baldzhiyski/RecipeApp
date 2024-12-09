@@ -16,8 +16,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -46,7 +46,7 @@ public class UserServiceImpl implements UserService {
         mapped.setPassword(passwordEncoder.encode(userRegisterDto.getPassword()));
         mapped.setCreatedRecipes(new ArrayList<>());
         mapped.setUuid(UUID.randomUUID());
-
+        mapped.setCreated(new Date());
 
         ShoppingList shoppingList = new ShoppingList();
         shoppingList.setIngredients(new ArrayList<>());
@@ -71,5 +71,20 @@ public class UserServiceImpl implements UserService {
         this.userRepository.saveAndFlush(user);
 
         return new ImageResponseDto(imageUrl);
+    }
+
+    @Override
+    public long countUsers() {
+        return this.userRepository.count();
+    }
+
+    @Override
+    public Map<String, Long> getRegistrationsByWeek() {
+        List<Object[]> results = userRepository.countRegistrationsByMonthWeek();
+        return results.stream()
+                .collect(Collectors.toMap(
+                        result -> "Month " + result[1] + " - Week " + result[2], // Format as Month-Week
+                        result -> (Long) result[3]                              // Cast count to Long
+                ));
     }
 }
