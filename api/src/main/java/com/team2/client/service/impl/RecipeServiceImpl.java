@@ -21,7 +21,6 @@ import com.team2.client.repository.RecipeRepository;
 import com.team2.client.repository.UserRepository;
 import com.team2.client.service.RecipeService;
 import com.team2.client.service.helper.HelperService;
-import com.team2.client.utils.Constants;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -29,7 +28,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -76,6 +74,7 @@ public class RecipeServiceImpl implements RecipeService {
         recipe.setDishType(RecipeType.valueOf(addRecipeDTO.getDishType().toUpperCase()));
         recipe.setMealType(MealType.valueOf(addRecipeDTO.getMealType().toUpperCase()));
         recipe.setDietaryPreference(DietaryPreference.valueOf(addRecipeDTO.getDietaryPreference().toUpperCase()));
+        recipe.setEstimatedTime(addRecipeDTO.getEstimatedTime());
 
         // Handle ingredients list
         List<RecipeIngredient> ingredientsForRecipe = addRecipeDTO.getIngredientsList().stream()
@@ -215,6 +214,26 @@ public class RecipeServiceImpl implements RecipeService {
         this.recipeIngredientRepository.deleteAll(recipe.getRecipeIngredients());
         this.recipeRepository.delete(recipe);
 
+    }
+
+    @Override
+    public long countRecipes() {
+        return this.recipeRepository.count();
+    }
+
+    @Override
+    public List<Object[]> countRecipesByMealType() {
+        return this.recipeRepository.countRecipesByMealType();
+    }
+
+    @Override
+    public List<Object[]> countRecipesByDietaryPreference() {
+        return this.recipeRepository.countRecipesByDietaryPreference();
+    }
+
+    @Override
+    public List<Object[]> countRecipesByType() {
+        return this.recipeRepository.countRecipesByType();
     }
 
     /**

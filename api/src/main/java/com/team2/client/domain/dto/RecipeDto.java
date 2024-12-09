@@ -20,7 +20,7 @@ public class RecipeDto {
 
     private boolean isPrivate;
 
-
+    private Integer estimatedTime;
     private MealType mealType; // Add meal type field
 
     private DietaryPreference dietaryPreference;

@@ -32,20 +32,21 @@ INSERT INTO ingredients (id, name) VALUES
                                        (30, 'Cilantro');
 
 -- Insert the first admin user
-INSERT INTO users (id, username, password, email, uuid, role_type) VALUES
-    (1, 'admin', 'some-password', 'admin@example.com', UUID(), 'ADMIN');
+INSERT INTO users (id, username, password, email,created, uuid, role_type) VALUES
+    (1, 'admin', 'some-password', 'admin@example.com',NOW(),UUID(), 'ADMIN');
 
 -- Insert recipes with categories and dietary preferences, setting creator to the admin user (id = 1)
-INSERT INTO recipes (id, recipe_name, description, instructions, dish_type, meal_type, dietary_preference, creator_id,is_private) VALUES
-                                                                                                                           (1, 'Spaghetti Bolognese', 'A classic Italian pasta dish with a rich tomato meat sauce.', 'Cook pasta. In a separate pan, brown the meat, then add sauce and simmer. Combine and serve.', 'MAIN_COURSE', 'DINNER', 'NON_VEGETARIAN', 1,false),
-                                                                                                                           (2, 'Chicken Salad', 'A fresh and healthy salad with grilled chicken and mixed greens.', 'Grill chicken, slice, and mix with fresh greens and dressing.', 'MAIN_COURSE', 'LUNCH', 'NON_VEGETARIAN', 1,false),
-                                                                                                                           (3, 'Vegetable Stir-Fry', 'A colorful stir-fry with assorted vegetables and soy sauce.', 'Stir-fry vegetables in oil, add sauce, and serve hot.', 'MAIN_COURSE', 'DINNER', 'VEGAN', 1,false),
-                                                                                                                           (4, 'Chocolate Cake', 'A rich and moist chocolate cake perfect for dessert.', 'Mix ingredients, bake at 350°F for 30 minutes, and let cool.', 'DESSERT', 'DESSERT', 'VEGETARIAN', 1,false),
-                                                                                                                           (5, 'Guacamole', 'A creamy avocado dip with onions, tomatoes, and lime.', 'Mash avocados, mix with diced onions, tomatoes, and lime juice.', 'APPETIZER', 'SNACK', 'VEGAN', 1,false),
-                                                                                                                           (6, 'Pancakes', 'Fluffy pancakes perfect for breakfast.', 'Mix ingredients, pour batter onto griddle, cook until bubbles form, flip, and serve.', 'SNACK', 'BREAKFAST', 'VEGETARIAN', 1,false),
-                                                                                                                           (7, 'Caesar Salad', 'A classic Caesar salad with crisp romaine and creamy dressing.', 'Toss romaine with dressing, add croutons and Parmesan, and serve.', 'SIDE_DISH', 'LUNCH', 'NON_VEGETARIAN', 1,false),
-                                                                                                                           (8, 'French Toast', 'Golden, buttery French toast perfect for breakfast or brunch.', 'Dip bread in egg mixture, cook on griddle until golden, and serve with syrup.', 'SNACK', 'BREAKFAST', 'VEGETARIAN', 1,false);
--- Zutaten für Spaghetti Bolognese (Rezept ID 1)
+  INSERT INTO recipes (id, recipe_name, description, instructions, dish_type, meal_type, dietary_preference, creator_id, is_private, estimated_time) VALUES
+                                                                                                                                                         (1, 'Spaghetti Bolognese', 'A classic Italian pasta dish with a rich tomato meat sauce.', 'Cook pasta. In a separate pan, brown the meat, then add sauce and simmer. Combine and serve.', 'MAIN_COURSE', 'DINNER', 'NON_VEGETARIAN', 1, false, 45),
+                                                                                                                                                         (2, 'Chicken Salad', 'A fresh and healthy salad with grilled chicken and mixed greens.', 'Grill chicken, slice, and mix with fresh greens and dressing.', 'MAIN_COURSE', 'LUNCH', 'NON_VEGETARIAN', 1, false, 30),
+                                                                                                                                                         (3, 'Vegetable Stir-Fry', 'A colorful stir-fry with assorted vegetables and soy sauce.', 'Stir-fry vegetables in oil, add sauce, and serve hot.', 'MAIN_COURSE', 'DINNER', 'VEGAN', 1, false, 25),
+                                                                                                                                                         (4, 'Chocolate Cake', 'A rich and moist chocolate cake perfect for dessert.', 'Mix ingredients, bake at 350°F for 30 minutes, and let cool.', 'DESSERT', 'DESSERT', 'VEGETARIAN', 1, false, 60),
+                                                                                                                                                         (5, 'Guacamole', 'A creamy avocado dip with onions, tomatoes, and lime.', 'Mash avocados, mix with diced onions, tomatoes, and lime juice.', 'APPETIZER', 'SNACK', 'VEGAN', 1, false, 15),
+                                                                                                                                                         (6, 'Pancakes', 'Fluffy pancakes perfect for breakfast.', 'Mix ingredients, pour batter onto griddle, cook until bubbles form, flip, and serve.', 'SNACK', 'BREAKFAST', 'VEGETARIAN', 1, false, 20),
+                                                                                                                                                         (7, 'Caesar Salad', 'A classic Caesar salad with crisp romaine and creamy dressing.', 'Toss romaine with dressing, add croutons and Parmesan, and serve.', 'SIDE_DISH', 'LUNCH', 'NON_VEGETARIAN', 1, false, 15),
+                                                                                                                                                         (8, 'French Toast', 'Golden, buttery French toast perfect for breakfast or brunch.', 'Dip bread in egg mixture, cook on griddle until golden, and serve with syrup.', 'SNACK', 'BREAKFAST', 'VEGETARIAN', 1, false, 25);
+
+
 INSERT INTO recipe_ingredients (ingredient_id, recipe_id, amount, unit) VALUES
                                                                             (1, 1, 200, 'grams'),
                                                                             (2, 1, 150, 'grams'),

@@ -36,6 +36,8 @@ public class AddRecipeDTO {
     @NotBlank(message = "{recipe.required}")
     private String instructions;
 
+    private Integer estimatedTime;
+
     private Boolean isPrivate;
 
 }

@@ -1,5 +1,3 @@
-'use client';
-
 import {
   Modal,
   Button,
@@ -10,47 +8,40 @@ import {
   Textarea,
   Input,
   Select,
-  SelectItem,
-  Checkbox,  // Import Checkbox component
+  Checkbox, SelectItem,
 } from '@nextui-org/react';
-import { DietaryPreference } from '@/types/DietaryPreference';
-import { MealType } from '@/types/MealType';
 import { useState } from 'react';
-import { Ingredient } from '@entities/Ingredient';
-import { Recipe } from '@entities/Recipe';
 import apiClient from '@lib/apiClient';
-import { DishType } from '@/types/DishType';
+import { DishType } from '@types/DishType';
+import { DietaryPreference } from '@types/DietaryPreference';
+import { MealType } from '@types/MealType';
 
 interface CreateRecipeProps {
   isOpen: boolean;
   onClose: () => void;
-  onRecipeAdded:() => void;
-
+  onRecipeAdded: () => void;
 }
 
-const CreateRecipe: React.FC<CreateRecipeProps> = ({ isOpen, onClose,onRecipeAdded }) => {
+const CreateRecipe: React.FC<CreateRecipeProps> = ({ isOpen, onClose, onRecipeAdded }) => {
   const [recipeName, setRecipeName] = useState<string>('');
   const [description, setDescription] = useState<string>('');
-  const [mealType, setMealType] = useState<MealType | null>(null);
-  const [dishType, setDishType] = useState<DishType | null>(null);
-  const [dietaryPreference, setDietaryPreference] = useState<DietaryPreference | null>(null);
+  const [mealType, setMealType] = useState<string | null>(null);
+  const [dishType, setDishType] = useState<string | null>(null);
+  const [dietaryPreference, setDietaryPreference] = useState<string | null>(null);
   const [instructions, setInstructions] = useState<string>('');
-  const [ingredients, setIngredients] = useState<Ingredient[]>([]);
+  const [ingredients, setIngredients] = useState<any[]>([]);
   const [uploading, setUploading] = useState<boolean>(false);
-  const [isPrivate, setIsPrivate] = useState<boolean>(false);  // New state for privacy
+  const [isPrivate, setIsPrivate] = useState<boolean>(false);
+  const [estimatedTime, setEstimatedTime] = useState<number>(0);
 
   const addIngredient = () => {
     setIngredients((prevIngredients) => [
       ...prevIngredients,
-      new Ingredient(0, '', ''),
+      { ingredientName: '', amount: 0, unit: '' },
     ]);
   };
 
-  const updateIngredient = (
-    index: number,
-    field: keyof Ingredient,
-    value: string | number
-  ) => {
+  const updateIngredient = (index: number, field: keyof typeof ingredients[0], value: string | number) => {
     setIngredients((prevIngredients) =>
       prevIngredients.map((ingredient, i) =>
         i === index ? { ...ingredient, [field]: value } : ingredient
@@ -59,9 +50,7 @@ const CreateRecipe: React.FC<CreateRecipeProps> = ({ isOpen, onClose,onRecipeAdd
   };
 
   const removeIngredient = (index: number) => {
-    setIngredients((prevIngredients) =>
-      prevIngredients.filter((_, i) => i !== index)
-    );
+    setIngredients((prevIngredients) => prevIngredients.filter((_, i) => i !== index));
   };
 
   const isFormValid = () => {
@@ -71,12 +60,11 @@ const CreateRecipe: React.FC<CreateRecipeProps> = ({ isOpen, onClose,onRecipeAdd
       mealType !== null &&
       dietaryPreference !== null &&
       instructions !== '' &&
+      ingredients.length > 0 &&
       ingredients.every(
-        (ingredient) =>
-          ingredient.ingredientName !== '' &&
-          ingredient.amount > 0 &&
-          ingredient.unit !== null
-      )
+        (ingredient) => ingredient.ingredientName !== '' && ingredient.amount > 0 && ingredient.unit !== ''
+      ) &&
+      estimatedTime > 0
     );
   };
 
@@ -98,18 +86,17 @@ const CreateRecipe: React.FC<CreateRecipeProps> = ({ isOpen, onClose,onRecipeAdd
       recipeName,
       description,
       instructions,
-      isPrivate,  // Include isPrivate in the request body
+      isPrivate,
+      estimatedTime,
     };
 
     try {
-      await apiClient.post<Recipe>('recipes/add', requestBody);
-      console.log(requestBody)
-      onRecipeAdded(); // Notify parent about the new recipe
+      await apiClient.post('recipes/add', requestBody);
+      onRecipeAdded();
     } catch (error) {
       console.error('Failed to upload recipe:', error);
     }
 
-    // Once done:
     setUploading(false);
     onClose();
   };
@@ -125,57 +112,56 @@ const CreateRecipe: React.FC<CreateRecipeProps> = ({ isOpen, onClose,onRecipeAdd
             label="Recipe Name"
             placeholder="Recipe Name"
             value={recipeName}
-            isInvalid={recipeName === ''}
             onValueChange={setRecipeName}
+            isInvalid={recipeName === ''}
           />
           <Select
             label="Dish Type"
             placeholder="Select Dish type"
             value={dishType || ''}
-            onChange={(event) =>
-              setDishType(event.target.value as unknown as DishType)
-            }
+            onChange={(e) => setDishType(e.target.value as unknown as DishType)}
+            isInvalid={!dishType}
           >
             {Object.values(DishType).map((type) => (
               <SelectItem key={type} value={type}>
                 {type}
               </SelectItem>
             ))}
+            {/* Add your dish types here */}
           </Select>
           <Select
             label="Meal Type"
             placeholder="Select meal type"
             value={mealType || ''}
-            onChange={(event) =>
-              setMealType(event.target.value as unknown as MealType)
-            }
+            onChange={(e) => setMealType(e.target.value as unknown as MealType)}
+            isInvalid={!mealType}
           >
             {Object.values(MealType).map((type) => (
               <SelectItem key={type} value={type}>
                 {type}
               </SelectItem>
             ))}
+            {/* Add your meal types here */}
           </Select>
           <Select
             label="Dietary Preference"
             placeholder="Select dietary preference"
             value={dietaryPreference || ''}
-            onChange={(event) =>
-              setDietaryPreference(
-                event.target.value as unknown as DietaryPreference
-              )
-            }
+            onChange={(e) => setDietaryPreference(e.target.value as unknown as DietaryPreference)}
+            isInvalid={!dietaryPreference}
           >
-            {Object.values(DietaryPreference).map((preference) => (
-              <SelectItem key={preference} value={preference}>
-                {preference}
+            {Object.values(DietaryPreference).map((type) => (
+              <SelectItem key={type} value={type}>
+                {type}
               </SelectItem>
             ))}
+            {/* Add your dietary preferences here */}
           </Select>
           <Textarea
+            label="Description"
+            placeholder="Recipe Description"
             value={description}
             onValueChange={setDescription}
-            placeholder="Description"
             isInvalid={description === ''}
           />
           <Textarea
@@ -185,66 +171,55 @@ const CreateRecipe: React.FC<CreateRecipeProps> = ({ isOpen, onClose,onRecipeAdd
             onValueChange={setInstructions}
             isInvalid={instructions === ''}
           />
+          {/* Estimated time input */}
+          <Input
+            label="Estimated Time (minutes)"
+            type="number"
+            value={estimatedTime}
+            onValueChange={(value) => setEstimatedTime(value)}
+            min={1}
+            isInvalid={estimatedTime <= 0}
+          />
+          {/* Ingredients section */}
           <div className="mt-4">
             <h3>Ingredients</h3>
+            {ingredients.length === 0 && (
+              <div style={{ color: 'red', fontSize: '14px' }}>
+                At least one ingredient is required.
+              </div>
+            )}
             {ingredients.map((ingredient, index) => (
               <div key={index} className="flex items-center gap-4 mt-2">
                 <Input
                   label="Name"
-                  placeholder="Ingredient name"
+                  placeholder="Ingredient Name"
                   value={ingredient.ingredientName}
-                  onValueChange={(value) =>
-                    updateIngredient(index, 'ingredientName', value)
-                  }
+                  onValueChange={(value) => updateIngredient(index, 'ingredientName', value)}
+                  isInvalid={ingredient.ingredientName === ''}
                 />
                 <Input
                   label="Amount"
-                  placeholder="Amount"
                   type="number"
-                  min="0"
                   value={ingredient.amount.toString()}
-                  onValueChange={(value) =>
-                    updateIngredient(index, 'amount', parseFloat(value))
-                  }
+                  onValueChange={(value) => updateIngredient(index, 'amount', parseFloat(value))}
+                  isInvalid={ingredient.amount <= 0}
                 />
                 <Input
                   label="Unit"
-                  placeholder="Your unit"
                   value={ingredient.unit}
-                  onValueChange={(value) =>
-                    updateIngredient(index, 'unit', value)
-                  }
+                  onValueChange={(value) => updateIngredient(index, 'unit', value)}
+                  isInvalid={ingredient.unit === ''}
                 />
-                <Button
-                  className="bg-danger"
-                  onClick={() => removeIngredient(index)}
-                >
-                  Remove
-                </Button>
+                <Button onClick={() => removeIngredient(index)}>Remove</Button>
               </div>
             ))}
-            <Button onClick={addIngredient} className="mt-4 bg-primary">
-              + Add Ingredient
-            </Button>
+            <Button onClick={addIngredient}>+ Add Ingredient</Button>
           </div>
-
-          {/* Checkbox for privacy */}
-          <Checkbox label="Make this recipe private"
-                    isSelected={isPrivate}
-                    onChange={(e) => setIsPrivate(e.target.checked)}> Do you want to stay private ? </Checkbox>
-
-
         </ModalBody>
         <ModalFooter>
-          <Button
-            className="bg-success"
-            onClick={upLoadRecipe}
-            disabled={!isFormValid()}
-          >
-            {uploading ? 'Uploading...' : 'Save'}
-          </Button>
-          <Button className="bg-danger" onClick={onClose}>
-            Close
+          <Button onClick={onClose}>Close</Button>
+          <Button onClick={upLoadRecipe} disabled={uploading || !isFormValid()}>
+            {uploading ? 'Uploading...' : 'Upload Recipe'}
           </Button>
         </ModalFooter>
       </ModalContent>

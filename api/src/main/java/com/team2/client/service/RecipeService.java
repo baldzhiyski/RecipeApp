@@ -1,14 +1,12 @@
 package com.team2.client.service;
 
 
-import com.team2.client.domain.Ingredient;
 import com.team2.client.domain.dto.AddRecipeDTO;
 import com.team2.client.domain.dto.AddRecipeResponse;
 import com.team2.client.domain.dto.RecipeDto;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.List;
-import java.util.UUID;
 
 public interface RecipeService {
     List<RecipeDto> getAllRecipes();
@@ -30,4 +28,12 @@ public interface RecipeService {
     void toggleRecipePrivacy(Long recipeId);
 
     void deleteRecipe(Long recipeId);
+
+    long countRecipes();
+
+    List<Object[]> countRecipesByMealType();
+
+    List<Object[]> countRecipesByDietaryPreference();
+
+    List<Object[]> countRecipesByType();
 }

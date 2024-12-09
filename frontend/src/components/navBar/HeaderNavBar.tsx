@@ -75,7 +75,7 @@ const HeaderNavbar = () => {
                         className="flex items-center hover:text-[#C542FF] transition duration-300">
                   <FiList /> <span className="ml-1">My Shopping List</span>
                 </button>
-                <button onClick={() => handleNavigation('/recipe-stats')}
+                <button onClick={() => handleNavigation('/recipes-stats')}
                         className="flex items-center hover:text-[#C542FF] transition duration-300">
                   <FiBarChart /> <span className="ml-1">Recipe Stats</span>
                 </button>
@@ -119,7 +119,7 @@ const HeaderNavbar = () => {
                 <li><button onClick={() => handleNavigation('/recipes')} className="hover:text-[#C542FF]">All Recipes</button></li>
                 <li><button onClick={() => handleNavigation('/add-recipe')} className="hover:text-[#C542FF]">Add Recipe</button></li>
                 <li><button onClick={() => handleNavigation('/shopping-list')} className="hover:text-[#C542FF]">My Shopping List</button></li>
-                <li><button onClick={() => handleNavigation('/recipe-stats')} className="hover:text-[#C542FF]">Recipe Stats</button></li>
+                <li><button onClick={() => handleNavigation('/recipes-stats')} className="hover:text-[#C542FF]">Recipe Stats</button></li>
                 <li><button onClick={() => handleNavigation('/weekly-plan')} className="hover:text-[#C542FF]">My Weekly Plan</button></li>
                 <li><button onClick={() => {
                   apiClient.logout();
