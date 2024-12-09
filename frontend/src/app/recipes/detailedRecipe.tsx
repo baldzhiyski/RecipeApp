@@ -7,6 +7,7 @@ import {
   ModalContent,
 } from '@nextui-org/react';
 import { Recipe } from '@entities/Recipe';
+import { useState, useEffect } from 'react';
 
 interface RecipeDetailsProps {
   isOpen: boolean;
@@ -19,6 +20,28 @@ const RecipeDetails: React.FC<RecipeDetailsProps> = ({
                                                        onClose,
                                                        recipe,
                                                      }) => {
+  const [portions, setPortions] = useState(1);  // Default portion size
+  const [scaledIngredients, setScaledIngredients] = useState(recipe.recipeIngredients);
+
+  // Function to scale the ingredient quantities
+  const scaleIngredients = (ingredients: any[], portions: number) => {
+    return ingredients.map(ingredient => ({
+      ...ingredient,
+      amount: ingredient.amount * portions, // Multiply amount by the number of portions
+    }));
+  };
+
+  // Update scaled ingredients whenever recipe or portions change
+  useEffect(() => {
+    if (recipe.recipeIngredients) {
+      setScaledIngredients(scaleIngredients(recipe.recipeIngredients, portions));
+    }
+  }, [recipe, portions]);
+
+  // Handle increment and decrement for portions
+  const increasePortions = () => setPortions(prev => prev + 1);
+  const decreasePortions = () => setPortions(prev => (prev > 1 ? prev - 1 : 1));
+
   return (
     <Modal
       isOpen={isOpen}
@@ -48,16 +71,32 @@ const RecipeDetails: React.FC<RecipeDetailsProps> = ({
               <span className="font-semibold">Created by:</span> {recipe.creatorUsername}
             </p>
           </div>
-          <div className="space-y-2">
+
+
+          {/* Ingredients List */}
+          <div className="space-y-2 mt-4">
             <h4 className="text-xl font-semibold">Ingredients:</h4>
             <ul className="list-disc list-inside space-y-1">
-              {recipe.recipeIngredients?.map((ingredient, index) => (
+              {scaledIngredients?.map((ingredient, index) => (
                 <li key={index}>
                   {ingredient.amount} {ingredient.unit} of {ingredient.ingredientName}
                 </li>
               ))}
             </ul>
           </div>
+
+          {/* Portion Control */}
+          <div className="mt-4 flex justify-between items-center">
+            <h4 className="text-xl font-semibold">Portions: {portions}</h4>
+            <div className="flex space-x-4">
+              <Button onClick={decreasePortions} disabled={portions <= 1}>
+                -
+              </Button>
+              <Button onClick={increasePortions}>+</Button>
+            </div>
+          </div>
+
+          {/* Instructions */}
           <div>
             <h4 className="text-xl font-semibold">Instructions:</h4>
             <p>{recipe.instructions}</p>
