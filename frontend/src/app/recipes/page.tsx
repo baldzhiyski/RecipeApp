@@ -61,6 +61,7 @@ const Recipes: React.FC = () => {
       const endpoint = isUserRecipesOnly ? 'my-recipes' : 'recipes';
       const response = await apiClient.get<Recipe[]>(endpoint);
       setRecipes(response);
+      console.log(response)
       setFilteredRecipes(response); // Sync the filteredRecipes with fetched data
     } catch (error) {
       console.error('Failed to fetch recipes:', error);

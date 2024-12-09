@@ -49,6 +49,8 @@ public class Recipe  extends BaseEntity{
     @Column
     private Boolean isPrivate;
 
+    @Column
+    private Integer estimatedTime;
 
     @ManyToOne
     private User creator;

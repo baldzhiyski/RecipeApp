@@ -74,6 +74,7 @@ public class RecipeServiceImpl implements RecipeService {
         recipe.setDishType(RecipeType.valueOf(addRecipeDTO.getDishType().toUpperCase()));
         recipe.setMealType(MealType.valueOf(addRecipeDTO.getMealType().toUpperCase()));
         recipe.setDietaryPreference(DietaryPreference.valueOf(addRecipeDTO.getDietaryPreference().toUpperCase()));
+        recipe.setEstimatedTime(addRecipeDTO.getEstimatedTime());
 
         // Handle ingredients list
         List<RecipeIngredient> ingredientsForRecipe = addRecipeDTO.getIngredientsList().stream()
