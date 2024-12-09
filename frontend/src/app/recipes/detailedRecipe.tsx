@@ -44,12 +44,12 @@ const RecipeDetails: React.FC<RecipeDetailsProps> = ({
       isDismissable
       className="flex items-center justify-center"
     >
-      <ModalContent className="bg-blue-100 p-4 rounded-lg shadow-xl max-w-xl w-full">
-        <ModalHeader className="border-b pb-2 mb-4">
+      <ModalContent className="bg-blue-100 p-1 rounded-lg shadow-xl max-w-xl w-full">
+        <ModalHeader className="border-b pb-1 mb-1">
           <h2 className="text-2xl font-semibold text-gray-800">{recipe.recipeName}</h2>
         </ModalHeader>
 
-        <ModalBody className="space-y-3 text-gray-700">
+        <ModalBody className="space-y-1 text-gray-700">
           {/* Description and Details */}
           <p className="text-base">{recipe.description}</p>
 
@@ -69,7 +69,7 @@ const RecipeDetails: React.FC<RecipeDetailsProps> = ({
           </div>
 
           {/* Estimated Time with Clock Icon */}
-          <div className="flex items-center space-x-2 mt-2">
+          <div className="flex items-center space-x-1 mt-1">
             <FaClock className="text-gray-500" />
             <span className="text-sm">
               Estimated Time: {recipe.estimatedTime} minutes
@@ -77,7 +77,7 @@ const RecipeDetails: React.FC<RecipeDetailsProps> = ({
           </div>
 
           {/* Ingredients List */}
-          <div className="mt-4">
+          <div className="mt-1">
             <h4 className="text-lg font-semibold">Ingredients:</h4>
             <ul className="list-disc list-inside text-sm space-y-1">
               {scaledIngredients?.map((ingredient, index) => (
@@ -89,9 +89,9 @@ const RecipeDetails: React.FC<RecipeDetailsProps> = ({
           </div>
 
           {/* Portion Control */}
-          <div className="mt-4 flex justify-between items-center">
+          <div className="mt-1 flex justify-between items-center">
             <h4 className="text-sm font-semibold">Portions: {portions}</h4>
-            <div className="flex space-x-2">
+            <div className="flex space-x-1">
               <Button onClick={decreasePortions} disabled={portions <= 1} size="sm">
                 -
               </Button>
@@ -100,13 +100,13 @@ const RecipeDetails: React.FC<RecipeDetailsProps> = ({
           </div>
 
           {/* Instructions */}
-          <div className="mt-4">
+          <div className="mt-1">
             <h4 className="text-lg font-semibold">Instructions:</h4>
             <p className="text-sm">{recipe.instructions}</p>
           </div>
         </ModalBody>
 
-        <ModalFooter className="pt-2">
+        <ModalFooter className="pt-1">
           <Button
             className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md font-medium transition"
             onClick={onClose}

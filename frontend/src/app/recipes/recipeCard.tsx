@@ -5,6 +5,7 @@ import { FaTrashAlt, FaEye, FaEyeSlash } from 'react-icons/fa'; // Import Font A
 import { useState } from 'react';
 import RecipeDetails from './detailedRecipe';
 import apiClient from '@lib/apiClient';
+import 'bootstrap/dist/css/bootstrap.min.css'
 
 interface RecipeCardProps {
   recipe: Recipe;
