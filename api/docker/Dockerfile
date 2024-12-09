@@ -1,4 +1,4 @@
-# Stage 1: Build the application using Maven
+# Stage 1: Use Maven to build the application
 FROM maven:3.8.8-amazoncorretto-21 AS build
 
 # Set the working directory in the build container
@@ -8,20 +8,18 @@ WORKDIR /app
 COPY pom.xml .
 COPY src ./src
 
-# Build the application
-RUN mvn clean package -DskipTests
-
-# Stage 2: Create the runtime image with the built JAR file
+# Stage 2: Use the Amazon Corretto image as the base for runtime
 FROM amazoncorretto:21-alpine
 
 # Set the working directory in the runtime container
 WORKDIR /app
 
-# Copy the JAR file from the build stage
-COPY --from=build /app/target/api-0.0.1-SNAPSHOT.jar app.jar
+# Copy the Maven project files into the runtime container
+COPY pom.xml .
+COPY src ./src
+
+# Install dependencies and build the app when the container starts
+CMD mvn clean install && java -jar target/api-0.0.1-SNAPSHOT.jar
 
 # Expose the port the application will run on
 EXPOSE 8082
-
-# Command to run the application
-ENTRYPOINT ["java", "-jar", "app.jar"]
