@@ -65,16 +65,15 @@ Einkaufsplaner is a comprehensive meal and shopping planner that simplifies reci
 - **Frontend**: Built with Next.js, providing a responsive and modern user interface.
 - **Backend**: Developed using Spring Boot, organized with a two-layer architecture (Controller and Service layers) for a clean and maintainable codebase.
 
-## Getting Started
+## Getting Started ( Locally )
 
 1. **Clone the repository**:
    ```bash
-   git clone https://github.com/username/einkaufsplaner.git
-   cd einkaufsplaner
+   git clone https://github.com/username/einkaufsplaner.git](https://github.tik.uni-stuttgart.de/iste-sopra-2024-aeb/team-2.git
    ```
 ## 2. Build and Start the Docker Containers
 
-Before running the project, make sure you have a [Cloudinary](https://cloudinary.com/) account. Follow these steps:
+Use the provided credentials for cloduinary or get your own : Make sure you have a [Cloudinary](https://cloudinary.com/) account. Follow these steps:
 
 1. **Register on Cloudinary**: Sign up for a Cloudinary account if you don’t have one already.
 2. **Create an API Key**: In your Cloudinary dashboard, create an API key to use for this project.
@@ -91,7 +90,8 @@ docker-compose up --build
    ```
    This command will set up the database and the api server as specified in the `docker-compose.yml` file.
 
-Then you need to go to the frontend folder and write : 
+Then you need to go to the frontend folder and make a change in the .env.local file. Replace it with the url in the .env.local.example.
+Then write the following commands : 
 ```bash
 npm install
 npm run dev
@@ -101,7 +101,7 @@ npm run dev
 
 Once the containers are running and the frontend is started:
 
-URL: https://localhost:3000
+URL: http://localhost:3000
 
 
 4.**Access the Application**
