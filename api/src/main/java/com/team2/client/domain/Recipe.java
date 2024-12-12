@@ -38,9 +38,11 @@ public class Recipe  extends BaseEntity{
     @NotBlank
     private String description;
 
-    @Column
-    @NotBlank
-    private String instructions;
+   @Column(columnDefinition = "TEXT")
+   @Lob
+   @NotBlank
+   private String instructions;
+
 
     @OneToMany(mappedBy = "recipe",fetch = FetchType.EAGER)
     @JsonManagedReference
