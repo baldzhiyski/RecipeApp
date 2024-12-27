@@ -36,4 +36,10 @@ public interface RecipeService {
     List<Object[]> countRecipesByDietaryPreference();
 
     List<Object[]> countRecipesByType();
+
+    void addRating(Long recipeId, Long stars, String username);
+
+    Long getRating(Long recipeId, String username);
+
+    Double getAvg(Long recipeId);
 }

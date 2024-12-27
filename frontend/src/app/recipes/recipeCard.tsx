@@ -1,7 +1,7 @@
 'use client';
 import { Recipe } from '@entities/Recipe';
 import { Button, Card, CardBody } from '@nextui-org/react';
-import { FaTrashAlt, FaEye, FaEyeSlash } from 'react-icons/fa'; // Import Font Awesome icons
+import { FaTrashAlt, FaEye, FaEyeSlash, FaStar } from 'react-icons/fa'; // Import Font Awesome icons
 import { useState } from 'react';
 import RecipeDetails from './detailedRecipe';
 import apiClient from '@lib/apiClient';
@@ -15,6 +15,13 @@ interface RecipeCardProps {
 
 const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, loggedInUsername, onUpdateRecipe }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [updatedRating, setUpdatedRating] = useState(recipe.averageRating);
+
+  const handleRatingUpdate = (newRating: number) => {
+    setUpdatedRating(newRating); // Immediately update the rating in the state
+    onUpdateRecipe(); // Optionally call this to update the recipe list or perform any other updates
+  };
+
 
   const handleOpenRecipeDetails = () => {
     setIsModalOpen(true);
@@ -50,6 +57,7 @@ const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, loggedInUsername, onUpd
             <h3 className="text-xl font-bold text-blue-700">{recipe.recipeName}</h3>
           </div>
           <p className="text-gray-600">{recipe.description}</p>
+
           <div className="flex flex-col space-y-2 text-sm">
             <div>
               <span className="font-semibold text-blue-700">Meal Type:</span> {recipe.mealType}
@@ -59,6 +67,14 @@ const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, loggedInUsername, onUpd
             </div>
             <div>
               <span className="font-semibold text-blue-700">Created by:</span> {recipe.creatorUsername}
+            </div>
+
+            {/* Average Rating */}
+            <div className="flex items-center justify-center space-x-1 text-yellow-500">
+              <FaStar className="text-lg" />
+              <span className="text-lg font-semibold">
+              {updatedRating.toFixed(1) || 'No Ratings'}
+            </span>
             </div>
           </div>
 
@@ -97,6 +113,7 @@ const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, loggedInUsername, onUpd
         isOpen={isModalOpen}
         onClose={handleCloseRecipeDetails}
         recipe={recipe}
+        onRatingUpdate={handleRatingUpdate}
       />
     </>
   );

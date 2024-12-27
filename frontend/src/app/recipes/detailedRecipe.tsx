@@ -1,21 +1,77 @@
 import { Modal, Button, ModalBody, ModalFooter, ModalHeader, ModalContent } from '@nextui-org/react';
 import { Recipe } from '@entities/Recipe';
 import { useState, useEffect } from 'react';
-import { FaClock } from 'react-icons/fa'; // Importing the clock icon
+import { FaClock, FaStar } from 'react-icons/fa';
+import { toast, ToastContainer } from 'react-toastify';
+import apiClient from '@lib/apiClient'; // Importing the clock icon
 
 interface RecipeDetailsProps {
   isOpen: boolean;
   onClose: () => void;
   recipe: Recipe;
+  onRatingUpdate: (newRating: number) => void; // Callback to update rating in the parent
 }
 
 const RecipeDetails: React.FC<RecipeDetailsProps> = ({
                                                        isOpen,
                                                        onClose,
                                                        recipe,
+                                                       onRatingUpdate
                                                      }) => {
   const [portions, setPortions] = useState(1); // Default portion size
   const [scaledIngredients, setScaledIngredients] = useState(recipe.recipeIngredients);
+
+  const [rating, setRating] = useState<number>(recipe.averageRating || 0); // Rating state (default to recipe's average rating)
+  const [hoverRating, setHoverRating] = useState<number>(0); // Hover rating for star highlight
+  const [userRating, setUserRating] = useState<number | null>(null); // Store user rating
+
+  // Fetch the user's rating when the component mounts
+  // Fetch the user's rating when the component mounts
+  useEffect(() => {
+    const fetchUserRating = async () => {
+      try {
+        const response = await apiClient.get(`recipes/${recipe.id}/rating`);
+        console.log('Fetched user rating:', response);
+
+        // If no rating exists, response.data will be null, otherwise, store the rating
+        setUserRating(response ?? null); // If null, user hasn't rated yet
+      } catch (error) {
+        console.error('Error fetching user rating:', error);
+      }
+    };
+
+    // Call the fetch function only when recipe.id is available
+    if (recipe?.id) {
+      fetchUserRating();
+    }
+  }, [recipe.id]);
+
+  // Handle rating star click
+  const handleRatingClick = async (rate: number) => {
+    setRating(rate);
+    // Use ApiClient to send POST request with the updated rating
+    console.log(rate)
+
+    // Log the payload to see what you're sending
+    const payload = {
+
+    };
+
+    console.log(payload);
+
+    await apiClient.post(`recipes/${recipe.id}/rate`, { numStars: rate,
+        recipeId: recipe.id });
+    toast.success('Successfully rated recipe !');
+
+    // Update parent component's state
+    onRatingUpdate(rate);
+
+  };
+
+  // Handle mouse hover on stars for preview effect
+  const handleMouseEnter = (rate: number) => setHoverRating(rate);
+  const handleMouseLeave = () => setHoverRating(0);
+
 
   // Function to scale the ingredient quantities
   const scaleIngredients = (ingredients: any[], portions: number) => {
@@ -96,6 +152,24 @@ const RecipeDetails: React.FC<RecipeDetailsProps> = ({
                 -
               </Button>
               <Button onClick={increasePortions} size="sm">+</Button>
+            </div>
+          </div>
+
+          {/* Rating Section with Stars */}
+          <div className="mt-4">
+            <h4 className="text-lg font-semibold">Rate this Recipe:</h4>
+            <div className="flex space-x-1">
+              {[1, 2, 3, 4, 5].map((star) => (
+                <FaStar
+                  key={star}
+                  size={24}
+                  color={userRating >= star ? "#FFD700" : hoverRating >= star ? "#FFD700" : "#D3D3D3"} // Stars are golden if rated by user or hovered over, else gray
+                  onClick={() => handleRatingClick(star)}
+                  onMouseEnter={() => handleMouseEnter(star)}
+                  onMouseLeave={handleMouseLeave}
+                  className="cursor-pointer"
+                />
+              ))}
             </div>
           </div>
 

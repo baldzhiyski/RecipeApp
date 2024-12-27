@@ -57,6 +57,17 @@ public class Recipe  extends BaseEntity{
     @ManyToOne
     private User creator;
 
+    @OneToMany(mappedBy = "recipe", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    private List<Rating> ratings;
+
+    public double getAverageRating() {
+        if (ratings == null || ratings.isEmpty()) {
+            return 0.0;
+        }
+        return ratings.stream().mapToLong(Rating::getStars).average().orElse(0.0);
+    }
+
 
 
 }

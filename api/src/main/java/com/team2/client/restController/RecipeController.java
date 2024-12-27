@@ -1,8 +1,8 @@
 package com.team2.client.restController;
 
-import com.team2.client.domain.Ingredient;
 import com.team2.client.domain.dto.AddRecipeDTO;
 import com.team2.client.domain.dto.AddRecipeResponse;
+import com.team2.client.domain.dto.RatingDto;
 import com.team2.client.domain.dto.RecipeDto;
 import com.team2.client.exception.RecipeNotFoundException;
 import com.team2.client.service.RecipeService;
@@ -204,6 +204,19 @@ public class RecipeController {
                         result -> result[0].toString(),  // Convert the key to String
                         result -> (Long) result[1]       // Cast the count to Long
                 ));
+    }
+
+    @PostMapping("/api/recipes/{recipeId}/rate")
+    public ResponseEntity<Double> rateRecipe(@PathVariable Long recipeId, @org.springframework.web.bind.annotation.RequestBody @Valid RatingDto rating, @AuthenticationPrincipal UserDetails userDetails) {
+        recipeService.addRating(recipeId, rating.getNumStars(),userDetails.getUsername());
+        return ResponseEntity.ok(recipeService.getAvg(recipeId));
+    }
+
+    // Endpoint to get the rating for a specific recipe by the logged-in user
+    @GetMapping("/api/recipes/{recipeId}/rating")
+    public ResponseEntity<Long> getRating(@PathVariable Long recipeId, @AuthenticationPrincipal UserDetails userDetails) {
+
+        return ResponseEntity.ok(this.recipeService.getRating(recipeId,userDetails.getUsername())); // Return the user's rating or null if not rated
     }
 
 }

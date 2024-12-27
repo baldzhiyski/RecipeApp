@@ -32,4 +32,6 @@ public class RecipeDto {
     private String instructions;
 
     private String creatorUsername;
+
+    private Double averageRating;
 }
