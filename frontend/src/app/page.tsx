@@ -88,7 +88,7 @@ export default function Home() {
                   <div className="card shadow-xl rounded-lg overflow-hidden border-0 transform-hover">
                     <div className="card-img-wrapper">
                       <img
-                        src={recipe.image}
+                        src={recipe.imageUrl}
                         className="card-img-top object-cover"
                         alt={recipe.recipeName}
                         style={{ height: '200px', width: '100%' }}

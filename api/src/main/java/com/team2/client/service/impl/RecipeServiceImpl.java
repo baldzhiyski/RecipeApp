@@ -13,12 +13,14 @@ import com.team2.client.exception.RecipeExistsException;
 import com.team2.client.exception.RecipeNotFoundException;
 import com.team2.client.exception.UserNotFound;
 import com.team2.client.repository.*;
+import com.team2.client.service.CloudinaryService;
 import com.team2.client.service.RecipeService;
 import com.team2.client.service.helper.HelperService;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Optional;
@@ -32,6 +34,7 @@ public class RecipeServiceImpl implements RecipeService {
 
     private HelperService helperService;
 
+    private CloudinaryService cloudinaryService;
     private IngredientRepository ingredientRepository;
 
     private RecipeIngredientRepository recipeIngredientRepository;
@@ -41,9 +44,10 @@ public class RecipeServiceImpl implements RecipeService {
 
     private RatingRepository ratingRepository;
 
-    public RecipeServiceImpl(RecipeRepository repository, HelperService helperService, ModelMapper mapper, IngredientRepository ingredientRepository, UserRepository userRepository, RecipeRepository recipeRepository, RecipeIngredientRepository recipeIngredientRepository, RatingRepository ratingRepository) {
+    public RecipeServiceImpl(RecipeRepository repository, HelperService helperService, CloudinaryService cloudinaryService, ModelMapper mapper, IngredientRepository ingredientRepository, UserRepository userRepository, RecipeRepository recipeRepository, RecipeIngredientRepository recipeIngredientRepository, RatingRepository ratingRepository) {
         this.repository = repository;
         this.helperService = helperService;
+        this.cloudinaryService = cloudinaryService;
         this.mapper = mapper;
         this.ingredientRepository=ingredientRepository;
         this.userRepository = userRepository;
@@ -55,12 +59,14 @@ public class RecipeServiceImpl implements RecipeService {
 
     @Override
     @Transactional
-    public AddRecipeResponse addRecipe(AddRecipeDTO addRecipeDTO, UserDetails loggedInUser) {
+    public AddRecipeResponse addRecipe(AddRecipeDTO addRecipeDTO, UserDetails loggedInUser, MultipartFile image) {
         // Check if recipe already exists
         Optional<Recipe> byRecipeName = this.repository.findByRecipeName(addRecipeDTO.getRecipeName());
         if (byRecipeName.isPresent()) {
             throw new RecipeExistsException("The recipe with the name " + addRecipeDTO.getRecipeName() + " already exists!");
         }
+
+        String imageUrl = this.cloudinaryService.uploadPhoto(image,"recipe-images");
 
 
         // Create a new Recipe entity
@@ -73,6 +79,7 @@ public class RecipeServiceImpl implements RecipeService {
         recipe.setMealType(MealType.valueOf(addRecipeDTO.getMealType().toUpperCase()));
         recipe.setDietaryPreference(DietaryPreference.valueOf(addRecipeDTO.getDietaryPreference().toUpperCase()));
         recipe.setEstimatedTime(addRecipeDTO.getEstimatedTime());
+        recipe.setImageUrl(imageUrl);
 
         // Handle ingredients list
         List<RecipeIngredient> ingredientsForRecipe = addRecipeDTO.getIngredientsList().stream()

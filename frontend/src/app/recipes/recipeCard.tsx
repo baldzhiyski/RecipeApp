@@ -22,7 +22,6 @@ const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, loggedInUsername, onUpd
     onUpdateRecipe(); // Optionally call this to update the recipe list or perform any other updates
   };
 
-
   const handleOpenRecipeDetails = () => {
     setIsModalOpen(true);
   };
@@ -51,30 +50,31 @@ const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, loggedInUsername, onUpd
   return (
     <>
       <Card
-        className="w-full max-w-md mx-auto p-4 bg-gradient-to-r from-blue-50 to-blue-100 shadow-lg rounded-lg transition-transform transform hover:scale-105">
-        <CardBody className="space-y-4">
+        className="w-full max-w-md mx-auto p-4 bg-gradient-to-r from-blue-50 to-blue-100 shadow-lg rounded-lg transition-transform transform hover:scale-105"
+        style={{ backgroundImage: `url(${recipe.imageUrl})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
+      >
+        <CardBody className="space-y-4 bg-black bg-opacity-50 p-4 rounded-lg">
           <div className="text-center">
-            <h3 className="text-xl font-bold text-blue-700">{recipe.recipeName}</h3>
+            <h3 className="text-xl font-bold text-white">{recipe.recipeName}</h3>
           </div>
-          <p className="text-gray-600">{recipe.description}</p>
+          <p className="text-gray-200">{recipe.description}</p>
 
           <div className="flex flex-col space-y-2 text-sm">
             <div>
-              <span className="font-semibold text-blue-700">Meal Type:</span> {recipe.mealType}
+              <span className="font-semibold text-gray-200">Meal Type:  {recipe.mealType}</span>
             </div>
             <div>
-              <span className="font-semibold text-blue-700">Dish Type:</span> {recipe.dishType}
+              <span className="font-semibold text-gray-200">Dish Type: {recipe.dishType}</span>
             </div>
             <div>
-              <span className="font-semibold text-blue-700">Created by:</span> {recipe.creatorUsername}
+              <span className="font-semibold text-gray-200">Created by: {recipe.creatorUsername}</span>
             </div>
-
             {/* Average Rating */}
             <div className="flex items-center justify-center space-x-1 text-yellow-500">
               <FaStar className="text-lg" />
               <span className="text-lg font-semibold">
-              {updatedRating.toFixed(1) || 'No Ratings'}
-            </span>
+                {updatedRating.toFixed(1) || 'No Ratings'}
+              </span>
             </div>
           </div>
 

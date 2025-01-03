@@ -255,6 +255,59 @@ class ApiClient {
       method: 'GET',
     });
   }
+  public async postRecipe(
+    endpoint: string,
+    formData: FormData,
+    headers: Record<string, string> = {}
+  ): Promise<void> {
+    try {
+      // Ensure headers have the Authorization token if it's available
+      const configHeaders = {
+        ...headers,
+        ...(this.token ? { Authorization: `Bearer ${this.token}` } : {}),
+      };
+
+      const url = `${this.baseUrl}/${endpoint}`;
+
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: configHeaders, // Include headers with Authorization
+        body: formData, // Send FormData directly
+      });
+
+      // Check if the response is successful
+      if (!response.ok) {
+        let errorData;
+        try {
+          errorData = await response.json();
+        } catch (error) {
+          errorData = { message: 'An error occurred while parsing the error response.' };
+        }
+
+        const errorMessage = errorData.message || 'Failed to upload the recipe';
+        const fieldErrors = errorData.errors || {};
+        const generalErrors = errorData.generalErrors || [];
+
+        // Log or handle detailed error
+        throw { message: errorMessage, fieldErrors, generalErrors };
+      }
+
+      // Handle successful response
+      if (response.status === 204 || response.headers.get('Content-Length') === '0') {
+        return; // No body to parse
+      }
+
+      // Parse response data if needed
+      const responseData = await response.json();
+      return responseData;
+    } catch (error) {
+      console.error('Error uploading recipe:', error);
+      throw error; // Rethrow or handle error as needed
+    }
+  }
+
+
+
 }
 
 // Create a singleton instance and export it

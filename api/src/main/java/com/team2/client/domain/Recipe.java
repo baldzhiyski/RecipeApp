@@ -61,6 +61,9 @@ public class Recipe  extends BaseEntity{
     @JsonManagedReference
     private List<Rating> ratings;
 
+    @Column
+    private String imageUrl;
+
     public double getAverageRating() {
         if (ratings == null || ratings.isEmpty()) {
             return 0.0;

@@ -1,0 +1,28 @@
+.bg-image-container {
+    position: relative;
+    min-height: 100vh;
+    background-image: url('/images/background2.jpg');
+    background-size: cover;
+    background-position: center;
+
+}
+
+.bg-image-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5); /* Add dark overlay */
+    z-index: -1; /* Ensure the overlay stays behind the content */
+}
+
+.bg-image-container img {
+    filter: grayscale(100%); /* Only apply grayscale to the image */
+}
+
+.container {
+    position: relative;
+    z-index: 1; /* Ensures that content is above the background */
+}

@@ -1,20 +1,10 @@
-import {
-  Modal,
-  Button,
-  ModalBody,
-  ModalFooter,
-  ModalHeader,
-  ModalContent,
-  Textarea,
-  Input,
-  Select,
-  Checkbox, SelectItem,
-} from '@nextui-org/react';
+import { Modal, Button, ModalBody, ModalFooter, ModalHeader, ModalContent, Textarea, Input, Select, SelectItem } from '@nextui-org/react';
 import { useState } from 'react';
 import apiClient from '@lib/apiClient';
 import { DishType } from '@types/DishType';
 import { DietaryPreference } from '@types/DietaryPreference';
 import { MealType } from '@types/MealType';
+import { FaCameraRetro } from 'react-icons/fa'; // Import Font Awesome icon
 
 interface CreateRecipeProps {
   isOpen: boolean;
@@ -33,6 +23,8 @@ const CreateRecipe: React.FC<CreateRecipeProps> = ({ isOpen, onClose, onRecipeAd
   const [uploading, setUploading] = useState<boolean>(false);
   const [isPrivate, setIsPrivate] = useState<boolean>(false);
   const [estimatedTime, setEstimatedTime] = useState<number>(0);
+  const [photo, setPhoto] = useState<File | null>(null);
+  const [photoName, setPhotoName] = useState<string>(''); // State to store the name of the uploaded photo
 
   const addIngredient = () => {
     setIngredients((prevIngredients) => [
@@ -68,6 +60,14 @@ const CreateRecipe: React.FC<CreateRecipeProps> = ({ isOpen, onClose, onRecipeAd
     );
   };
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files ? e.target.files[0] : null;
+    if (file) {
+      setPhoto(file);
+      setPhotoName(file.name); // Update the state with the name of the uploaded photo
+    }
+  };
+
   const upLoadRecipe = async () => {
     if (!isFormValid()) return;
     setUploading(true);
@@ -78,20 +78,33 @@ const CreateRecipe: React.FC<CreateRecipeProps> = ({ isOpen, onClose, onRecipeAd
       unit: ingredient.unit,
     }));
 
-    const requestBody = {
-      ingredientsList,
-      dishType,
-      mealType,
-      dietaryPreference,
+    const ingr = JSON.stringify(ingredientsList);
+
+    const formData = new FormData();
+    formData.append('addRecipeDTO', JSON.stringify({
+      ingredients,
+      dishType: dishType || '',
+      mealType: mealType || '',
+      dietaryPreference: dietaryPreference || '',
       recipeName,
       description,
       instructions,
-      isPrivate,
-      estimatedTime,
-    };
+      isPrivate: isPrivate,
+      estimatedTime: String(estimatedTime),
+    }));
 
+    if (photo) {
+      formData.append('image', photo);  // Image part
+    }
     try {
-      await apiClient.post('recipes/add', requestBody);
+      // Log each key-value pair of formData
+      for (let [key, value] of formData.entries()) {
+        console.log(`${key}:`, value);
+      }
+
+      await apiClient.postRecipe('recipes/add', formData,{
+        headers :''
+      });
       onRecipeAdded();
     } catch (error) {
       console.error('Failed to upload recipe:', error);
@@ -190,6 +203,19 @@ const CreateRecipe: React.FC<CreateRecipeProps> = ({ isOpen, onClose, onRecipeAd
                 min={1}
                 isInvalid={estimatedTime <= 0}
               />
+            </div>
+            {/* Photo Upload section with Font Awesome icon */}
+            <div className="flex flex-col items-center">
+              <label htmlFor="file-upload" className="cursor-pointer">
+                <FaCameraRetro size={40} /> {/* Font Awesome Camera Icon */}
+              </label>
+              <input
+                id="file-upload"
+                type="file"
+                style={{ display: 'none' }}
+                onChange={handleFileChange}
+              />
+              {photoName && <p className="mt-2 text-sm">{photoName}</p>} {/* Display uploaded file name */}
             </div>
             {/* Ingredients section */}
             <div className="mt-4 col-span-2">
