@@ -7,6 +7,7 @@ import com.team2.client.domain.dto.RecipeDto;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.List;
+import java.util.Set;
 
 public interface RecipeService {
     List<RecipeDto> getAllRecipes();
@@ -42,4 +43,6 @@ public interface RecipeService {
     Long getRating(Long recipeId, String username);
 
     Double getAvg(Long recipeId);
+
+    Set<RecipeDto> getTopRatedRecipes();
 }

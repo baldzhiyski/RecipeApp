@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -285,6 +286,24 @@ public class RecipeServiceImpl implements RecipeService {
         Recipe recipe = getRecipeId(recipeId);
 
         return recipe.getAverageRating();
+    }
+
+    @Override
+    public Set<RecipeDto> getTopRatedRecipes() {
+        // Fetch all recipes from the repository
+        Set<RecipeDto> recipeDtos = this.recipeRepository.findAll()
+                .stream()
+                .filter(recipe -> !recipe.getIsPrivate())
+                // Sort the recipes by average rating in descending order
+                .sorted((recipe1, recipe2) -> Double.compare(
+                        recipe2.getAverageRating(), recipe1.getAverageRating()))
+                // Limit to the top 3 recipes
+                .limit(3)
+                // Map the top recipes to RecipeDto objects
+                .map(recipe -> this.mapper.map(recipe, RecipeDto.class))
+                // Collect the results into a Set (or List if order matters)
+                .collect(Collectors.toSet());
+        return recipeDtos;
     }
 
     /**

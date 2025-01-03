@@ -219,4 +219,9 @@ public class RecipeController {
         return ResponseEntity.ok(this.recipeService.getRating(recipeId,userDetails.getUsername())); // Return the user's rating or null if not rated
     }
 
+    @GetMapping("/api/recipes/top-rated")
+    public ResponseEntity<Set<RecipeDto>> getTopRatedRecipes(){
+        return ResponseEntity.ok(this.recipeService.getTopRatedRecipes());
+    }
+
 }
