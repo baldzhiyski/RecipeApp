@@ -5,13 +5,15 @@ import com.team2.client.domain.dto.AddRecipeDTO;
 import com.team2.client.domain.dto.AddRecipeResponse;
 import com.team2.client.domain.dto.RecipeDto;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Set;
 
 public interface RecipeService {
     List<RecipeDto> getAllRecipes();
 
-    AddRecipeResponse addRecipe(AddRecipeDTO addRecipeDTO, UserDetails loggedInUser);
+    AddRecipeResponse addRecipe(AddRecipeDTO addRecipeDTO, UserDetails loggedInUser, MultipartFile image);
 
 
     List<Object> getTypes(String type);
@@ -36,4 +38,12 @@ public interface RecipeService {
     List<Object[]> countRecipesByDietaryPreference();
 
     List<Object[]> countRecipesByType();
+
+    void addRating(Long recipeId, Long stars, String username);
+
+    Long getRating(Long recipeId, String username);
+
+    Double getAvg(Long recipeId);
+
+    Set<RecipeDto> getTopRatedRecipes();
 }

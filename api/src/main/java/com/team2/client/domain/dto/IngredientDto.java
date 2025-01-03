@@ -1,5 +1,6 @@
 package com.team2.client.domain.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.Column;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -11,6 +12,7 @@ import lombok.Setter;
 @Setter
 public class IngredientDto {
     @NotBlank
+    @JsonProperty("ingredientName")
     private String name;
 
     @Positive

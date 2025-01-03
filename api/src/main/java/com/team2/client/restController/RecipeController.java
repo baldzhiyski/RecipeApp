@@ -1,11 +1,14 @@
 package com.team2.client.restController;
 
-import com.team2.client.domain.Ingredient;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.team2.client.domain.dto.AddRecipeDTO;
 import com.team2.client.domain.dto.AddRecipeResponse;
+import com.team2.client.domain.dto.RatingDto;
 import com.team2.client.domain.dto.RecipeDto;
 import com.team2.client.exception.RecipeNotFoundException;
 import com.team2.client.service.RecipeService;
+import com.team2.client.validation.annotation.ValidFile;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
@@ -15,12 +18,14 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -52,16 +57,29 @@ public class RecipeController {
             @ApiResponse(responseCode = "400", description = "Invalid input data",
                     content = @Content(mediaType = "application/json", examples = @ExampleObject(value = "{\"error\": \"Validation failed\"}")))
     })
-    @PostMapping("/api/recipes/add")
+    @PostMapping(value = "/api/recipes/add",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<AddRecipeResponse> addRecipe(
             @RequestBody(description = "Details of the recipe to add", required = true,
                     content = @Content(
                             mediaType = "application/json",
                             schema = @Schema(implementation = AddRecipeDTO.class),
                             examples = @ExampleObject(value = "{\"name\":\"Green Smoothie\",\"description\":\"Healthy green smoothie.\",\"mealType\":\"BREAKFAST\",\"dishType\":\"APPETIZER\",\"dietaryPreference\":\"VEGETARIAN\",\"ingredients\":[{\"name\":\"Spinach\",\"amount\":\"1\" , \"unit\":\"cup\"},{\"name\":\"Banana\",\"amount\":\"500\",\"unit\" :\"grams\"}]}")))
-            @org.springframework.web.bind.annotation.RequestBody @Valid AddRecipeDTO addRecipeDTO,
+            @RequestParam("addRecipeDTO") String addRecipeDTOJson, // This will bind the recipe data
+            @RequestParam("image") MultipartFile image, // Handle the uploaded image file
             @AuthenticationPrincipal UserDetails loggedInUser) {
-        return ResponseEntity.ok(recipeService.addRecipe(addRecipeDTO, loggedInUser));
+
+
+        // Deserialize the JSON string into the DTO object
+        ObjectMapper objectMapper = new ObjectMapper();
+        AddRecipeDTO addRecipeDTO;
+        try {
+            addRecipeDTO = objectMapper.readValue(addRecipeDTOJson, AddRecipeDTO.class);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
+
+        return ResponseEntity.ok(recipeService.addRecipe(addRecipeDTO, loggedInUser,image));
     }
 
     @Operation(summary = "Get recipes by type", description = "Retrieve recipes by their meal type.")
@@ -204,6 +222,24 @@ public class RecipeController {
                         result -> result[0].toString(),  // Convert the key to String
                         result -> (Long) result[1]       // Cast the count to Long
                 ));
+    }
+
+    @PostMapping("/api/recipes/{recipeId}/rate")
+    public ResponseEntity<Double> rateRecipe(@PathVariable Long recipeId, @org.springframework.web.bind.annotation.RequestBody @Valid RatingDto rating, @AuthenticationPrincipal UserDetails userDetails) {
+        recipeService.addRating(recipeId, rating.getNumStars(),userDetails.getUsername());
+        return ResponseEntity.ok(recipeService.getAvg(recipeId));
+    }
+
+    // Endpoint to get the rating for a specific recipe by the logged-in user
+    @GetMapping("/api/recipes/{recipeId}/rating")
+    public ResponseEntity<Long> getRating(@PathVariable Long recipeId, @AuthenticationPrincipal UserDetails userDetails) {
+
+        return ResponseEntity.ok(this.recipeService.getRating(recipeId,userDetails.getUsername())); // Return the user's rating or null if not rated
+    }
+
+    @GetMapping("/api/recipes/top-rated")
+    public ResponseEntity<Set<RecipeDto>> getTopRatedRecipes(){
+        return ResponseEntity.ok(this.recipeService.getTopRatedRecipes());
     }
 
 }

@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import ProtectedPage from '@components/globals/ProtectedPage';
 import apiClient from '@lib/apiClient';
 import RecipeCard from './recipeCard';
+import './page.css'
 import { Button, Input, Select, SelectItem } from '@nextui-org/react';
 import CreateRecipe from './createRecipe';
 import { FaSearch } from 'react-icons/fa';
@@ -120,9 +121,9 @@ const Recipes: React.FC = () => {
 
   return (
     <ProtectedPage>
-      <div className="bg-gradient-to-r from-blue-50 via-pictionBlue-100 to-blue-200 min-h-screen flex flex-col">
+      <div className="bg-image-container">
         <div className="container mx-auto px-4 py-6 flex-1">
-          <h2 className="text-3xl font-extrabold text-center text-gray-800 mb-8">All Recipes</h2>
+          <h2 className="text-3xl font-extrabold text-center text-gray-200 mb-8">All Recipes</h2>
 
           {/* Search Filter */}
           <div className="flex justify-center mb-6">
@@ -142,7 +143,7 @@ const Recipes: React.FC = () => {
           <div className="flex justify-center mb-6 space-x-4">
             {/* Meal Type Filter */}
             <div className="relative w-60">
-              <label htmlFor="mealType" className="block text-sm font-semibold text-gray-600">Meal Type</label>
+              <label htmlFor="mealType" className="block text-sm font-semibold text-gray-200">Meal Type</label>
               <Select
                 value={mealTypeFilter}
                 onChange={(e) => handleMealTypeChange(e.target.value as MealType | 'ALL')}
@@ -160,7 +161,7 @@ const Recipes: React.FC = () => {
 
             {/* Dish Type Filter */}
             <div className="relative w-60">
-              <label htmlFor="dishType" className="block text-sm font-semibold text-gray-600">Dish Type</label>
+              <label htmlFor="dishType" className="block text-sm font-semibold text-gray-200">Dish Type</label>
               <Select
                 value={dishTypeFilter}
                 onChange={(e) => handleDishTypeChange(e.target.value as DishType | 'ALL')}
@@ -178,7 +179,8 @@ const Recipes: React.FC = () => {
 
             {/* Dietary Preference Filter */}
             <div className="relative w-60">
-              <label htmlFor="dietaryPreference" className="block text-sm font-semibold text-gray-600">Dietary Preference</label>
+              <label htmlFor="dietaryPreference" className="block text-sm font-semibold text-gray-200">Dietary
+                Preference</label>
               <Select
                 value={dietaryPreferenceFilter}
                 onChange={(e) => handleDietaryPreferenceChange(e.target.value as DietaryPreference | 'ALL')}
@@ -223,7 +225,7 @@ const Recipes: React.FC = () => {
           </div>
         </div>
 
-        <div className="flex justify-center mt-8 mb-8">
+        <div className="flex justify-center ">
           <Button
             onClick={handleOpenCreateRecipe}
             className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-semibold text-lg px-6 py-3 rounded-full shadow-lg hover:scale-105 transition-all duration-300 transform"
@@ -233,10 +235,12 @@ const Recipes: React.FC = () => {
         </div>
 
         {/* Create Recipe Modal */}
-        <CreateRecipe onClose={handleCloseCreateRecipe}  isOpen={isModalOpen} onRecipeAdded={handleRecipeUpdate}/>
+        <CreateRecipe onClose={handleCloseCreateRecipe} isOpen={isModalOpen} onRecipeAdded={handleRecipeUpdate} />
       </div>
     </ProtectedPage>
   );
 };
+
+
 
 export default Recipes;

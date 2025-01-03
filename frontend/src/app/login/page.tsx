@@ -100,9 +100,9 @@ export default function LoginPage() {
           color={isInvalidEmail ? 'danger' : 'default'}
           onValueChange={setEmail}
           className="mb-4"
-          css={{
+          style={{
             borderColor: isInvalidEmail ? '#BE1846' : '#831834', // Custom border color
-            color: '#831834', // Text color for input
+            color: '#EE5A8F', // Text color for input
           }}
         />
 
@@ -132,9 +132,9 @@ export default function LoginPage() {
 
           }
           className="mb-4"
-          css={{
+          style={{
             borderColor: isInvalidPassword ? '#BE1846' : '#831834', // Custom border color
-            color: '#831834', // Text color for input
+            color: '#EE5A8F', // Text color for input
           }}
         />
 
