@@ -21,6 +21,7 @@ export default function RegisterPage() {
 
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [showPassword, setShowPassword] = useState(false);
+  const [showCnfPassword, setShowCnfPassword] = useState(false);
   const router = useRouter();
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -52,13 +53,17 @@ export default function RegisterPage() {
       router.push('/login?success=true');
 
     } catch (err: any) {
-      console.warn(err)
+      console.warn(err);
       // Display all error messages returned from the server
       if (err.fieldErrors) {
-        console.log(err.fieldErrors)
+        console.log(err.fieldErrors);
+
         const fieldErrors = err.fieldErrors;
-        Object.keys(fieldErrors).forEach((key) => {
-          toast.error(fieldErrors[key]);
+        const uniqueErrors = new Set(Object.values(fieldErrors));
+
+        // Iterate directly over the Set
+        uniqueErrors.forEach((error) => {
+          toast.error(error); // Display each unique error
         });
       } else {
         toast.error("An unexpected error occurred. Please try again.");
@@ -182,6 +187,7 @@ export default function RegisterPage() {
                     onChange={handleChange}
                     placeholder="Enter your password"
                   />
+
                   <button
                     type="button"
                     className="btn btn-outline-secondary"
@@ -189,33 +195,44 @@ export default function RegisterPage() {
                   >
                     {showPassword ? <i className="fas fa-eye-slash"></i> : <i className="fas fa-eye"></i>}
                   </button>
+                  {errors.password && <div className="invalid-feedback">{errors.password}</div>}
                 </div>
-                {errors.password && <div className="invalid-feedback">{errors.password}</div>}
               </div>
 
               {/* Confirm Password */}
               <div className="mb-3">
-                <label htmlFor="confirmPassword" className="form-label" style={{ color: "#6D1093" }}>
+                <label htmlFor="confirmPassword" className="form-label" style={{ color: '#6D1093' }}>
                   <i className="fas fa-lock"></i> Confirm Password
                 </label>
-                <input
-                  type="password"
-                  id="confirmPassword"
-                  name="confirmPassword"
-                  className={`form-control ${errors.confirmPassword ? "is-invalid" : ""}`}
-                  value={formData.confirmPassword}
-                  onChange={handleChange}
-                  placeholder="Confirm your password"
-                />
-                {errors.confirmPassword &&
-                  <div className="invalid-feedback">{errors.confirmPassword}</div>
-                }
+                <div className="input-group">
+                  <input
+                    type={showCnfPassword ? "text" : "password"}
+                    id="confirmPassword"
+                    name="confirmPassword"
+                    className={`form-control ${errors.confirmPassword ? 'is-invalid' : ''}`}
+                    value={formData.confirmPassword}
+                    onChange={handleChange}
+                    placeholder="Confirm your password"
+                  />
+
+                  <button
+                    type="button"
+                    className="btn btn-outline-secondary"
+                    onClick={() => setShowCnfPassword(!showCnfPassword)}
+                  >
+                    {showCnfPassword ? <i className="fas fa-eye-slash"></i> : <i className="fas fa-eye"></i>}
+                  </button>
+                  {errors.confirmPassword &&
+                    <div className="invalid-feedback">{errors.confirmPassword}</div>
+                  }
+                </div>
+
               </div>
 
               {/* Submit Button */}
               <div className="d-grid">
-                <button type="submit" className="btn" style={{ backgroundColor: "#6D1093", color: "#fff" }} >
-                  <i className="fas fa-paper-plane"></i> Register
+                <button type="submit" className="btn" style={{ backgroundColor: '#6D1093', color: '#fff' }}>
+                <i className="fas fa-paper-plane"></i> Register
                 </button>
               </div>
             </form>
