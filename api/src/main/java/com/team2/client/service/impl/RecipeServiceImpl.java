@@ -30,19 +30,19 @@ import java.util.stream.Collectors;
 @Service
 public class RecipeServiceImpl implements RecipeService {
     private final RecipeRepository recipeRepository;
-    private RecipeRepository repository;
+    private final RecipeRepository repository;
 
-    private HelperService helperService;
+    private final HelperService helperService;
 
-    private CloudinaryService cloudinaryService;
-    private IngredientRepository ingredientRepository;
+    private final CloudinaryService cloudinaryService;
+    private final IngredientRepository ingredientRepository;
 
-    private RecipeIngredientRepository recipeIngredientRepository;
+    private final RecipeIngredientRepository recipeIngredientRepository;
 
-    private UserRepository userRepository;
-    private ModelMapper mapper;
+    private final UserRepository userRepository;
+    private final ModelMapper mapper;
 
-    private RatingRepository ratingRepository;
+    private final RatingRepository ratingRepository;
 
     public RecipeServiceImpl(RecipeRepository repository, HelperService helperService, CloudinaryService cloudinaryService, ModelMapper mapper, IngredientRepository ingredientRepository, UserRepository userRepository, RecipeRepository recipeRepository, RecipeIngredientRepository recipeIngredientRepository, RatingRepository ratingRepository) {
         this.repository = repository;
@@ -311,6 +311,35 @@ public class RecipeServiceImpl implements RecipeService {
                 // Collect the results into a Set (or List if order matters)
                 .collect(Collectors.toSet());
         return recipeDtos;
+    }
+
+    @Override
+    public Set<RecipeDto> getFavouriteRecipes(String username) {
+        User user = getUser(this.userRepository.findByEmail(username));
+        return user.getFavouriteRecipes()
+                .stream()
+                .map(this::mapRecipeToDto)
+                .collect(Collectors.toSet());
+    }
+
+    @Override
+    @Transactional
+    public void removeFromFavourites(String username, Long id) {
+        User user = getUser(this.userRepository.findByEmail(username));
+        Recipe recipeById = getRecipeId(id);
+
+        user.getFavouriteRecipes().remove(recipeById);
+        this.userRepository.saveAndFlush(user);
+    }
+
+    @Override
+    @Transactional
+    public void addToFavourites(String username, Long id) {
+        User user = getUser(this.userRepository.findByEmail(username));
+        Recipe recipeById = getRecipeId(id);
+
+        user.getFavouriteRecipes().add(recipeById);
+        this.userRepository.saveAndFlush(user);
     }
 
     /**

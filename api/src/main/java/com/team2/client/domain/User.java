@@ -63,6 +63,11 @@ public class User  extends BaseEntity implements UserDetails {
     @JsonBackReference
     private List<Recipe> createdRecipes;
 
+
+    @OneToMany
+    @JsonBackReference
+    private List<Recipe> favouriteRecipes;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return Collections.singleton(new SimpleGrantedAuthority("ROLE_" + roleType.name()));

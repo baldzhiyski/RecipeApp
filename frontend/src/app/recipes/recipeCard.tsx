@@ -1,16 +1,18 @@
 'use client';
 import { Recipe } from '@entities/Recipe';
 import { Button, Card, CardBody } from '@nextui-org/react';
-import { FaTrashAlt, FaEye, FaEyeSlash, FaStar } from 'react-icons/fa'; // Import Font Awesome icons
-import { useState } from 'react';
+import { FaTrashAlt, FaEye, FaEyeSlash, FaStar, FaHeart, FaRegHeart } from 'react-icons/fa'; // Import Font Awesome icons
+import { useState, useEffect } from 'react';
 import RecipeDetails from './detailedRecipe';
 import apiClient from '@lib/apiClient';
-import 'bootstrap/dist/css/bootstrap.min.css'
+import 'bootstrap/dist/css/bootstrap.min.css';
+import { toast } from 'react-toastify';
 
 interface RecipeCardProps {
   recipe: Recipe;
   loggedInUsername: string; // The logged-in username
   onUpdateRecipe: () => void;
+  onFavoriteUpdate: () => void; // New prop to update favorites
 }
 
 const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, loggedInUsername, onUpdateRecipe }) => {
@@ -45,6 +47,17 @@ const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, loggedInUsername, onUpd
     onUpdateRecipe();
     // Logic to toggle visibility of the recipe (send API request or similar)
     console.log(`Toggling visibility for recipe with ID: ${recipe.id}`);
+  };
+
+  // Handle favorite toggle
+  const handleToggleFavorite = async () => {
+    try {
+      // Toggle favorite status using API
+      await apiClient.post(`recipes/favourites/${recipe.id}`, {});
+      toast.success(`Recipe ${recipe.recipeName} added to favorites!`);
+    } catch (e) {
+      console.log(e);
+    }
   };
 
   return (
@@ -105,6 +118,14 @@ const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, loggedInUsername, onUpd
               </Button>
             </div>
           )}
+
+          {/* Favorite Button */}
+          <Button
+            className="bg-transparent text-white hover:text-red-600 p-2 rounded-md mt-4"
+            onClick={handleToggleFavorite}
+          >
+              <FaRegHeart className="text-white text-2xl" />
+          </Button>
         </CardBody>
       </Card>
 

@@ -12,6 +12,11 @@ import { Recipe } from '@entities/Recipe';
 import { MealType } from '@types/MealType';
 import { DishType } from '@types/DishType';
 import { DietaryPreference } from '@types/DietaryPreference';
+import { useRouter } from 'next/navigation';
+import { useSearchParams } from "next/navigation";
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 
 const Recipes: React.FC = () => {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
@@ -27,6 +32,21 @@ const Recipes: React.FC = () => {
   const [dietaryPreferenceFilter, setDietaryPreferenceFilter] = useState<DietaryPreference | 'ALL'>('ALL');
 
   const username = User.getInstance().getUser()?.username;
+
+
+
+
+  const parameters = useSearchParams();
+
+  // Update search term when the query parameter is present
+  useEffect(() => {
+    const searchQuery = parameters.get("search");
+    if (searchQuery) {
+      setSearchTerm(searchQuery); // Set the search term if present in the query
+    }
+  }, [parameters]); // Re-run the effect whenever parameters change
+
+
 
   useEffect(() => {
     let filtered = recipes;
@@ -79,6 +99,10 @@ const Recipes: React.FC = () => {
     setIsModalOpen(true);
   };
 
+  const hangleFavUpdate = () => {
+
+  }
+
   const handleCloseCreateRecipe = () => {
     setIsModalOpen(false);
   };
@@ -122,8 +146,20 @@ const Recipes: React.FC = () => {
   return (
     <ProtectedPage>
       <div className="bg-image-container">
+
         <div className="container mx-auto px-4 py-6 flex-1">
           <h2 className="text-3xl font-extrabold text-center text-gray-200 mb-8">All Recipes</h2>
+
+          <ToastContainer
+            position="bottom-right"
+            autoClose={5000}
+            hideProgressBar={false}
+            newestOnTop={true}
+            closeOnClick
+            pauseOnHover
+          />
+
+
 
           {/* Search Filter */}
           <div className="flex justify-center mb-6">

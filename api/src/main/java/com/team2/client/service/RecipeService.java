@@ -46,4 +46,10 @@ public interface RecipeService {
     Double getAvg(Long recipeId);
 
     Set<RecipeDto> getTopRatedRecipes();
+
+    Set<RecipeDto> getFavouriteRecipes(String username);
+
+    void removeFromFavourites(String username, Long id);
+
+    void addToFavourites(String username, Long id);
 }
