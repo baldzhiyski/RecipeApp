@@ -36,4 +36,6 @@ public class RecipeDto {
     private Double averageRating;
 
     private String imageUrl;
+
+    private Boolean isPending;
 }

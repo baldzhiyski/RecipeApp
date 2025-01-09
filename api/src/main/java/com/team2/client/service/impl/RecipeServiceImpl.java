@@ -49,7 +49,7 @@ public class RecipeServiceImpl implements RecipeService {
         this.helperService = helperService;
         this.cloudinaryService = cloudinaryService;
         this.mapper = mapper;
-        this.ingredientRepository=ingredientRepository;
+        this.ingredientRepository = ingredientRepository;
         this.userRepository = userRepository;
         this.recipeRepository = recipeRepository;
         this.recipeIngredientRepository = recipeIngredientRepository;
@@ -66,7 +66,7 @@ public class RecipeServiceImpl implements RecipeService {
             throw new RecipeExistsException("The recipe with the name " + addRecipeDTO.getRecipeName() + " already exists!");
         }
 
-        String imageUrl = this.cloudinaryService.uploadPhoto(image,"recipe-images");
+        String imageUrl = this.cloudinaryService.uploadPhoto(image, "recipe-images");
 
 
         // Create a new Recipe entity
@@ -122,7 +122,7 @@ public class RecipeServiceImpl implements RecipeService {
 
     @Override
     public List<Object> getTypes(String type) {
-        switch (type.toUpperCase()){
+        switch (type.toUpperCase()) {
             case "MEAL" -> {
                 return List.of(MealType.values());
             }
@@ -254,12 +254,12 @@ public class RecipeServiceImpl implements RecipeService {
 
         if (existingRating.isPresent()) {
             // Update the existing rating
-             rating = existingRating.get();
+            rating = existingRating.get();
             rating.setStars(stars);
             this.ratingRepository.saveAndFlush(rating);
         } else {
             // Create a new rating
-             rating = new Rating();
+            rating = new Rating();
             rating.setStars(stars);
             rating.setRecipe(recipe);
             rating.setUser(user);
@@ -340,6 +340,52 @@ public class RecipeServiceImpl implements RecipeService {
 
         user.getFavouriteRecipes().add(recipeById);
         this.userRepository.saveAndFlush(user);
+    }
+
+    @Override
+    public Void sendRecipe(Long recipeId, Long userId) {
+
+        Recipe recipe = getRecipeId(recipeId);
+        User user = getUser(this.userRepository.findById(userId));
+
+
+        // Add recipe to user's pending list
+
+        if(!user.getPendingRecipes().contains(recipe)){
+            user.getPendingRecipes().add(recipe);
+            userRepository.saveAndFlush(user);
+            return null;
+        }else {
+            throw new RecipeExistsException("Recipe already sent to the user and is waiting to be proceeded !");
+        }
+
+
+    }
+
+
+    @Override
+    public Void declineRecipe(Long recipeId, Long userId) {
+        Recipe recipe = getRecipeId(recipeId);
+        User user = getUser(this.userRepository.findById(userId));
+
+        user.getPendingRecipes().remove(recipe);
+
+        userRepository.saveAndFlush(user);
+        return null;
+    }
+
+    @Override
+    public List<RecipeDto> getLoggedUserPendingRecipes(String username) {
+        return getUser(userRepository.findByEmail(username))
+                .getPendingRecipes()
+                .stream()
+                .map(recipe -> {
+                    RecipeDto map = this.mapper.map(recipe, RecipeDto.class);
+                    map.setIsPending(true);
+
+                    return map;
+                })
+                .collect(Collectors.toList());
     }
 
     /**

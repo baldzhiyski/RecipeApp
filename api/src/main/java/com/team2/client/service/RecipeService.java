@@ -52,4 +52,10 @@ public interface RecipeService {
     void removeFromFavourites(String username, Long id);
 
     void addToFavourites(String username, Long id);
+
+    Void sendRecipe(Long recipeId, Long userId);
+
+    Void declineRecipe(Long recipeId, Long userId);
+
+    List<RecipeDto> getLoggedUserPendingRecipes(String username);
 }
