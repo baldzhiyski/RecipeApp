@@ -3,6 +3,7 @@ package com.team2.client.service.impl;
 import com.team2.client.domain.ShoppingList;
 import com.team2.client.domain.User;
 import com.team2.client.domain.dto.ImageResponseDto;
+import com.team2.client.domain.dto.UserDto;
 import com.team2.client.domain.dto.UserRegisterDto;
 import com.team2.client.domain.enums.Role;
 import com.team2.client.exception.UserNotFound;
@@ -86,5 +87,14 @@ public class UserServiceImpl implements UserService {
                         result -> "Month " + result[1] + " - Week " + result[2], // Format as Month-Week
                         result -> (Long) result[3]                              // Cast count to Long
                 ));
+    }
+
+    @Override
+    public List<UserDto> getCurrentUsers(String loggedUserUsername) {
+        return this.userRepository.findAll()
+                .stream()
+                .filter(user -> !user.getEmail().equals(loggedUserUsername))
+                .map(user -> this.mapper.map(user, UserDto.class))
+                .collect(Collectors.toList());
     }
 }

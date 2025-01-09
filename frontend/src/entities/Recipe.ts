@@ -15,6 +15,7 @@ export class Recipe {
   instructions: string;
   creatorUsername: string;
   estimatedTime: string;
+  isPending:boolean;
 
   constructor(
     recipeName: string,
@@ -26,7 +27,8 @@ export class Recipe {
     instructions: string,
     isPrivate :boolean,
     creatorUsername: string,
-    estimatedTime: string
+    estimatedTime: string,
+    isPending:boolean
   ) {
     this.recipeName = recipeName;
     this.description = description;
@@ -38,6 +40,7 @@ export class Recipe {
     this.private=isPrivate;
     this.creatorUsername = creatorUsername;
     this.estimatedTime=estimatedTime;
+    this.isPending=isPending
   }
 
   // Optional: Method to display recipe details as a formatted string

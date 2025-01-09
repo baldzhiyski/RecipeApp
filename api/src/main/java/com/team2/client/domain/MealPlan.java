@@ -1,5 +1,6 @@
 package com.team2.client.domain;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.OneToMany;
@@ -16,5 +17,6 @@ import java.util.List;
 public class MealPlan extends BaseEntity{
 
     @OneToMany(fetch = FetchType.EAGER,mappedBy = "mealPlan")
+    @JsonBackReference
     private List<MealPlanRecipe> mealPlanRecipes;
 }

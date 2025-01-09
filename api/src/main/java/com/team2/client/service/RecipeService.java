@@ -46,4 +46,16 @@ public interface RecipeService {
     Double getAvg(Long recipeId);
 
     Set<RecipeDto> getTopRatedRecipes();
+
+    Set<RecipeDto> getFavouriteRecipes(String username);
+
+    void removeFromFavourites(String username, Long id);
+
+    void addToFavourites(String username, Long id);
+
+    Void sendRecipe(Long recipeId, Long userId);
+
+    Void declineRecipe(Long recipeId, Long userId);
+
+    List<RecipeDto> getLoggedUserPendingRecipes(String username);
 }

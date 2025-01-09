@@ -12,6 +12,12 @@ import { Recipe } from '@entities/Recipe';
 import { MealType } from '@types/MealType';
 import { DishType } from '@types/DishType';
 import { DietaryPreference } from '@types/DietaryPreference';
+import { useRouter } from 'next/navigation';
+import { useSearchParams } from "next/navigation";
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
+
 
 const Recipes: React.FC = () => {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
@@ -19,6 +25,9 @@ const Recipes: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isUserRecipesOnly, setIsUserRecipesOnly] = useState(false);
+
+  const [isPendingRecipesOnly, setIsPendingRecipesOnly] = useState(false);
+
   const [searchTerm, setSearchTerm] = useState('');
 
   // Filters
@@ -27,6 +36,22 @@ const Recipes: React.FC = () => {
   const [dietaryPreferenceFilter, setDietaryPreferenceFilter] = useState<DietaryPreference | 'ALL'>('ALL');
 
   const username = User.getInstance().getUser()?.username;
+  const loggedId = User.getInstance().getUser()?.id;
+
+
+
+
+  const parameters = useSearchParams();
+
+  // Update search term when the query parameter is present
+  useEffect(() => {
+    const searchQuery = parameters.get("search");
+    if (searchQuery) {
+      setSearchTerm(searchQuery); // Set the search term if present in the query
+    }
+  }, [parameters]); // Re-run the effect whenever parameters change
+
+
 
   useEffect(() => {
     let filtered = recipes;
@@ -59,7 +84,11 @@ const Recipes: React.FC = () => {
   const fetchRecipes = async () => {
     setLoading(true);
     try {
-      const endpoint = isUserRecipesOnly ? 'my-recipes' : 'recipes';
+      const endpoint = isPendingRecipesOnly
+        ? 'my-pending-recipes' // API endpoint for pending recipes
+        : isUserRecipesOnly
+          ? 'my-recipes' // API endpoint for user-specific recipes
+          : 'recipes'; // Default endpoint for all recipes
       const response = await apiClient.get<Recipe[]>(endpoint);
       setRecipes(response);
       console.log(response)
@@ -73,11 +102,15 @@ const Recipes: React.FC = () => {
 
   useEffect(() => {
     fetchRecipes();
-  }, [isUserRecipesOnly]);
+  }, [isUserRecipesOnly,isPendingRecipesOnly]);
 
   const handleOpenCreateRecipe = () => {
     setIsModalOpen(true);
   };
+
+  const hangleFavUpdate = () => {
+
+  }
 
   const handleCloseCreateRecipe = () => {
     setIsModalOpen(false);
@@ -87,8 +120,14 @@ const Recipes: React.FC = () => {
     await fetchRecipes();
   };
 
+  const handleToggleUsersPendingRecipes = () => {
+    setIsPendingRecipesOnly(!isPendingRecipesOnly);
+    setIsUserRecipesOnly(false); // Reset "My Recipes" when toggling pending recipes
+  };
+
   const handleToggleUserRecipes = () => {
     setIsUserRecipesOnly(!isUserRecipesOnly);
+    setIsPendingRecipesOnly(false); // Reset "Pending Recipes" when toggling user recipes
   };
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -122,8 +161,19 @@ const Recipes: React.FC = () => {
   return (
     <ProtectedPage>
       <div className="bg-image-container">
+
         <div className="container mx-auto px-4 py-6 flex-1">
           <h2 className="text-3xl font-extrabold text-center text-gray-200 mb-8">All Recipes</h2>
+
+          <ToastContainer
+            position="bottom-right"
+            autoClose={5000}
+            hideProgressBar={false}
+            newestOnTop={true}
+            closeOnClick
+            pauseOnHover
+          />
+
 
           {/* Search Filter */}
           <div className="flex justify-center mb-6">
@@ -208,31 +258,58 @@ const Recipes: React.FC = () => {
           </div>
 
           {/* User recipes toggle */}
-          <div className="flex justify-center mb-6">
-            <Button
-              onClick={handleToggleUserRecipes}
-              className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-semibold text-lg px-6 py-3 rounded-full shadow-lg hover:scale-105 transition-all duration-300 transform"
-            >
-              {isUserRecipesOnly ? 'Show All Recipes' : 'Show My Recipes'}
-            </Button>
+          <div className="flex justify-center mb-6 space-x-4">
+            {/* Button for Pending Recipes */}
+            {!isPendingRecipesOnly && (
+              <Button
+                onClick={handleToggleUsersPendingRecipes}
+                className="bg-gradient-to-r from-yellow-500 to-yellow-700 text-white font-semibold text-lg px-6 py-3 rounded-full shadow-lg hover:scale-105 transition-all duration-300 transform"
+              >
+                {isPendingRecipesOnly ? 'Show All Recipes' : 'Show Pending Recipes'}
+              </Button>
+            )}
+
+            {/* Show My Recipes or Show All Recipes Buttons */}
+            {!(isPendingRecipesOnly && isUserRecipesOnly) && (
+              <>
+                <Button
+                  onClick={handleToggleUserRecipes}
+                  className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-semibold text-lg px-6 py-3 rounded-full shadow-lg hover:scale-105 transition-all duration-300 transform"
+                >
+                  {isUserRecipesOnly ? 'Show All Recipes' : 'Show My Recipes'}
+                </Button>
+
+                {isPendingRecipesOnly && !isUserRecipesOnly && (
+                  <Button
+                    onClick={handleToggleUsersPendingRecipes}
+                    className="bg-gradient-to-r from-yellow-500 to-yellow-700 text-white font-semibold text-lg px-6 py-3 rounded-full shadow-lg hover:scale-105 transition-all duration-300 transform"
+                  >
+                    {isPendingRecipesOnly ? 'Show All Recipes' : 'Show Pending Recipes'}
+                  </Button>
+                )}
+              </>
+            )}
           </div>
 
+
           {/* Display filtered recipes */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredRecipes.map((recipe, index) => (
-              <RecipeCard key={index} recipe={recipe} loggedInUsername={username} onUpdateRecipe={handleRecipeUpdate} />
+              <RecipeCard key={index} recipe={recipe} loggedInUsername={username} onUpdateRecipe={handleRecipeUpdate}  loggedId={loggedId}/>
             ))}
           </div>
         </div>
 
-        <div className="flex justify-center ">
+        {/* Add recipe button */}
+        <div className="fixed bottom-5 right-5">
           <Button
             onClick={handleOpenCreateRecipe}
-            className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-semibold text-lg px-6 py-3 rounded-full shadow-lg hover:scale-105 transition-all duration-300 transform"
+            className="bg-blue-500 text-white font-semibold text-xl rounded-full shadow-lg hover:scale-105 transition-all duration-300"
           >
-            Create New Recipe
+            + Add Recipe
           </Button>
         </div>
+
 
         {/* Create Recipe Modal */}
         <CreateRecipe onClose={handleCloseCreateRecipe} isOpen={isModalOpen} onRecipeAdded={handleRecipeUpdate} />
@@ -240,7 +317,6 @@ const Recipes: React.FC = () => {
     </ProtectedPage>
   );
 };
-
 
 
 export default Recipes;

@@ -242,4 +242,43 @@ public class RecipeController {
         return ResponseEntity.ok(this.recipeService.getTopRatedRecipes());
     }
 
+    @GetMapping("/api/recipes/favourites")
+    public ResponseEntity<Set<RecipeDto>> getFavouritesRecipes(@AuthenticationPrincipal UserDetails userDetails){
+        return ResponseEntity.ok(this.recipeService.getFavouriteRecipes(userDetails.getUsername()));
+    }
+
+    @PostMapping("/api/recipes/favourites/{id}")
+    public ResponseEntity<Void> addRecipeToFavourites(
+            @AuthenticationPrincipal UserDetails userDetails,
+            @PathVariable Long id) {
+        this.recipeService.addToFavourites(userDetails.getUsername(), id);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+
+    @DeleteMapping("/api/recipes/favourites/{id}")
+    public ResponseEntity<Void> removeRecipeFromFavourites(@AuthenticationPrincipal UserDetails userDetails,@PathVariable Long id){
+        this.recipeService.removeFromFavourites(userDetails.getUsername(),id);
+        return ResponseEntity.noContent().build();
+    }
+
+
+    @GetMapping("/api/my-pending-recipes")
+    public ResponseEntity<List<RecipeDto>> getMyPendingRecipes(@AuthenticationPrincipal UserDetails userDetails) {
+        return ResponseEntity.ok(recipeService.getLoggedUserPendingRecipes(userDetails.getUsername()));
+    }
+
+
+    // TODO : Fix the problem
+    @PostMapping("/api/recipes/{recipeId}/send/{userId}")
+    public ResponseEntity<Void> sendRecipe(@PathVariable Long recipeId, @PathVariable Long userId) {
+        return ResponseEntity.ok(this.recipeService.sendRecipe(recipeId,userId));
+    }
+
+
+    @DeleteMapping("/api/recipes/{recipeId}/decline/{userId}")
+    public ResponseEntity<Void> declineRecipe(@PathVariable Long recipeId, @PathVariable Long userId) {
+        return ResponseEntity.ok(this.recipeService.declineRecipe(recipeId,userId));
+    }
+
 }

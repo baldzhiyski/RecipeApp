@@ -1,10 +1,23 @@
-import { Modal, Button, ModalBody, ModalFooter, ModalHeader, ModalContent, Textarea, Input, Select, SelectItem } from '@nextui-org/react';
+import {
+  Modal,
+  Button,
+  ModalBody,
+  ModalFooter,
+  ModalHeader,
+  ModalContent,
+  Textarea,
+  Input,
+  Select,
+  SelectItem,
+} from '@nextui-org/react';
 import { useState } from 'react';
 import apiClient from '@lib/apiClient';
 import { DishType } from '@types/DishType';
 import { DietaryPreference } from '@types/DietaryPreference';
 import { MealType } from '@types/MealType';
 import { FaCameraRetro } from 'react-icons/fa'; // Import Font Awesome icon
+
+import { toast, ToastContainer } from 'react-toastify';
 
 interface CreateRecipeProps {
   isOpen: boolean;
@@ -36,8 +49,8 @@ const CreateRecipe: React.FC<CreateRecipeProps> = ({ isOpen, onClose, onRecipeAd
   const updateIngredient = (index: number, field: keyof typeof ingredients[0], value: string | number) => {
     setIngredients((prevIngredients) =>
       prevIngredients.map((ingredient, i) =>
-        i === index ? { ...ingredient, [field]: value } : ingredient
-      )
+        i === index ? { ...ingredient, [field]: value } : ingredient,
+      ),
     );
   };
 
@@ -54,7 +67,7 @@ const CreateRecipe: React.FC<CreateRecipeProps> = ({ isOpen, onClose, onRecipeAd
       instructions !== '' &&
       ingredients.length > 0 &&
       ingredients.every(
-        (ingredient) => ingredient.ingredientName !== '' && ingredient.amount > 0 && ingredient.unit !== ''
+        (ingredient) => ingredient.ingredientName !== '' && ingredient.amount > 0 && ingredient.unit !== '',
       ) &&
       estimatedTime > 0
     );
@@ -65,6 +78,8 @@ const CreateRecipe: React.FC<CreateRecipeProps> = ({ isOpen, onClose, onRecipeAd
     if (file) {
       setPhoto(file);
       setPhotoName(file.name); // Update the state with the name of the uploaded photo
+    } else {
+      toast('Image is required !');
     }
   };
 
@@ -102,8 +117,8 @@ const CreateRecipe: React.FC<CreateRecipeProps> = ({ isOpen, onClose, onRecipeAd
         console.log(`${key}:`, value);
       }
 
-      await apiClient.postRecipe('recipes/add', formData,{
-        headers :''
+      await apiClient.postRecipe('recipes/add', formData, {
+        headers: '',
       });
       onRecipeAdded();
     } catch (error) {
@@ -214,7 +229,11 @@ const CreateRecipe: React.FC<CreateRecipeProps> = ({ isOpen, onClose, onRecipeAd
                 type="file"
                 style={{ display: 'none' }}
                 onChange={handleFileChange}
+                required
               />
+              {!photo && (
+                <p className="mt-2 text-sm text-red-600">Image is required!</p>
+                )}
               {photoName && <p className="mt-2 text-sm">{photoName}</p>} {/* Display uploaded file name */}
             </div>
             {/* Ingredients section */}
