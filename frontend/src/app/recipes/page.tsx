@@ -304,7 +304,7 @@ const Recipes: React.FC = () => {
         <div className="fixed bottom-5 right-5">
           <Button
             onClick={handleOpenCreateRecipe}
-            className="bg-blue-500 text-white font-semibold text-2xl rounded-full shadow-lg hover:scale-105 transition-all duration-300"
+            className="bg-blue-500 text-white font-semibold text-xl rounded-full shadow-lg hover:scale-105 transition-all duration-300"
           >
             + Add Recipe
           </Button>

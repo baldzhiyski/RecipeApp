@@ -4,6 +4,9 @@ import { useState, useEffect } from "react";
 import { FaClock, FaStar } from "react-icons/fa";
 import { toast } from "react-toastify";
 import apiClient from "@lib/apiClient";
+import { jsPDF } from "jspdf";
+import 'jspdf-autotable';
+
 
 interface RecipeDetailsProps {
   isOpen: boolean;
@@ -64,6 +67,59 @@ const RecipeDetails: React.FC<RecipeDetailsProps> = ({ isOpen, onClose, recipe, 
   const increasePortions = () => setPortions((prev) => prev + 1);
   const decreasePortions = () => setPortions((prev) => (prev > 1 ? prev - 1 : 1));
 
+  const generatePDF = () => {
+    const doc = new jsPDF();
+
+    // Set Title
+    doc.setFontSize(18);
+    doc.text(recipe.recipeName, 20, 20);
+
+    // Add Image (if available)
+    if (recipe.imageUrl) {
+      doc.addImage(recipe.imageUrl, 'JPEG', 15, 30, 180, 100); // Adjust image position and size
+    }
+
+    // Add Description with better formatting
+    doc.setFontSize(12);
+    doc.setTextColor(50);  // Set text color
+    doc.text(recipe.description, 20, 140, { maxWidth: 180 });
+
+    // Add a horizontal line separator after the description
+    doc.setLineWidth(0.5);
+    doc.line(20, 150, 190, 150);
+
+    // Add Ingredients section using a table
+    doc.setFontSize(12);
+    doc.setTextColor(0);  // Reset text color for ingredients
+    doc.text('Ingredients:', 20, 160);
+
+    // AutoTable for Ingredients List
+    const startY = 170;
+    doc.autoTable({
+      startY: startY,
+      head: [['Ingredient', 'Amount', 'Unit']],  // Column headers
+      body: scaledIngredients.map((ingredient) => [
+        ingredient.ingredientName,
+        ingredient.amount.toFixed(1),  // Format amount for consistency
+        ingredient.unit
+      ]),
+      theme: 'striped',  // Striped rows for better readability
+      headStyles: { fillColor: [0, 51, 102], textColor: [255, 255, 255] }, // Header background and text color
+      bodyStyles: { fontSize: 12 },
+      columnStyles: { 0: { cellWidth: 70 }, 1: { cellWidth: 30 }, 2: { cellWidth: 80 } }, // Column width adjustment
+      margin: { top: 10, left: 20, right: 20 },
+    });
+
+    // Add Instructions Section
+    doc.setFontSize(12);
+    doc.setTextColor(50);
+    doc.text('Instructions:', 20, doc.lastAutoTable.finalY + 10);  // Positioned after the table
+    doc.text(recipe.instructions, 20, doc.lastAutoTable.finalY + 20, { maxWidth: 180 });
+
+    // Save PDF
+    doc.save(`${recipe.recipeName}.pdf`);
+  };
+
   return (
     <Modal isOpen={isOpen} placement="center" onClose={onClose} isDismissable className="flex items-center justify-center">
       <ModalContent
@@ -77,11 +133,8 @@ const RecipeDetails: React.FC<RecipeDetailsProps> = ({ isOpen, onClose, recipe, 
         }}
       >
         {/* Background overlay */}
-        <div
-          className="absolute inset-0 bg-black opacity-50 rounded-lg"
-          style={{ zIndex: -1 }}
-        />
-        {/* Modal Content */}
+        <div className="absolute inset-0 bg-black opacity-50 rounded-lg" style={{ zIndex: -1 }} />
+
         <div className="relative z-20">
           <ModalHeader className="border-b pb-3 mb-4">
             <h2 className="text-3xl font-semibold">{recipe.recipeName}</h2>
@@ -122,18 +175,12 @@ const RecipeDetails: React.FC<RecipeDetailsProps> = ({ isOpen, onClose, recipe, 
                       <FaStar
                         key={star}
                         size={24}
-                        color={
-                          (userRating && userRating >= star) || hoverRating >= star
-                            ? "#FFD700" // Yellow for rated or hover
-                            : "#D3D3D3" // Gray for not rated or hover
-                        }
+                        color={userRating && userRating >= star || hoverRating >= star ? "#FFD700" : "#D3D3D3"}
                         onClick={() => handleRatingClick(star)}
                         onMouseEnter={() => handleMouseEnter(star)}
                         onMouseLeave={handleMouseLeave}
                         className="cursor-pointer"
-                        style={{
-                          zIndex: 10, // Ensures stars are clickable above background
-                        }}
+                        style={{ zIndex: 10 }}
                       />
                     ))}
                   </div>
@@ -156,20 +203,10 @@ const RecipeDetails: React.FC<RecipeDetailsProps> = ({ isOpen, onClose, recipe, 
 
                 {/* Portion Control */}
                 <div className="mt-6 flex justify-between items-center">
-                  <h4 className="text-sm font-semibold text-white">
-                    Portions: {portions}
-                  </h4>
+                  <h4 className="text-sm font-semibold text-white">Portions: {portions}</h4>
                   <div className="flex space-x-2">
-                    <Button
-                      onClick={decreasePortions}
-                      disabled={portions <= 1}
-                      size="sm"
-                    >
-                      -
-                    </Button>
-                    <Button onClick={increasePortions} size="sm">
-                      +
-                    </Button>
+                    <Button onClick={decreasePortions} disabled={portions <= 1} size="sm">-</Button>
+                    <Button onClick={increasePortions} size="sm">+</Button>
                   </div>
                 </div>
 
@@ -183,13 +220,8 @@ const RecipeDetails: React.FC<RecipeDetailsProps> = ({ isOpen, onClose, recipe, 
           </ModalBody>
 
           <ModalFooter className="pt-4">
-            <Button
-              className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md font-medium transition"
-              onClick={onClose}
-              size="sm"
-            >
-              Close
-            </Button>
+            <Button className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md font-medium transition" onClick={onClose} size="sm">Close</Button>
+            <Button className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-md font-medium transition" onClick={generatePDF} size="sm">Download PDF</Button>
           </ModalFooter>
         </div>
       </ModalContent>
