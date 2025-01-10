@@ -28,9 +28,9 @@ services:
       MYSQL_HOST: database
       MYSQL_PORT: 3306
       MYSQL_DATABASE: shopping-app
-      CLOUDINARY_NAME: dcazwzpwt
-      CLOUDINARY_API_KEY: 142434264428854
-      CLOUDINARY_API_SECRET: s5aetyk1HKbM1uGc__C3U3dH660
+      CLOUDINARY_NAME: 
+      CLOUDINARY_API_KEY: 
+      CLOUDINARY_API_SECRET: 
     ports:
       - "8082:8082"
     # Volumes are removed here
