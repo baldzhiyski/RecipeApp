@@ -73,7 +73,7 @@ Einkaufsplaner is a comprehensive meal and shopping planner that simplifies reci
    ```
 ## 2. Build and Start the Docker Containers
 
-Use the provided credentials for cloduinary or get your own : Make sure you have a [Cloudinary](https://cloudinary.com/) account. Follow these steps:
+Get your own cloudinary credentials  : Make sure you have a [Cloudinary](https://cloudinary.com/) account. Follow these steps:
 
 1. **Register on Cloudinary**: Sign up for a Cloudinary account if you don’t have one already.
 2. **Create an API Key**: In your Cloudinary dashboard, create an API key to use for this project.
@@ -102,7 +102,3 @@ npm run dev
 Once the containers are running and the frontend is started:
 
 URL: http://localhost:3000
-
-
-4.**Access the Application**
-The application is currently available at http://193.196.54.242:3000.
