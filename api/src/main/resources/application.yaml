@@ -41,9 +41,9 @@ app:
   application-name: Shopping App
 
 cloudinary :
-  cloud_name : ${CLOUDINARY_NAME:dcazwzpwt}
-  apiKey: ${CLOUDINARY_API_KEY:142434264428854}
-  apiSecret : ${CLOUDINARY_API_SECRET:s5aetyk1HKbM1uGc__C3U3dH660}
+  cloud_name : ${CLOUDINARY_NAME:}
+  apiKey: ${CLOUDINARY_API_KEY:}
+  apiSecret : ${CLOUDINARY_API_SECRET:}
 
 springdoc:
   swagger-ui:
